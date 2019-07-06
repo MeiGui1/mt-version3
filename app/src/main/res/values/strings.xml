@@ -3,4 +3,5 @@
     <string name="title_activity_menu">MenuActivity</string>
     <string name="navigation_drawer_open">Navigation öffnen</string>
     <string name="navigation_drawer_close">Navigation schliessen</string>
+    <string name="title_activity_patient_selection">PatientSelectionActivity</string>
 </resources>

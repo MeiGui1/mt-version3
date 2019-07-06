@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //jump to Menu for faster testing puroposes
-        Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+        Intent intent = new Intent(MainActivity.this, PatientSelectionActivity.class);
         intent.putExtra("usernameKey", "Admin");
         startActivity(intent);
     }
