@@ -1,8 +1,11 @@
 package com.example.frontend.Models;
 
 public class Patient {
+
     private int id;
+
     private String shortname;
+
     private String gender;
 
     public int getId() {
