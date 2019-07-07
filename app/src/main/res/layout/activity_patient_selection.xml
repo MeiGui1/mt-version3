@@ -41,7 +41,7 @@
         android:layout_weight="1"
         android:fillViewport="true"
         android:paddingHorizontal="70dp"
-        android:paddingTop="50dp"
+        android:paddingTop="30dp"
         android:paddingBottom="100dp">
 
         <LinearLayout
@@ -57,6 +57,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"/>
             </LinearLayout>
 
             <LinearLayout
@@ -65,6 +69,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -73,6 +83,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"/>
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -1,5 +1,6 @@
 package com.example.frontend.Activities;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,6 +19,7 @@ import com.example.frontend.Fragments.CollectionsFragment;
 import com.example.frontend.Fragments.ModelsFragment;
 import com.example.frontend.Fragments.NotesFragment;
 import com.example.frontend.Globals;
+import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
 
 public class MenuActivity extends AppCompatActivity {
@@ -25,7 +27,7 @@ public class MenuActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView tvUsername;
-    private int patientId;
+    private Patient patient;
 
 
     @Override
@@ -35,7 +37,7 @@ public class MenuActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            patientId = extras.getInt("patientId");
+            patient = (Patient)extras.getSerializable("patient");
         }
 
         toolbar = findViewById(R.id.toolbar);
@@ -58,7 +60,7 @@ public class MenuActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModelsFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_models);
+            navigationView.setCheckedItem(R.id.nav_pen);
         }
 
         ViewTreeObserver vto = findViewById(R.id.fragment_container).getViewTreeObserver();
@@ -73,7 +75,7 @@ public class MenuActivity extends AppCompatActivity {
         });
 
         tvUsername = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvUsername);
-        tvUsername.setText(Integer.toString(patientId));
+        tvUsername.setText(Integer.toString(patient.getId()));
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -96,6 +98,9 @@ public class MenuActivity extends AppCompatActivity {
                         setTitle("Benutzer");
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CollectionsFragment()).commit();
                         Toast.makeText(MenuActivity.this, "I am a Person", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(MenuActivity.this, PatientSelectionActivity.class);
+                        startActivity(intent);
                         break;
                 }
 
@@ -118,4 +123,5 @@ public class MenuActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
 }

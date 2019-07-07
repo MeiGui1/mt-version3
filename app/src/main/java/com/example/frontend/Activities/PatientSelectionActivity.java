@@ -51,10 +51,10 @@ public class PatientSelectionActivity extends AppCompatActivity {
 
     }
 
-    public void navigateNextActivity(int patientId) {
+    public void navigateNextActivity(Patient patient) {
         //jump to Menu
         Intent intent = new Intent(PatientSelectionActivity.this, MenuActivity.class);
-        intent.putExtra("patientId", patientId);
+        intent.putExtra("patient", patient);
         startActivity(intent);
     }
 
@@ -70,26 +70,26 @@ public class PatientSelectionActivity extends AppCompatActivity {
                     allPatients = response.body();
 
                     for(Patient patient: allPatients){
-                        addPatientBtn(patient.getShortname(), patient.getId());
+                        addPatientBtn(patient);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<List<Patient>> call, Throwable t) {
-                tvPatientlist.setText(t.getMessage());
+               // tvPatientlist.setText(t.getMessage());
             }
         });
     }
 
-    public void addPatientBtn(String patientName, final int patientId){
+    public void addPatientBtn(final Patient patient){
         Button btnPatient = new Button(context);
-        btnPatient.setText(patientName);
+        btnPatient.setText(patient.getShortname());
         btnPatient.setTransformationMethod(null);
         btnPatient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigateNextActivity(patientId);
+                navigateNextActivity(patient);
             }
         });
         LinearLayout ll1 = (LinearLayout) findViewById(R.id.llFirstColumn);

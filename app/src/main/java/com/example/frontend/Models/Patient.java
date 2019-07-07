@@ -1,6 +1,8 @@
 package com.example.frontend.Models;
 
-public class Patient {
+import java.io.Serializable;
+
+public class Patient implements Serializable {
 
     private int id;
 
