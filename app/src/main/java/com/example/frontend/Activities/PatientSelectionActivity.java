@@ -1,16 +1,18 @@
 package com.example.frontend.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.frontend.Service.JsonPlaceHolderApi;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
-import com.example.frontend.Service.RestService;
 
 import java.util.List;
 
@@ -24,6 +26,8 @@ public class PatientSelectionActivity extends AppCompatActivity {
     private String username = "";
     private TextView tvPatientlist;
     private List<Patient> allPatients;
+    private int columnCounter = 1;
+    Context context = this;
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -41,16 +45,16 @@ public class PatientSelectionActivity extends AppCompatActivity {
             username = extras.getString("usernameKey");
         }
 
-        tvPatientlist = (TextView)findViewById(R.id.tvPatientlist);
-
+        //tvPatientlist = (TextView)findViewById(R.id.tvPatientlist);
         addAllPatients();
+
 
     }
 
-    public void nextActivity(View view) {
-        //jump to Menu for faster testing puroposes
+    public void navigateNextActivity(int patientId) {
+        //jump to Menu
         Intent intent = new Intent(PatientSelectionActivity.this, MenuActivity.class);
-        intent.putExtra("usernameKey", username);
+        intent.putExtra("patientId", patientId);
         startActivity(intent);
     }
 
@@ -60,15 +64,14 @@ public class PatientSelectionActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Patient>> call, Response<List<Patient>> response) {
                 if (!response.isSuccessful()) {
-                    tvPatientlist.setText(response.code());
+                    //tvPatientlist.setText(response.code());
                     return;
                 } else {
                     allPatients = response.body();
-                    String string = "";
+
                     for(Patient patient: allPatients){
-                        string = string + "ID: " + patient.getId() + "\n Name:" + patient.getShortname() + "\n Gender:" + patient.getGender() + "\n\n";
+                        addPatientBtn(patient.getShortname(), patient.getId());
                     }
-                    tvPatientlist.setText(string);
                 }
             }
 
@@ -77,5 +80,35 @@ public class PatientSelectionActivity extends AppCompatActivity {
                 tvPatientlist.setText(t.getMessage());
             }
         });
+    }
+
+    public void addPatientBtn(String patientName, final int patientId){
+        Button btnPatient = new Button(context);
+        btnPatient.setText(patientName);
+        btnPatient.setTransformationMethod(null);
+        btnPatient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigateNextActivity(patientId);
+            }
+        });
+        LinearLayout ll1 = (LinearLayout) findViewById(R.id.llFirstColumn);
+        LinearLayout ll2 = (LinearLayout) findViewById(R.id.llSecondColumn);
+        LinearLayout ll3 = (LinearLayout) findViewById(R.id.llThirdColumn);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        switch (columnCounter){
+            case 1:
+                ll1.addView(btnPatient, lp);
+                columnCounter++;
+                break;
+            case 2:
+                ll2.addView(btnPatient, lp);
+                columnCounter++;
+                break;
+            case 3:
+                ll3.addView(btnPatient, lp);
+                columnCounter = 1;
+                break;
+        }
     }
 }

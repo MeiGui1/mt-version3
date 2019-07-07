@@ -25,7 +25,7 @@ public class MenuActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView tvUsername;
-    private String username = "";
+    private int patientId;
 
 
     @Override
@@ -35,7 +35,7 @@ public class MenuActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            username = extras.getString("usernameKey");
+            patientId = extras.getInt("patientId");
         }
 
         toolbar = findViewById(R.id.toolbar);
@@ -73,7 +73,7 @@ public class MenuActivity extends AppCompatActivity {
         });
 
         tvUsername = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvUsername);
-        tvUsername.setText(username);
+        tvUsername.setText(Integer.toString(patientId));
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
