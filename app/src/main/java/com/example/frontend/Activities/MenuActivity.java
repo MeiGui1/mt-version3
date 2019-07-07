@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.frontend.Fragments.CollectionsFragment;
 import com.example.frontend.Fragments.ModelsFragment;
 import com.example.frontend.Fragments.NotesFragment;
+import com.example.frontend.Fragments.OverviewFragment;
 import com.example.frontend.Globals;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
@@ -59,8 +60,8 @@ public class MenuActivity extends AppCompatActivity {
 
 
         if (savedInstanceState == null) {
-           getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModelsFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_pen);
+           getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OverviewFragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_overview);
         }
 
         ViewTreeObserver vto = findViewById(R.id.fragment_container).getViewTreeObserver();
@@ -75,23 +76,27 @@ public class MenuActivity extends AppCompatActivity {
         });
 
         tvUsername = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvUsername);
-        tvUsername.setText(Integer.toString(patient.getId()));
+        tvUsername.setText(patient.getShortname());
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
+                    case R.id.nav_overview:
+                        setTitle(getString(R.string.overview));
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OverviewFragment()).commit();
+                        break;
                     case R.id.nav_collections:
-                        setTitle("Medien");
+                        setTitle(getString(R.string.collections));
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CollectionsFragment()).commit();
                         break;
                     case R.id.nav_pen:
-                        setTitle("Notizen");
+                        setTitle(getString(R.string.notes));
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NotesFragment()).commit();
                         break;
                     case R.id.nav_models:
-                        setTitle("3D-Modelle");
+                        setTitle(getString(R.string.models));
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModelsFragment()).commit();
                         break;
                     case R.id.nav_person:

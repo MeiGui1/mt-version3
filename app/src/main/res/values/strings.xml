@@ -4,4 +4,17 @@
     <string name="navigation_drawer_open">Navigation öffnen</string>
     <string name="navigation_drawer_close">Navigation schliessen</string>
     <string name="title_activity_patient_selection">PatientSelectionActivity</string>
+    <string name="overview">Übersicht</string>
+    <string name="notes">Notizen</string>
+    <string name="models">3D Visualisierungen</string>
+    <string name="collections">Medien</string>
+    <string name="drugs">Medikamente</string>
+    <string name="diagnosis">Diagnosen</string>
+    <string name="exercises">Übungen</string>
+    <string name="paindetails">Schmerzdetails</string>
+    <string name="psychosocial">Psychosoziale Konextfaktoren</string>
+    <string name="diagnosis_and_therapy">Anamnese, Diagnose und Therapie</string>
+    <string name="tools">Tools</string>
+    <string name="translator">Sprachübersetzer</string>
+    <string name="recognizer">Befundnotizen</string>
 </resources>
