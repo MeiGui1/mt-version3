@@ -87,6 +87,7 @@ public class PatientSelectionActivity extends AppCompatActivity {
         btnPatient.setText(patient.getShortname());
         btnPatient.setTextSize(24);
         btnPatient.setPadding(0,30,0,30);
+        btnPatient.setBackgroundResource(R.drawable.button_style);
         btnPatient.setTransformationMethod(null);
         btnPatient.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +99,7 @@ public class PatientSelectionActivity extends AppCompatActivity {
         LinearLayout ll2 = (LinearLayout) findViewById(R.id.llSecondColumn);
         LinearLayout ll3 = (LinearLayout) findViewById(R.id.llThirdColumn);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(10,20,10,20);
         switch (columnCounter){
             case 1:
                 ll1.addView(btnPatient, lp);

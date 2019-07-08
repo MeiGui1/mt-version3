@@ -25,6 +25,10 @@
                         android:icon="@drawable/ic_collections"
                         android:title="@string/collections" />
                     <item
+                        android:id="@+id/nav_psychosocial"
+                        android:icon="@drawable/ic_psychosocial"
+                        android:title="@string/psychosocial" />
+                    <item
                         android:id="@+id/nav_recognizer"
                         android:icon="@drawable/ic_recognizer"
                         android:title="@string/recognizer" />
@@ -35,7 +39,7 @@
                 </group>
             </menu>
         </item>
-        <item android:title="@string/diagnosis_and_therapy">
+        <item android:title="@string/inputs">
             <menu>
                 <group
                     android:id="@+id/menu_bot"
@@ -44,6 +48,10 @@
                         android:id="@+id/nav_pain"
                         android:icon="@drawable/ic_pain"
                         android:title="@string/paindetails" />
+                    <item
+                        android:id="@+id/nav_diagnosis"
+                        android:icon="@drawable/ic_diagnosis"
+                        android:title="@string/diagnosis" />
                     <item
                         android:id="@+id/nav_drugs"
                         android:icon="@drawable/ic_medication"

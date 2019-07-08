@@ -17,4 +17,5 @@
     <string name="tools">Tools</string>
     <string name="translator">Sprachübersetzer</string>
     <string name="recognizer">Befundnotizen</string>
+    <string name="inputs">Eingaben</string>
 </resources>
