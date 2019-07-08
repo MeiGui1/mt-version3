@@ -85,6 +85,8 @@ public class PatientSelectionActivity extends AppCompatActivity {
     public void addPatientBtn(final Patient patient){
         Button btnPatient = new Button(context);
         btnPatient.setText(patient.getShortname());
+        btnPatient.setTextSize(24);
+        btnPatient.setPadding(0,30,0,30);
         btnPatient.setTransformationMethod(null);
         btnPatient.setOnClickListener(new View.OnClickListener() {
             @Override
