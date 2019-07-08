@@ -16,9 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.frontend.Fragments.CollectionsFragment;
+import com.example.frontend.Fragments.DrugsFragment;
+import com.example.frontend.Fragments.ExercisesFragment;
 import com.example.frontend.Fragments.ModelsFragment;
 import com.example.frontend.Fragments.NotesFragment;
 import com.example.frontend.Fragments.OverviewFragment;
+import com.example.frontend.Fragments.PainFragment;
+import com.example.frontend.Fragments.RecognizerFragment;
+import com.example.frontend.Fragments.TranslatorFragment;
 import com.example.frontend.Globals;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
@@ -87,23 +92,40 @@ public class MenuActivity extends AppCompatActivity {
                         setTitle(getString(R.string.overview));
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OverviewFragment()).commit();
                         break;
-                    case R.id.nav_collections:
-                        setTitle(getString(R.string.collections));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CollectionsFragment()).commit();
+                    case R.id.nav_models:
+                        setTitle(getString(R.string.models));
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModelsFragment()).commit();
                         break;
                     case R.id.nav_pen:
                         setTitle(getString(R.string.notes));
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NotesFragment()).commit();
                         break;
-                    case R.id.nav_models:
-                        setTitle(getString(R.string.models));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModelsFragment()).commit();
+                    case R.id.nav_collections:
+                        setTitle(getString(R.string.collections));
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CollectionsFragment()).commit();
+                        break;
+                    case R.id.nav_recognizer:
+                        setTitle(getString(R.string.recognizer));
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecognizerFragment()).commit();
+                        break;
+                    case R.id.nav_translator:
+                        setTitle(getString(R.string.translator));
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TranslatorFragment()).commit();
+                        break;
+                    case R.id.nav_pain:
+                        setTitle(getString(R.string.paindetails));
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PainFragment()).commit();
+                        break;
+                    case R.id.nav_drugs:
+                        setTitle(getString(R.string.drugs));
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DrugsFragment()).commit();
+                        break;
+                    case R.id.nav_exercises:
+                        setTitle(getString(R.string.exercises));
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ExercisesFragment()).commit();
                         break;
                     case R.id.nav_person:
-                        setTitle("Benutzer");
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CollectionsFragment()).commit();
-                        Toast.makeText(MenuActivity.this, "I am a Person", Toast.LENGTH_SHORT).show();
-
+                        setTitle("Patienten");
                         Intent intent = new Intent(MenuActivity.this, PatientSelectionActivity.class);
                         startActivity(intent);
                         break;
