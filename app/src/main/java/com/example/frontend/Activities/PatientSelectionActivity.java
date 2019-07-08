@@ -85,7 +85,7 @@ public class PatientSelectionActivity extends AppCompatActivity {
     public void addPatientBtn(final Patient patient){
         Button btnPatient = new Button(context);
         btnPatient.setText(patient.getShortname());
-        btnPatient.setTextSize(24);
+        btnPatient.setTextSize(18);
         btnPatient.setPadding(0,30,0,30);
         btnPatient.setBackgroundResource(R.drawable.button_style);
         btnPatient.setTransformationMethod(null);
