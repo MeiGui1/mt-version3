@@ -86,7 +86,7 @@ public class DrugsFragment extends Fragment {
         });
     }
     public void addDrugTypeBtn(final DrugType drugType){
-        Button btnDrugType = new Button(getContext());
+        final Button btnDrugType = new Button(getContext());
         btnDrugType.setText(drugType.getName());
         TooltipCompat.setTooltipText(btnDrugType.getRootView(), drugType.getDescription());
         btnDrugType.setTextSize(18);
@@ -97,7 +97,13 @@ public class DrugsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //TODO: select the drug
-                showPatientDrugPopup();
+                //showPatientDrugPopup();
+                if(btnDrugType.isSelected()){
+                    btnDrugType.setSelected(false);
+                }else{
+                    btnDrugType.setSelected(true);
+                }
+
             }
         });
         LinearLayout ll1 = (LinearLayout) cView.findViewById(R.id.llFirstColumn);
