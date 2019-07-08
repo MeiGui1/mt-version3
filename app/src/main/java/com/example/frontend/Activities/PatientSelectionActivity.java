@@ -24,7 +24,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PatientSelectionActivity extends AppCompatActivity {
     private String username = "";
-    private TextView tvPatientlist;
     private List<Patient> allPatients;
     private int columnCounter = 1;
     Context context = this;
