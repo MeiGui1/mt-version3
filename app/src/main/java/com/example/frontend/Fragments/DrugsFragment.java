@@ -48,6 +48,8 @@ public class DrugsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        patientId = getArguments().getInt("patientId");
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_drugs, container, false);
 
@@ -67,8 +69,7 @@ public class DrugsFragment extends Fragment {
         });*/
 
         cView = view;
-        patientId = 1;
-        getDrugsOfPatient(patientId);
+        addDrugButtons(patientId);
 
     }
 
@@ -168,7 +169,8 @@ public class DrugsFragment extends Fragment {
         });
     }
 
-    public void getDrugsOfPatient(final int patientId) {
+    public void addDrugButtons(final int patientId) {
+        //Get all PatientDrugs of Patient
         Call<List<PatientDrug>> call = jsonPlaceHolderApi.getAllDrugsOfPatient(patientId);
         call.enqueue(new Callback<List<PatientDrug>>() {
             @Override
@@ -185,6 +187,8 @@ public class DrugsFragment extends Fragment {
                         allDrugIdsOfPatient.add(patientDrug.getDrugTypeId());
                         test = test + id;
                     }
+
+                    //Add all Buttons
                     addAllDrugsTypes();
 
                     Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();

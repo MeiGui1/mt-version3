@@ -37,7 +37,7 @@ public class MenuActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private TextView tvUsername;
     private Patient patient;
-
+    private Bundle bundlePatientId = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +47,7 @@ public class MenuActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             patient = (Patient)extras.getSerializable("patient");
+            bundlePatientId.putInt("patientId", patient.getId());
         }
 
         toolbar = findViewById(R.id.toolbar);
@@ -206,7 +207,9 @@ public class MenuActivity extends AppCompatActivity {
                 break;
             case R.id.btnDrugs:
                 setTitle(getString(R.string.drugs));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DrugsFragment()).commit();
+                DrugsFragment fragobj = new DrugsFragment();
+                fragobj.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragobj).commit();
                 navigationView.setCheckedItem(R.id.nav_drugs);
                 break;
             case R.id.btnExercises:
