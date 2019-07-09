@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.example.frontend.Fragments.Drugs.DrugDialog;
 import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDrug;
@@ -33,11 +34,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
-public class DrugsFragment extends Fragment {
+public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogListener {
     private View cView;
     private List<DrugType> allDrugTypes = new ArrayList<>();
     private List<PatientDrug> allDrugsOfPatient = new ArrayList<>();
     private List<Integer> allDrugIdsOfPatient = new ArrayList<>();
+    private PatientDrug selectedPatientDrug = new PatientDrug();
     private int patientId;
     private int columnCounter = 1;
     private String test = "Test: ";
@@ -108,14 +110,14 @@ public class DrugsFragment extends Fragment {
             public void onClick(View view) {
                 //TODO: select the drug
                 //showPatientDrugPopup();
+
                 if (btnDrugType.isSelected()) {
                     deletePatientDrug(patientId, drugType.getId());
                     btnDrugType.setSelected(false);
                 } else {
-                    PatientDrug patientDrug = new PatientDrug();
-                    patientDrug.setPatientId(patientId);
-                    patientDrug.setDrugId(drugType.getId());
-                    addNewPatientDrug(patientDrug);
+                    selectedPatientDrug.setPatientId(patientId);
+                    selectedPatientDrug.setDrugId(drugType.getId());
+                    openDrugDialog();
                     btnDrugType.setSelected(true);
                 }
 
@@ -184,14 +186,9 @@ public class DrugsFragment extends Fragment {
                     for (PatientDrug patientDrug : allDrugsOfPatient) {
                         int id = patientDrug.getDrugTypeId();
                         allDrugIdsOfPatient.add(patientDrug.getDrugTypeId());
-                        test = test + id;
                     }
-
                     //Add all Buttons
                     addAllDrugsTypes();
-
-                    Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
-
                 }
             }
 
@@ -203,19 +200,21 @@ public class DrugsFragment extends Fragment {
         });
     }
 
-    public void addNewPatientDrug(PatientDrug patientDrug){
+    public void addNewPatientDrug(PatientDrug patientDrug) {
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatientDrug(patientDrug);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
         });
     }
-    public void deletePatientDrug(int patientId, int drugtypeId){
-        Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientDrug(patientId,drugtypeId);
+
+    public void deletePatientDrug(int patientId, int drugtypeId) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientDrug(patientId, drugtypeId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -227,4 +226,20 @@ public class DrugsFragment extends Fragment {
         });
     }
 
+    public void openDrugDialog() {
+        DrugDialog drugDialog = new DrugDialog();
+        drugDialog.setTargetFragment(DrugsFragment.this,1);
+        drugDialog.show(getActivity().getSupportFragmentManager(), "Drug Dialog");
+    }
+
+    @Override
+    public void applyTexts(String amount, String dosis) {
+        if(!amount.isEmpty()){
+            selectedPatientDrug.setAmount(amount);
+        }
+        if(!dosis.isEmpty()){
+            selectedPatientDrug.setDosis(dosis);
+        }
+        addNewPatientDrug(selectedPatientDrug);
+    }
 }
