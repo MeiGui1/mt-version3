@@ -11,9 +11,13 @@ import android.view.ViewGroup;
 import com.example.frontend.R;
 
 public class ModelsFragment extends Fragment {
+    private int patientId;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        patientId = getArguments().getInt("patientId");
+
         return inflater.inflate(R.layout.fragment_models,container,false);
     }
 }

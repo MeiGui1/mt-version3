@@ -9,8 +9,13 @@ import android.view.ViewGroup;
 import com.example.frontend.R;
 
 public class TranslatorFragment extends Fragment {
+
+    private int patientId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        patientId = getArguments().getInt("patientId");
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_translator, container, false);
 

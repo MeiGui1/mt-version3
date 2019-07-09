@@ -25,11 +25,14 @@ public class NotesFragment extends Fragment {
 
     private PaintView paintView;
     private View cView;
+    private int patientId;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        patientId = getArguments().getInt("patientId");
+
         return inflater.inflate(R.layout.fragment_notes,container,false);
     }
 

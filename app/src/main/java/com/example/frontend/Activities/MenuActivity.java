@@ -98,43 +98,63 @@ public class MenuActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_models:
                         setTitle(getString(R.string.models));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModelsFragment()).commit();
+                        ModelsFragment modelsFrag = new ModelsFragment();
+                        modelsFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, modelsFrag).commit();
                         break;
                     case R.id.nav_pen:
                         setTitle(getString(R.string.notes));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NotesFragment()).commit();
+                        NotesFragment notesFrag = new NotesFragment();
+                        notesFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, notesFrag).commit();
                         break;
                     case R.id.nav_collections:
                         setTitle(getString(R.string.collections));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CollectionsFragment()).commit();
+                        CollectionsFragment collectionsFrag = new CollectionsFragment();
+                        collectionsFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, collectionsFrag).commit();
                         break;
                     case R.id.nav_psychosocial:
                         setTitle(getString(R.string.psychosocial));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PsychosocialFragment()).commit();
+                        PsychosocialFragment psychosocialFrag = new PsychosocialFragment();
+                        psychosocialFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, psychosocialFrag).commit();
                         break;
                     case R.id.nav_recognizer:
                         setTitle(getString(R.string.recognizer));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecognizerFragment()).commit();
+                        RecognizerFragment recognizerFrag = new RecognizerFragment();
+                        recognizerFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, recognizerFrag).commit();
                         break;
                     case R.id.nav_translator:
                         setTitle(getString(R.string.translator));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TranslatorFragment()).commit();
+                        TranslatorFragment translatorFrag = new TranslatorFragment();
+                        translatorFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, translatorFrag).commit();
                         break;
                     case R.id.nav_pain:
                         setTitle(getString(R.string.paindetails));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PainFragment()).commit();
+                        PainFragment painFrag = new PainFragment();
+                        painFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, painFrag).commit();
                         break;
                     case R.id.nav_diagnosis:
                         setTitle(getString(R.string.diagnosis));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DiagnosisFragment()).commit();
+                        DiagnosisFragment diagnosisFrag = new DiagnosisFragment();
+                        diagnosisFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, diagnosisFrag).commit();
                         break;
                     case R.id.nav_drugs:
                         setTitle(getString(R.string.drugs));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DrugsFragment()).commit();
+                        DrugsFragment drugsFrag = new DrugsFragment();
+                        drugsFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, drugsFrag).commit();
                         break;
                     case R.id.nav_exercises:
                         setTitle(getString(R.string.exercises));
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ExercisesFragment()).commit();
+                        ExercisesFragment exercisesFrag = new ExercisesFragment();
+                        exercisesFrag.setArguments(bundlePatientId);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, exercisesFrag).commit();
                         break;
                     case R.id.nav_person:
                         setTitle("Patienten");
@@ -167,54 +187,72 @@ public class MenuActivity extends AppCompatActivity {
         switch(view.getId()){
             case R.id.btnModel:
                 setTitle(getString(R.string.models));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ModelsFragment()).commit();
+                ModelsFragment modelsFrag = new ModelsFragment();
+                modelsFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, modelsFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_models);
                 break;
             case R.id.btnNotes:
                 setTitle(getString(R.string.notes));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NotesFragment()).commit();
+                NotesFragment notesFrag = new NotesFragment();
+                notesFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, notesFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_pen);
                 break;
             case R.id.btnCollections:
                 setTitle(getString(R.string.collections));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CollectionsFragment()).commit();
+                CollectionsFragment collectionsFrag = new CollectionsFragment();
+                collectionsFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, collectionsFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_collections);
                 break;
             case R.id.btnPsychosocial:
                 setTitle(getString(R.string.psychosocial));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PsychosocialFragment()).commit();
+                PsychosocialFragment psychosocialFrag = new PsychosocialFragment();
+                psychosocialFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, psychosocialFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_psychosocial);
                 break;
             case R.id.btnRecognizer:
                 setTitle(getString(R.string.recognizer));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecognizerFragment()).commit();
+                RecognizerFragment recognizerFrag = new RecognizerFragment();
+                recognizerFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, recognizerFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_recognizer);
                 break;
             case R.id.btnTranslator:
                 setTitle(getString(R.string.translator));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TranslatorFragment()).commit();
+                TranslatorFragment translatorFrag = new TranslatorFragment();
+                translatorFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, translatorFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_translator);
                 break;
             case R.id.btnPain:
                 setTitle(getString(R.string.paindetails));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PainFragment()).commit();
+                PainFragment painFrag = new PainFragment();
+                painFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, painFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_pain);
                 break;
             case R.id.btnDiagnosis:
                 setTitle(getString(R.string.diagnosis));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DiagnosisFragment()).commit();
+                DiagnosisFragment diagnosisFrag = new DiagnosisFragment();
+                diagnosisFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, diagnosisFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_diagnosis);
                 break;
             case R.id.btnDrugs:
                 setTitle(getString(R.string.drugs));
-                DrugsFragment fragobj = new DrugsFragment();
-                fragobj.setArguments(bundlePatientId);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragobj).commit();
+                DrugsFragment drugsFrag = new DrugsFragment();
+                drugsFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, drugsFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_drugs);
                 break;
             case R.id.btnExercises:
                 setTitle(getString(R.string.exercises));
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ExercisesFragment()).commit();
+                ExercisesFragment exercisesFrag = new ExercisesFragment();
+                exercisesFrag.setArguments(bundlePatientId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, exercisesFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_exercises);
                 break;
         }
