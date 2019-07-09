@@ -4,10 +4,10 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorDarkBlue">#2D3B8D</color>
-    <color name="colorBlue">#632D3B8D</color>
+    <color name="colorBlue">#B72D3B8D</color>
     <color name="colorLightBlue">#372D3B8D</color>
 
-    <color name="button_pressed">#DF2D3B8D</color>
-    <color name="button_focused">#DF2D3B8D</color>
-    <color name="button_default">#372D3B8D</color>
+    <color name="button_pressed">#632D3B8D</color>
+    <color name="button_focused">#632D3B8D</color>
+    <color name="button_default">#2A2D3B8D</color>
 </resources>

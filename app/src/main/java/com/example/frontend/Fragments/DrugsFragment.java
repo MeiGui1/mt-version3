@@ -109,8 +109,13 @@ public class DrugsFragment extends Fragment {
                 //TODO: select the drug
                 //showPatientDrugPopup();
                 if (btnDrugType.isSelected()) {
+                    deletePatientDrug(patientId, drugType.getId());
                     btnDrugType.setSelected(false);
                 } else {
+                    PatientDrug patientDrug = new PatientDrug();
+                    patientDrug.setPatientId(patientId);
+                    patientDrug.setDrugId(drugType.getId());
+                    addNewPatientDrug(patientDrug);
                     btnDrugType.setSelected(true);
                 }
 
@@ -209,4 +214,17 @@ public class DrugsFragment extends Fragment {
             }
         });
     }
+    public void deletePatientDrug(int patientId, int drugtypeId){
+        Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientDrug(patientId,drugtypeId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
+    }
+
 }
