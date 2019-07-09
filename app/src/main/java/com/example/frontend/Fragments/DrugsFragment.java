@@ -16,6 +16,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.example.frontend.Models.DrugType;
+import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
@@ -23,6 +24,7 @@ import com.example.frontend.Service.JsonPlaceHolderApi;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,20 +59,12 @@ public class DrugsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
-        /*view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                view.post(new Runnable() {
-                    public void run() {
-
-                    }
-                });
-            }
-        });*/
-
         cView = view;
         addDrugButtons(patientId);
-
+        PatientDrug patientDrug = new PatientDrug();
+        patientDrug.setPatientId(1);
+        patientDrug.setDrugId(2);
+        addNewPatientDrug(patientDrug);
     }
 
     public void addAllDrugsTypes() {
@@ -200,6 +194,18 @@ public class DrugsFragment extends Fragment {
             public void onFailure(Call<List<PatientDrug>> call, Throwable t) {
                 // tvPatientlist.setText(t.getMessage());
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void addNewPatientDrug(PatientDrug patientDrug){
+        Call<ResponseBody> call = jsonPlaceHolderApi.createPatientDrug(patientDrug);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
         });
     }

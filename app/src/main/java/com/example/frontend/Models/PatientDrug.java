@@ -29,4 +29,20 @@ public class PatientDrug {
     public String getDosis() {
         return dosis;
     }
+
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
+    }
+
+    public void setDrugId(int drugId) {
+        this.drugId = drugId;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public void setDosis(String dosis) {
+        this.dosis = dosis;
+    }
 }

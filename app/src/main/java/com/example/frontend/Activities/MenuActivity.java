@@ -46,7 +46,7 @@ public class MenuActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            patient = (Patient)extras.getSerializable("patient");
+            patient = (Patient) extras.getSerializable("patient");
             bundlePatientId.putInt("patientId", patient.getId());
         }
 
@@ -69,7 +69,7 @@ public class MenuActivity extends AppCompatActivity {
 
 
         if (savedInstanceState == null) {
-           getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OverviewFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OverviewFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_overview);
         }
 
@@ -184,7 +184,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void openClickedFragment(View view) {
-        switch(view.getId()){
+        switch (view.getId()) {
             case R.id.btnModel:
                 setTitle(getString(R.string.models));
                 ModelsFragment modelsFrag = new ModelsFragment();

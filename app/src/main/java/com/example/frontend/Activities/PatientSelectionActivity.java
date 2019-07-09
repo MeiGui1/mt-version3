@@ -68,7 +68,7 @@ public class PatientSelectionActivity extends AppCompatActivity {
                 } else {
                     allPatients = response.body();
 
-                    for(Patient patient: allPatients){
+                    for (Patient patient : allPatients) {
                         addPatientBtn(patient);
                     }
                 }
@@ -76,16 +76,16 @@ public class PatientSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Patient>> call, Throwable t) {
-               // tvPatientlist.setText(t.getMessage());
+                // tvPatientlist.setText(t.getMessage());
             }
         });
     }
 
-    public void addPatientBtn(final Patient patient){
+    public void addPatientBtn(final Patient patient) {
         Button btnPatient = new Button(context);
         btnPatient.setText(patient.getShortname());
         btnPatient.setTextSize(18);
-        btnPatient.setPadding(0,30,0,30);
+        btnPatient.setPadding(0, 30, 0, 30);
         btnPatient.setBackgroundResource(R.drawable.button_style);
         btnPatient.setTransformationMethod(null);
         btnPatient.setOnClickListener(new View.OnClickListener() {
@@ -98,8 +98,8 @@ public class PatientSelectionActivity extends AppCompatActivity {
         LinearLayout ll2 = (LinearLayout) findViewById(R.id.llSecondColumn);
         LinearLayout ll3 = (LinearLayout) findViewById(R.id.llThirdColumn);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(10,20,10,20);
-        switch (columnCounter){
+        lp.setMargins(10, 20, 10, 20);
+        switch (columnCounter) {
             case 1:
                 ll1.addView(btnPatient, lp);
                 columnCounter++;
