@@ -10,16 +10,17 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import com.example.frontend.Models.DrugType;
-import com.example.frontend.Models.Patient;
+import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -32,8 +33,12 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class DrugsFragment extends Fragment {
     private View cView;
-    private List<DrugType> allDrugTypes;
+    private List<DrugType> allDrugTypes = new ArrayList<>();
+    private List<PatientDrug> allDrugsOfPatient = new ArrayList<>();
+    private List<Integer> allDrugIdsOfPatient = new ArrayList<>();
+    private int patientId;
     private int columnCounter = 1;
+    private String test = "Test: ";
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -47,6 +52,7 @@ public class DrugsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_drugs, container, false);
 
     }
+
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         /*view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -59,9 +65,13 @@ public class DrugsFragment extends Fragment {
                 });
             }
         });*/
+
         cView = view;
-        addAllDrugsTypes();
+        patientId = 1;
+        getDrugsOfPatient(patientId);
+
     }
+
     public void addAllDrugsTypes() {
         Call<List<DrugType>> call = jsonPlaceHolderApi.getAllDrugTypes();
         call.enqueue(new Callback<List<DrugType>>() {
@@ -73,7 +83,7 @@ public class DrugsFragment extends Fragment {
                 } else {
                     allDrugTypes = response.body();
 
-                    for(DrugType drugType: allDrugTypes){
+                    for (DrugType drugType : allDrugTypes) {
                         addDrugTypeBtn(drugType);
                     }
                 }
@@ -85,22 +95,27 @@ public class DrugsFragment extends Fragment {
             }
         });
     }
-    public void addDrugTypeBtn(final DrugType drugType){
+
+    public void addDrugTypeBtn(final DrugType drugType) {
         final Button btnDrugType = new Button(getContext());
         btnDrugType.setText(drugType.getName());
         TooltipCompat.setTooltipText(btnDrugType.getRootView(), drugType.getDescription());
         btnDrugType.setTextSize(18);
-        btnDrugType.setPadding(0,30,0,30);
+        btnDrugType.setPadding(0, 30, 0, 30);
         btnDrugType.setBackgroundResource(R.drawable.button_selector_effect);
         btnDrugType.setTransformationMethod(null);
+        if (allDrugIdsOfPatient.contains(drugType.getId())) {
+            btnDrugType.setSelected(true);
+        }
+
         btnDrugType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO: select the drug
                 //showPatientDrugPopup();
-                if(btnDrugType.isSelected()){
+                if (btnDrugType.isSelected()) {
                     btnDrugType.setSelected(false);
-                }else{
+                } else {
                     btnDrugType.setSelected(true);
                 }
 
@@ -110,8 +125,8 @@ public class DrugsFragment extends Fragment {
         LinearLayout ll2 = (LinearLayout) cView.findViewById(R.id.llSecondColumn);
         LinearLayout ll3 = (LinearLayout) cView.findViewById(R.id.llThirdColumn);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(10,20,10,20);
-        switch (columnCounter){
+        lp.setMargins(10, 20, 10, 20);
+        switch (columnCounter) {
             case 1:
                 ll1.addView(btnDrugType, lp);
                 columnCounter++;
@@ -149,6 +164,38 @@ public class DrugsFragment extends Fragment {
             public boolean onTouch(View v, MotionEvent event) {
                 popupWindow.dismiss();
                 return true;
+            }
+        });
+    }
+
+    public void getDrugsOfPatient(final int patientId) {
+        Call<List<PatientDrug>> call = jsonPlaceHolderApi.getAllDrugsOfPatient(patientId);
+        call.enqueue(new Callback<List<PatientDrug>>() {
+            @Override
+            public void onResponse(Call<List<PatientDrug>> call, Response<List<PatientDrug>> response) {
+                if (!response.isSuccessful()) {
+                    //tvPatientlist.setText(response.code());
+                    Toast.makeText(getActivity(), "not successful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allDrugsOfPatient = response.body();
+
+                    for (PatientDrug patientDrug : allDrugsOfPatient) {
+                        int id = patientDrug.getDrugTypeId();
+                        allDrugIdsOfPatient.add(patientDrug.getDrugTypeId());
+                        test = test + id;
+                    }
+                    addAllDrugsTypes();
+
+                    Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PatientDrug>> call, Throwable t) {
+                // tvPatientlist.setText(t.getMessage());
+                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

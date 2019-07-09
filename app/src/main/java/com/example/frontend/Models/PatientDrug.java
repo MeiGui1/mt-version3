@@ -7,7 +7,7 @@ public class PatientDrug {
     @SerializedName("patient_id")
     private int patientId;
 
-    @SerializedName("drug_id")
+    @SerializedName("drugtype_id")
     private int drugId;
 
     private String amount;
@@ -18,7 +18,7 @@ public class PatientDrug {
         return patientId;
     }
 
-    public int getDrugId() {
+    public int getDrugTypeId() {
         return drugId;
     }
 
