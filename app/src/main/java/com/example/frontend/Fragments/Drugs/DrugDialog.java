@@ -46,14 +46,14 @@ public class DrugDialog extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.layout_drug_dialog, null);
 
         builder.setView(view)
-                .setTitle("Login")
-                .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.dosisForDrug)
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
                 })
-                .setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String amount = etAmount.getText().toString();
@@ -76,7 +76,5 @@ public class DrugDialog extends AppCompatDialogFragment {
             throw new ClassCastException(context.toString() + " must implement DrugDialogListener ");
         }
     }
-
-
 
 }

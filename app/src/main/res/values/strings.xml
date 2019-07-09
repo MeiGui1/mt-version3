@@ -18,4 +18,7 @@
     <string name="translator">Sprachübersetzer</string>
     <string name="recognizer">Befundnotizen</string>
     <string name="inputs">Eingaben</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="dosisForDrug">Dosierung für das Medikament</string>
+    <string name="add">Hinzufügen</string>
 </resources>

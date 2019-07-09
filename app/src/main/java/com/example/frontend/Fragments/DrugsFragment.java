@@ -40,6 +40,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     private List<PatientDrug> allDrugsOfPatient = new ArrayList<>();
     private List<Integer> allDrugIdsOfPatient = new ArrayList<>();
     private PatientDrug selectedPatientDrug = new PatientDrug();
+    private Button selectedDrugButton;
     private int patientId;
     private int columnCounter = 1;
     private String test = "Test: ";
@@ -62,6 +63,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         cView = view;
+        selectedDrugButton = new Button(getContext());
         addDrugButtons(patientId);
         PatientDrug patientDrug = new PatientDrug();
         patientDrug.setPatientId(1);
@@ -117,8 +119,9 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
                 } else {
                     selectedPatientDrug.setPatientId(patientId);
                     selectedPatientDrug.setDrugId(drugType.getId());
+                    selectedDrugButton = btnDrugType;
                     openDrugDialog();
-                    btnDrugType.setSelected(true);
+
                 }
 
             }
@@ -241,5 +244,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             selectedPatientDrug.setDosis(dosis);
         }
         addNewPatientDrug(selectedPatientDrug);
+        selectedDrugButton.setSelected(true);
     }
 }
