@@ -1,7 +1,9 @@
 package com.example.frontend.Service;
 
+import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.Patient;
+import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDrug;
 
 import java.util.List;
@@ -37,6 +39,21 @@ public interface JsonPlaceHolderApi {
 
 
     //Diagnosis Page
+
     @GET("diagnosistype/type")
     Call<List<String>> getDiagnosisClasses();
+
+    @GET("diagnosistype/type={type}")
+    Call<List<DiagnosisType>> getAllDiagnosisTypesOfClass(@Path("type") String type);
+
+    @GET("patientdiagnosis/{patient_id}/type={type}")
+    Call<List<PatientDiagnosis>> getPatientDiagnosesOfClass(@Path("patient_id") int patient_id, @Path("type") String type);
+
+    @POST("patientdiagnosis")
+    Call<ResponseBody> createPatientDiagnosis(@Body PatientDiagnosis patientDiagnosis);
+
+    @DELETE("patientdiagnosis/{patient_id}/{diagnosistype_id}")
+    Call<ResponseBody> deletePatientDiagnosis(@Path("patient_id") int patient_id, @Path("diagnosistype_id") int diagnosistype_id);
+
+
 }

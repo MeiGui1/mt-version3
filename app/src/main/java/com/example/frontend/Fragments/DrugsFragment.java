@@ -42,7 +42,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     private Button selectedDrugButton;
     private int patientId;
     private int columnCounter = 1;
-    private String test = "Test: ";
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -64,10 +63,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
         cView = view;
         selectedDrugButton = new Button(getContext());
         addDrugButtons(patientId);
-        PatientDrug patientDrug = new PatientDrug();
-        patientDrug.setPatientId(1);
-        patientDrug.setDrugId(2);
-        addNewPatientDrug(patientDrug);
     }
 
     public void addAllDrugsTypes() {
@@ -76,7 +71,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             @Override
             public void onResponse(Call<List<DrugType>> call, Response<List<DrugType>> response) {
                 if (!response.isSuccessful()) {
-                    //tvPatientlist.setText(response.code());
                     return;
                 } else {
                     allDrugTypes = response.body();
@@ -89,7 +83,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
 
             @Override
             public void onFailure(Call<List<DrugType>> call, Throwable t) {
-                // tvPatientlist.setText(t.getMessage());
             }
         });
     }
@@ -109,9 +102,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
         btnDrugType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: select the drug
-                //showPatientDrugPopup();
-
                 if (btnDrugType.isSelected()) {
                     deletePatientDrug(patientId, drugType.getId());
                     btnDrugType.setSelected(false);
@@ -120,9 +110,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
                     selectedPatientDrug.setDrugId(drugType.getId());
                     selectedDrugButton = btnDrugType;
                     openDrugDialog();
-
                 }
-
             }
         });
         LinearLayout ll1 = (LinearLayout) cView.findViewById(R.id.llFirstColumn);
@@ -146,32 +134,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
         }
     }
 
-    public void showPatientDrugPopup() {
-
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_drug_selection, null);
-
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(cView, Gravity.CENTER, 0, 0);
-
-        // dismiss the popup window when touched
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                popupWindow.dismiss();
-                return true;
-            }
-        });
-    }
-
     public void addDrugButtons(final int patientId) {
         //Get all PatientDrugs of Patient
         Call<List<PatientDrug>> call = jsonPlaceHolderApi.getAllDrugsOfPatient(patientId);
@@ -179,7 +141,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             @Override
             public void onResponse(Call<List<PatientDrug>> call, Response<List<PatientDrug>> response) {
                 if (!response.isSuccessful()) {
-                    //tvPatientlist.setText(response.code());
                     Toast.makeText(getActivity(), "not successful", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
@@ -230,16 +191,16 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
 
     public void openDrugDialog() {
         DrugDialog drugDialog = new DrugDialog();
-        drugDialog.setTargetFragment(DrugsFragment.this,1);
+        drugDialog.setTargetFragment(DrugsFragment.this, 1);
         drugDialog.show(getActivity().getSupportFragmentManager(), "Drug Dialog");
     }
 
     @Override
     public void applyTexts(String amount, String dosis) {
-        if(!amount.isEmpty()){
+        if (!amount.isEmpty()) {
             selectedPatientDrug.setAmount(amount);
         }
-        if(!dosis.isEmpty()){
+        if (!dosis.isEmpty()) {
             selectedPatientDrug.setDosis(dosis);
         }
         addNewPatientDrug(selectedPatientDrug);

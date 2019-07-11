@@ -21,4 +21,16 @@ public class Patient implements Serializable {
     public String getGender() {
         return gender;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setShortname(String shortname) {
+        this.shortname = shortname;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 }

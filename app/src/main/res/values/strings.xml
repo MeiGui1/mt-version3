@@ -23,4 +23,6 @@
     <string name="add">Hinzufügen</string>
     <string name="amountExample">Menge (z.B. 50mg)</string>
     <string name="dosisExample">Dosierung (z.B. 1010)</string>
+    <string name="diagnosisCommentExample">Zusatzinformation</string>
+    <string name="diagnosisDetails">Diagnosedetails</string>
 </resources>

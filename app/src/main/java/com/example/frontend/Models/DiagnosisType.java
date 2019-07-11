@@ -1,10 +1,12 @@
 package com.example.frontend.Models;
 
-public class DrugType {
+public class DiagnosisType {
 
     private int id;
 
     private String name;
+
+    private String type;
 
     private String description;
 
@@ -14,6 +16,10 @@ public class DrugType {
 
     public String getName() {
         return name;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getDescription() {
@@ -26,6 +32,10 @@ public class DrugType {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setDescription(String description) {
