@@ -20,6 +20,9 @@ public interface JsonPlaceHolderApi {
     @GET("patient")
     Call<List<Patient>> getAllPatients();
 
+
+    //Drug Page
+
     @GET("drugtype")
     Call<List<DrugType>> getAllDrugTypes();
 
@@ -31,4 +34,9 @@ public interface JsonPlaceHolderApi {
 
     @DELETE("patientdrug/{patient_id}/{drugtype_id}")
     Call<ResponseBody> deletePatientDrug(@Path("patient_id") int patient_id, @Path("drugtype_id") int drugtype_id);
+
+
+    //Diagnosis Page
+    @GET("diagnosistype/type")
+    Call<List<String>> getDiagnosisClasses();
 }

@@ -21,4 +21,6 @@
     <string name="cancel">Abbrechen</string>
     <string name="dosisForDrug">Dosierung für das Medikament</string>
     <string name="add">Hinzufügen</string>
+    <string name="amountExample">Menge (z.B. 50mg)</string>
+    <string name="dosisExample">Dosierung (z.B. 1010)</string>
 </resources>

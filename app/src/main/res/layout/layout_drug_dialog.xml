@@ -8,13 +8,13 @@
         android:id="@+id/edit_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Menge"/>
+        android:hint="@string/amountExample"/>
 
     <EditText
         android:id="@+id/edit_dosis"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Dosierung"
+        android:hint="@string/dosisExample"
         android:layout_below="@+id/edit_amount"/>
 
 </RelativeLayout>

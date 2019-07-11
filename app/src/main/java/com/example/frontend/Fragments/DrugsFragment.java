@@ -15,9 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
-import com.example.frontend.Fragments.Drugs.DrugDialog;
+import com.example.frontend.Fragments.Dialogs.DrugDialog;
 import com.example.frontend.Models.DrugType;
-import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;

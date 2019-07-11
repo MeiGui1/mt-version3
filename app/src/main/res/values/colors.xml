@@ -6,6 +6,7 @@
     <color name="colorDarkBlue">#2D3B8D</color>
     <color name="colorBlue">#B72D3B8D</color>
     <color name="colorLightBlue">#372D3B8D</color>
+    <color name="white">#FFFFFF</color>
 
     <color name="button_pressed">#632D3B8D</color>
     <color name="button_focused">#632D3B8D</color>

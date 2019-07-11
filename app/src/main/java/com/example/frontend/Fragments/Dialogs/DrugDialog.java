@@ -1,4 +1,4 @@
-package com.example.frontend.Fragments.Drugs;
+package com.example.frontend.Fragments.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,14 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
