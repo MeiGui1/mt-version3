@@ -1,11 +1,13 @@
 package com.example.frontend.Fragments;
 
+import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.frontend.Fragments.Notes.PaintView;
@@ -99,12 +102,24 @@ public class NotesFragment extends Fragment {
     public void addByteArrayToView(byte[] drawing)
     {
         Bitmap bmp = BitmapFactory.decodeByteArray(drawing, 0, drawing.length);
-
-        ImageView image = new ImageView(getContext());
+        final ImageView image = new ImageView(getContext());
+        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(0,0,0,20);
+        image.setLayoutParams(param);
+        image.setAdjustViewBounds(true);
+        image.setPadding(5,5,5,5);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "onClick successful", Toast.LENGTH_SHORT).show();
+                if(image.isSelected()){
+                    image.setSelected(false);
+                    image.setBackgroundColor(0);
+                    Toast.makeText(getActivity(), "onClick successful", Toast.LENGTH_SHORT).show();
+                }else{
+                    image.setSelected(true);
+                    image.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                    Toast.makeText(getActivity(), "onClick successful", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         image.setImageBitmap(bmp);
