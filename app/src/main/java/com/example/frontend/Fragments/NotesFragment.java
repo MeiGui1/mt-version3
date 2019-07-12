@@ -1,7 +1,7 @@
 package com.example.frontend.Fragments;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,28 +16,31 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.example.frontend.Fragments.Notes.PaintView;
 import com.example.frontend.R;
+
+import java.io.ByteArrayOutputStream;
 
 public class NotesFragment extends Fragment {
 
     private PaintView paintView;
     private View cView;
     private int patientId;
+    private LinearLayout linearLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         patientId = getArguments().getInt("patientId");
-
         return inflater.inflate(R.layout.fragment_notes,container,false);
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -45,7 +48,7 @@ public class NotesFragment extends Fragment {
                     public void run() {
                         cView = view;
                         paintView = (PaintView) view.findViewById(R.id.paintView);
-
+                        linearLayout = (LinearLayout) cView.findViewById(R.id.linearLayout);
                         DisplayMetrics metrics = new DisplayMetrics();
                         metrics.heightPixels = view.getHeight();
                         metrics.widthPixels = view.getWidth();
@@ -78,13 +81,33 @@ public class NotesFragment extends Fragment {
                 paintView.clear();
                 return true;
             case R.id.save:
-                LinearLayout linearLayout1 = (LinearLayout) cView.findViewById(R.id.linearLayout);
-                ImageView image = new ImageView(getContext());
-                Bitmap saved = paintView.getBitmap();
-                image.setImageBitmap(saved);
-                linearLayout1.addView(image);
+                byte[] savedByte = bitmapToByte(paintView.getBitmap());
+                addByteArrayToView(savedByte);
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public byte[] bitmapToByte(Bitmap drawing)
+    {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        drawing.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        byte[] drawingByteArray = bos.toByteArray();
+        return drawingByteArray;
+    }
+
+    public void addByteArrayToView(byte[] drawing)
+    {
+        Bitmap bmp = BitmapFactory.decodeByteArray(drawing, 0, drawing.length);
+
+        ImageView image = new ImageView(getContext());
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "onClick successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+        image.setImageBitmap(bmp);
+        linearLayout.addView(image);
     }
 }
