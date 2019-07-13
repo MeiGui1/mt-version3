@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.frontend.Fragments.Notes.PaintView;
+import com.example.frontend.Globals;
 import com.example.frontend.R;
 
 import java.io.ByteArrayOutputStream;
@@ -52,10 +53,7 @@ public class NotesFragment extends Fragment {
                         cView = view;
                         paintView = (PaintView) view.findViewById(R.id.paintView);
                         linearLayout = (LinearLayout) cView.findViewById(R.id.linearLayout);
-                        DisplayMetrics metrics = new DisplayMetrics();
-                        metrics.heightPixels = view.getHeight();
-                        metrics.widthPixels = view.getWidth();
-                        paintView.init(metrics);
+                        paintView.init();
                     }
                 });
             }
@@ -101,7 +99,7 @@ public class NotesFragment extends Fragment {
 
     public void addByteArrayToView(byte[] drawing)
     {
-        Bitmap bmp = BitmapFactory.decodeByteArray(drawing, 0, drawing.length);
+        final Bitmap bmp = BitmapFactory.decodeByteArray(drawing, 0, drawing.length);
         final ImageView image = new ImageView(getContext());
         RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         param.setMargins(0,0,0,20);
@@ -114,12 +112,22 @@ public class NotesFragment extends Fragment {
                 if(image.isSelected()){
                     image.setSelected(false);
                     image.setBackgroundColor(0);
-                    Toast.makeText(getActivity(), "onClick successful", Toast.LENGTH_SHORT).show();
                 }else{
                     image.setSelected(true);
                     image.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
-                    Toast.makeText(getActivity(), "onClick successful", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        image.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Globals g = Globals.getInstance();
+                g.setCurrentNoteChanged(true);
+                g.setCurrentNote(bmp);
+                paintView.init();
+                paintView.invalidate();
+                return true;
             }
         });
         image.setImageBitmap(bmp);

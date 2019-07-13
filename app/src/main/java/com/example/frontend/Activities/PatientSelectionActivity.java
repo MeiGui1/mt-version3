@@ -43,11 +43,7 @@ public class PatientSelectionActivity extends AppCompatActivity {
         if (extras != null) {
             username = extras.getString("usernameKey");
         }
-
-        //tvPatientlist = (TextView)findViewById(R.id.tvPatientlist);
         addAllPatients();
-
-
     }
 
     public void navigateNextActivity(Patient patient) {
@@ -63,7 +59,6 @@ public class PatientSelectionActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Patient>> call, Response<List<Patient>> response) {
                 if (!response.isSuccessful()) {
-                    //tvPatientlist.setText(response.code());
                     return;
                 } else {
                     allPatients = response.body();
@@ -76,7 +71,6 @@ public class PatientSelectionActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Patient>> call, Throwable t) {
-                // tvPatientlist.setText(t.getMessage());
             }
         });
     }

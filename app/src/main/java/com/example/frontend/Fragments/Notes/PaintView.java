@@ -19,7 +19,7 @@ import com.example.frontend.Globals;
 import java.util.ArrayList;
 
 public class PaintView extends View {
-    public static int BRUSH_SIZE = 10;
+    public static int BRUSH_SIZE = 8;
     public static final int DEFAULT_COLOR = Color.BLUE;
     public static final int DEFAULT_BG_COLOR = Color.WHITE;
     private static final float TOUCH_TOLERANCE = 4;
@@ -62,11 +62,7 @@ public class PaintView extends View {
         mBlur = new BlurMaskFilter(5, BlurMaskFilter.Blur.NORMAL);
     }
 
-    public void init(DisplayMetrics metrics) {
-        int height = 300;
-        int width = 300;
-
-
+    public void init() {
         currentColor = DEFAULT_COLOR;
         strokeWidth = BRUSH_SIZE;
     }
@@ -109,7 +105,16 @@ public class PaintView extends View {
             }
             mCanvas.drawPath(pp.path, mPaint);
         }
+
+        if(Globals.getInstance().getCurrentNoteChanged()){
+
+            Bitmap mutableBitmap = Globals.getInstance().getCurrentNote().copy(Bitmap.Config.ARGB_8888, true);
+            mCanvas.drawBitmap(mutableBitmap, 0, 0, mBitmapPaint);
+            paths.clear();
+            Globals.getInstance().setCurrentNoteChanged(false);
+        }
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
+
         canvas.restore();
     }
 
@@ -163,5 +168,13 @@ public class PaintView extends View {
 
     public Bitmap getBitmap() {
         return mBitmap;
+    }
+
+    public void setBitmap(Bitmap drawing) {
+        clear();
+        Bitmap mutableBitmap = drawing.copy(Bitmap.Config.ARGB_8888, true);
+        mCanvas.drawBitmap(mutableBitmap,0,0, mBitmapPaint);
+        //mCanvas.setBitmap(mutableBitmap);
+        invalidate();
     }
 }
