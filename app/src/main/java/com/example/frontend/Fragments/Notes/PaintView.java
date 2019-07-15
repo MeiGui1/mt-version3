@@ -105,14 +105,13 @@ public class PaintView extends View {
             }
             mCanvas.drawPath(pp.path, mPaint);
         }
-
+/*
         if(Globals.getInstance().getCurrentNoteChanged()){
-
             Bitmap mutableBitmap = Globals.getInstance().getCurrentNote().copy(Bitmap.Config.ARGB_8888, true);
             mCanvas.drawBitmap(mutableBitmap, 0, 0, mBitmapPaint);
             paths.clear();
             Globals.getInstance().setCurrentNoteChanged(false);
-        }
+        }*/
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
 
         canvas.restore();

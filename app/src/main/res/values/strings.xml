@@ -25,4 +25,10 @@
     <string name="dosisExample">Dosierung (z.B. 1010)</string>
     <string name="diagnosisCommentExample">Zusatzinformation</string>
     <string name="diagnosisDetails">Diagnosedetails</string>
+    <string name="save">Speichern</string>
+    <string name="save_template">Als Vorlage speichern</string>
+    <string name="new_note">Neue Seite</string>
+    <string name="open_template">Vorlage öffnen</string>
+    <string name="rubber">Radierer</string>
+    <string name="pen">Stift</string>
 </resources>
