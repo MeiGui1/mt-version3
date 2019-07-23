@@ -16,6 +16,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface JsonPlaceHolderApi {
@@ -73,5 +74,8 @@ public interface JsonPlaceHolderApi {
 
     @DELETE("note/{id}")
     Call<ResponseBody> deleteNote(@Path("id") int note_id);
+
+    @PUT("note/{id}")
+    Call<ResponseBody> updateNote(@Path("id") int note_id, @Body Note note);
 
 }

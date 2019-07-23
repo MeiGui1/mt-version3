@@ -1,8 +1,14 @@
 package com.example.frontend.Models;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import com.google.gson.annotations.SerializedName;
 
-public class Note {
+import java.io.Serializable;
+import android.util.Base64;
+
+public class Note implements Serializable {
 
     private int id;
 
@@ -10,7 +16,7 @@ public class Note {
     private int patientId;
 
     @SerializedName("note_bytes")
-    private byte[] noteBytes;
+    private String noteBytesString;
 
     private boolean selected;
 
@@ -31,11 +37,14 @@ public class Note {
     }
 
     public byte[] getNoteBytes() {
-        return noteBytes;
+        byte[] bytes = Base64.decode(noteBytesString, Base64.NO_WRAP);
+
+        return bytes;
     }
 
     public void setNoteBytes(byte[] noteBytes) {
-        this.noteBytes = noteBytes;
+        String string = Base64.encodeToString(noteBytes, Base64.NO_WRAP);
+        this.noteBytesString = string;
     }
 
     public boolean isSelected() {

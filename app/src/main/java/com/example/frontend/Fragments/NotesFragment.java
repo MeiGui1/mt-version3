@@ -32,12 +32,15 @@ import android.widget.Toast;
 
 import com.example.frontend.Fragments.Notes.PaintView;
 import com.example.frontend.Globals;
+import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.Note;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -69,6 +72,7 @@ public class NotesFragment extends Fragment {
     boolean init = true;
     boolean eraserMode = false;
     private MenuItem eraserItem;
+    List<Note> allNotesOfPatient = new ArrayList<>();
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -100,12 +104,35 @@ public class NotesFragment extends Fragment {
                         linearLayout = (LinearLayout) cView.findViewById(R.id.linearLayout);
                         chosenImageView = (ImageView) view.findViewById(R.id.ChoosenImageView);
                         setUpCanvas();
-
                     }
                 });
             }
         });
+        addPatientNotesToView();
+    }
 
+    public void addPatientNotesToView(){
+        Call<List<Note>> call = jsonPlaceHolderApi.getAllNotesOfPatient(patientId);
+        call.enqueue(new Callback<List<Note>>() {
+            @Override
+            public void onResponse(Call<List<Note>> call, Response<List<Note>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "not succesful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allNotesOfPatient = response.body();
+                    for (Note note : allNotesOfPatient) {
+                        addByteArrayToView(note.getId(), note.getNoteBytes(), note.isSelected());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Note>> call, Throwable t) {
+                Toast.makeText(getActivity(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -185,6 +212,7 @@ public class NotesFragment extends Fragment {
             case R.id.template_save:
                 return true;
             case R.id.template_open:
+                addPatientNotesToView();
                 return true;
             case R.id.clear:
                 init = true;
@@ -197,7 +225,10 @@ public class NotesFragment extends Fragment {
                 newNote.setPatientId(patientId);
                 newNote.setNoteBytes(savedByte);
                 addNewNote(newNote);
-                addByteArrayToView(savedByte);
+                if(((LinearLayout) linearLayout).getChildCount() > 0){
+                    ((LinearLayout) linearLayout).removeAllViews();
+                }
+                addPatientNotesToView();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -210,7 +241,7 @@ public class NotesFragment extends Fragment {
         return drawingByteArray;
     }
 
-    public void addByteArrayToView(byte[] drawing) {
+    public void addByteArrayToView(final int noteId, final byte[] drawing, boolean isSelected) {
         final Bitmap bmp = BitmapFactory.decodeByteArray(drawing, 0, drawing.length);
         final ImageView image = new ImageView(getContext());
         RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -218,15 +249,29 @@ public class NotesFragment extends Fragment {
         image.setLayoutParams(param);
         image.setAdjustViewBounds(true);
         image.setPadding(5, 5, 5, 5);
+        if(isSelected){
+            image.setSelected(true);
+            image.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+        }
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (image.isSelected()) {
                     image.setSelected(false);
                     image.setBackgroundColor(0);
+                    Note updatedNote = new Note();
+                    updatedNote.setSelected(false);
+                    updatedNote.setNoteBytes(drawing);
+                    updatedNote.setPatientId(patientId);
+                    updateNote(noteId, updatedNote);
                 } else {
                     image.setSelected(true);
                     image.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                    Note updatedNote = new Note();
+                    updatedNote.setSelected(true);
+                    updatedNote.setNoteBytes(drawing);
+                    updatedNote.setPatientId(patientId);
+                    updateNote(noteId, updatedNote);
                 }
             }
         });
@@ -293,6 +338,21 @@ public class NotesFragment extends Fragment {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Toast.makeText(getActivity(), "createNote successful "+ note.getPatientId() + note.isSelected(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), "createNote NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void updateNote(int noteId, final Note updatedNote) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.updateNote(noteId, updatedNote);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Toast.makeText(getActivity(), "createNote successful "+ updatedNote.getPatientId() + updatedNote.isSelected(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
