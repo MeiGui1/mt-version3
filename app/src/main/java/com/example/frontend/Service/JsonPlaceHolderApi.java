@@ -2,6 +2,7 @@ package com.example.frontend.Service;
 
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
+import com.example.frontend.Models.Note;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDrug;
@@ -55,5 +56,22 @@ public interface JsonPlaceHolderApi {
     @DELETE("patientdiagnosis/{patient_id}/{diagnosistype_id}")
     Call<ResponseBody> deletePatientDiagnosis(@Path("patient_id") int patient_id, @Path("diagnosistype_id") int diagnosistype_id);
 
+
+    //Note Page
+
+    @GET("note/patient_id={patient_id}")
+    Call<List<Note>> getAllNotesOfPatient(@Path("patient_id") int patient_id);
+
+    @GET("note/selected/patient_id={patient_id}")
+    Call<List<Note>> getSelectedNotesOfPatient(@Path("patient_id") int patient_id);
+
+    @GET("note/{id}")
+    Call<Note> getNote(@Path("id") int note_id);
+
+    @POST("note")
+    Call<ResponseBody> createNote(@Body Note note);
+
+    @DELETE("note/{id}")
+    Call<ResponseBody> deleteNote(@Path("id") int note_id);
 
 }

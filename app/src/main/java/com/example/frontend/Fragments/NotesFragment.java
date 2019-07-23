@@ -32,9 +32,19 @@ import android.widget.Toast;
 
 import com.example.frontend.Fragments.Notes.PaintView;
 import com.example.frontend.Globals;
+import com.example.frontend.Models.Note;
+import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.R;
+import com.example.frontend.Service.JsonPlaceHolderApi;
 
 import java.io.ByteArrayOutputStream;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.frontend.Fragments.Notes.PaintView.DEFAULT_COLOR;
 
@@ -59,6 +69,15 @@ public class NotesFragment extends Fragment {
     boolean init = true;
     boolean eraserMode = false;
     private MenuItem eraserItem;
+
+    Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+    /*Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:8080/api/v1/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();*/
+
+    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
 
     @Nullable
@@ -173,6 +192,11 @@ public class NotesFragment extends Fragment {
                 return true;
             case R.id.save:
                 byte[] savedByte = bitmapToByte(alteredBitmap);
+                Note newNote = new Note();
+                newNote.setSelected(false);
+                newNote.setPatientId(patientId);
+                newNote.setNoteBytes(savedByte);
+                addNewNote(newNote);
                 addByteArrayToView(savedByte);
                 return true;
         }
@@ -261,5 +285,20 @@ public class NotesFragment extends Fragment {
         });
         image.setImageBitmap(bmp);
         linearLayout.addView(image);
+    }
+
+    public void addNewNote(final Note note) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.createNote(note);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Toast.makeText(getActivity(), "createNote successful "+ note.getPatientId() + note.isSelected(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), "createNote NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
