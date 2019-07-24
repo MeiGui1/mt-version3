@@ -231,7 +231,6 @@ public class NotesFragment extends Fragment {
                     ((LinearLayout) linearLayout).removeAllViews();
                 }
                 addPatientNotesToView();
-                linearLayout.invalidate();
                 return true;
         }
         return super.onOptionsItemSelected(item);

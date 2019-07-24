@@ -11,12 +11,15 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -43,14 +46,17 @@ public class ExercisesFragment extends Fragment {
 
     private int patientId;
     private List<PatientExercise> patientExercisesOfPatient = new ArrayList<>();
+    private List<ExercisePhoto> allExercisesPhotosOfPatient = new ArrayList<>();
+
     private ImageView ivObservation;
     private ImageView ivElongation;
     private ImageView ivPatch;
     private ImageView ivTemple;
     private ImageView ivCheek;
-    private Button btnCamera;
+    private ImageButton btnCamera;
     private static final int REQUEST_IMAGE_CAPTURE = 101;
     private LinearLayout llPictures;
+    private int lastPhotoId;
 
     private View.OnClickListener onClickListener;
 
@@ -69,14 +75,15 @@ public class ExercisesFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_exercises, container, false);
 
     }
+
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         showInitialSelection();
         onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String exerciseTitle ="";
-                switch (view.getId()){
+                String exerciseTitle = "";
+                switch (view.getId()) {
                     case R.id.iv_observation:
                         exerciseTitle = "Selbstbeobachtung";
                         break;
@@ -93,12 +100,12 @@ public class ExercisesFragment extends Fragment {
                         exerciseTitle = "MassageSchlaefe";
                         break;
                 }
-                if(view.isSelected()){
+                if (view.isSelected()) {
                     view.setSelected(false);
                     view.setBackgroundColor(0);
 
                     removePatientExercise(patientId, exerciseTitle);
-                } else{
+                } else {
                     view.setSelected(true);
                     view.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
 
@@ -120,19 +127,45 @@ public class ExercisesFragment extends Fragment {
         ivCheek = (ImageView) view.findViewById(R.id.iv_cheek);
         ivCheek.setOnClickListener(onClickListener);
 
-        llPictures = (LinearLayout)view.findViewById(R.id.llPictures);
-        btnCamera = (Button) view.findViewById(R.id.btnCamera);
+        llPictures = (LinearLayout) view.findViewById(R.id.llPictures);
+        btnCamera = (ImageButton) view.findViewById(R.id.btnCamera);
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent imageTakeIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if(imageTakeIntent.resolveActivity(getActivity().getPackageManager()) != null){
+                if (imageTakeIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivityForResult(imageTakeIntent, REQUEST_IMAGE_CAPTURE);
                 }
             }
         });
+        addExercisePhotosToView();
     }
 
+    public void addExercisePhotosToView(){
+        Call<List<ExercisePhoto>> call = jsonPlaceHolderApi.getExercisePhotosOfPatient(patientId);
+        call.enqueue(new Callback<List<ExercisePhoto>>() {
+            @Override
+            public void onResponse(Call<List<ExercisePhoto>> call, Response<List<ExercisePhoto>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "not succesful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allExercisesPhotosOfPatient = response.body();
+                    for (ExercisePhoto photo : allExercisesPhotosOfPatient) {
+                        byte[] photoBytes = photo.getPhotoBytes();
+                        final Bitmap bmp = BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length);
+                        addBitmapToView(bmp, photo.getId());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ExercisePhoto>> call, Throwable t) {
+                Toast.makeText(getActivity(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -148,7 +181,7 @@ public class ExercisesFragment extends Fragment {
         return drawingByteArray;
     }
 
-    public void showInitialSelection(){
+    public void showInitialSelection() {
         Call<List<PatientExercise>> call = jsonPlaceHolderApi.getSelectedPatientExercises(patientId);
         call.enqueue(new Callback<List<PatientExercise>>() {
             @Override
@@ -159,7 +192,7 @@ public class ExercisesFragment extends Fragment {
                 } else {
                     patientExercisesOfPatient = response.body();
                     for (PatientExercise patientExercise : patientExercisesOfPatient) {
-                        switch (patientExercise.getExerciseTypeTitle()){
+                        switch (patientExercise.getExerciseTypeTitle()) {
                             case "Selbstbeobachtung":
                                 ivObservation.setSelected(true);
                                 ivObservation.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
@@ -193,7 +226,7 @@ public class ExercisesFragment extends Fragment {
         });
     }
 
-    public void addPatientExercise(PatientExercise patientExercise){
+    public void addPatientExercise(PatientExercise patientExercise) {
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatientExercise(patientExercise);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -207,7 +240,7 @@ public class ExercisesFragment extends Fragment {
         });
     }
 
-    public void removePatientExercise(int patientId, String exerciseTitle){
+    public void removePatientExercise(int patientId, String exerciseTitle) {
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientExercise(patientId, exerciseTitle);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -224,20 +257,34 @@ public class ExercisesFragment extends Fragment {
         final ImageView image = new ImageView(getContext());
         RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         param.setMargins(0, 0, 0, 20);
+        image.setId(exercisePhotoId);
         image.setLayoutParams(param);
         image.setAdjustViewBounds(true);
         image.setPadding(5, 5, 5, 5);
         image.setImageBitmap(photo);
-        image.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Toast.makeText(getActivity(), "NewId " + exercisePhotoId, Toast.LENGTH_LONG).show();
-                return true;
-            }
-        });
+        registerForContextMenu(image);
         llPictures.addView(image);
-        llPictures.invalidate();
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.exercisephoto_menu, menu);
+        lastPhotoId = v.getId();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.deleteOption:
+                deleteExercisePhoto(lastPhotoId);
+                llPictures.removeView(getView().findViewById(lastPhotoId));
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
     public void addNewExercisePhoto(final Bitmap photoBitmap) {
         ExercisePhoto newPhoto = new ExercisePhoto();
         newPhoto.setPatientId(patientId);
@@ -256,13 +303,14 @@ public class ExercisesFragment extends Fragment {
             }
         });
     }
-    public void getInsertPhotoId(final Bitmap photoBitmap){
+
+    public void getInsertPhotoId(final Bitmap photoBitmap) {
         Call<Integer> call = jsonPlaceHolderApi.getLastPhotoId();
         call.enqueue(new Callback<Integer>() {
             @Override
             public void onResponse(Call<Integer> call, Response<Integer> response) {
-                int id = response.body();
-                addBitmapToView(photoBitmap, id);
+                lastPhotoId = response.body();
+                addBitmapToView(photoBitmap, lastPhotoId);
             }
 
             @Override
@@ -270,5 +318,22 @@ public class ExercisesFragment extends Fragment {
                 Toast.makeText(getActivity(), "getId NOT successful", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void deleteExercisePhoto(int photoId) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.deleteExercisePhoto(photoId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
+    }
+
+    private void refreshView(){
+        llPictures.setVisibility(View.GONE);
+        llPictures.setVisibility(View.VISIBLE);
     }
 }

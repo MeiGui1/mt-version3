@@ -95,4 +95,10 @@ public interface JsonPlaceHolderApi {
 
     @GET("exercisephoto_last_id")
     Call<Integer> getLastPhotoId();
+
+    @GET("exercisephoto/{id}")
+    Call<List<ExercisePhoto>> getExercisePhotosOfPatient(@Path("id") int patient_id);
+
+    @DELETE("exercisephoto/{id}")
+    Call<ResponseBody> deleteExercisePhoto(@Path("id") int photo_id);
 }
