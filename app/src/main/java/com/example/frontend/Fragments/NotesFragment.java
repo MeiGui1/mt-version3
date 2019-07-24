@@ -3,6 +3,8 @@ package com.example.frontend.Fragments;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.ClipData;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,12 +13,15 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Layout;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +44,7 @@ import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +55,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.app.Activity.RESULT_OK;
 import static com.example.frontend.Fragments.Notes.PaintView.DEFAULT_COLOR;
 
 public class NotesFragment extends Fragment {
@@ -124,6 +131,7 @@ public class NotesFragment extends Fragment {
                     for (Note note : allNotesOfPatient) {
                         addByteArrayToView(note.getId(), note.getNoteBytes(), note.isSelected());
                     }
+                    linearLayout.invalidate();;
                 }
             }
 
@@ -200,7 +208,7 @@ public class NotesFragment extends Fragment {
                 if(!eraserMode){
                     item.setIcon(R.drawable.ic_pen_white);
                     paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                    paint.setStrokeWidth(10);
+                    paint.setStrokeWidth(15);
                     eraserMode = true;
                 }else {
                     item.setIcon(R.drawable.ic_rubber);
@@ -210,9 +218,10 @@ public class NotesFragment extends Fragment {
                 }
                 return true;
             case R.id.template_save:
+                saveAsTemplate(alteredBitmap);
                 return true;
             case R.id.template_open:
-                addPatientNotesToView();
+                openTemplate();
                 return true;
             case R.id.clear:
                 init = true;
@@ -326,7 +335,6 @@ public class NotesFragment extends Fragment {
                 });
                 return true;
             }
-
         });
         image.setImageBitmap(bmp);
         linearLayout.addView(image);
@@ -337,7 +345,6 @@ public class NotesFragment extends Fragment {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Toast.makeText(getActivity(), "createNote successful "+ note.getPatientId() + note.isSelected(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -352,7 +359,6 @@ public class NotesFragment extends Fragment {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Toast.makeText(getActivity(), "createNote successful "+ updatedNote.getPatientId() + updatedNote.isSelected(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -360,5 +366,91 @@ public class NotesFragment extends Fragment {
                 Toast.makeText(getActivity(), "createNote NOT successful", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void saveAsTemplate(Bitmap bitmap){
+        if (bitmap != null) {
+            ContentValues contentValues = new ContentValues(3);
+            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, "Draw On Me");
+
+            Uri imageFileUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            try {
+                OutputStream imageFileOS = getActivity().getContentResolver().openOutputStream(imageFileUri);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, imageFileOS);
+                Toast t = Toast.makeText(getActivity(), R.string.saved, Toast.LENGTH_SHORT);
+                t.show();
+
+            } catch (Exception e) {
+                Log.v("EXCEPTION", e.getMessage());
+            }
+        }
+    }
+
+    public void openTemplate(){
+        Intent choosePictureIntent = new Intent(
+                Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(choosePictureIntent, 0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,
+                                 Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == RESULT_OK) {
+            Uri imageFileUri = intent.getData();
+            try {
+                BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
+                bmpFactoryOptions.inJustDecodeBounds = true;
+                bmp = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(
+                        imageFileUri), null, bmpFactoryOptions);
+
+                bmpFactoryOptions.inJustDecodeBounds = false;
+                bmp = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(
+                        imageFileUri), null, bmpFactoryOptions);
+
+                alteredBitmap = Bitmap.createBitmap(bmp.getWidth(), bmp
+                        .getHeight(), bmp.getConfig());
+                canvas = new Canvas(alteredBitmap);
+                matrix = new Matrix();
+                canvas.drawBitmap(bmp, matrix, paint);
+
+                chosenImageView.setImageBitmap(alteredBitmap);
+                chosenImageView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent event) {
+                        int action = event.getAction();
+                        switch (action) {
+                            case MotionEvent.ACTION_DOWN:
+                                downx = event.getX();
+                                downy = event.getY();
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                upx = event.getX();
+                                upy = event.getY();
+                                canvas.drawLine(downx, downy, upx, upy, paint);
+                                chosenImageView.invalidate();
+                                downx = upx;
+                                downy = upy;
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                upx = event.getX();
+                                upy = event.getY();
+                                canvas.drawLine(downx, downy, upx, upy, paint);
+                                chosenImageView.invalidate();
+                                break;
+                            case MotionEvent.ACTION_CANCEL:
+                                break;
+                            default:
+                                break;
+                        }
+                        return true;
+                    }
+                });
+            } catch (Exception e) {
+                Log.v("ERROR", e.toString());
+            }
+        }
     }
 }

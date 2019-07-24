@@ -114,7 +114,6 @@ public class TranslatorFragment extends Fragment {
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(choosePictureIntent, 0);
         } else if (v == savePicture) {
-
             if (alteredBitmap != null) {
                 ContentValues contentValues = new ContentValues(3);
                 contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, "Draw On Me");
