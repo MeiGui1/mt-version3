@@ -3,17 +3,16 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:gravity="center"
     >
     <Button
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Picture" android:id="@+id/ChoosePictureButton"/>
-    <ImageView android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ChoosenImageView">
-    </ImageView>
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Save Picture" android:id="@+id/SavePictureButton"/>
+        android:text="@string/open_google_translate"
+        android:id="@+id/btnGoogleTranslate"
+        android:layout_gravity="center"
+        android:padding="30dp"
+        android:background="@drawable/button_selector_effect"
+       />
+
 </LinearLayout>

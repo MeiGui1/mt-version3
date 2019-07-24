@@ -331,9 +331,4 @@ public class ExercisesFragment extends Fragment {
             }
         });
     }
-
-    private void refreshView(){
-        llPictures.setVisibility(View.GONE);
-        llPictures.setVisibility(View.VISIBLE);
-    }
 }

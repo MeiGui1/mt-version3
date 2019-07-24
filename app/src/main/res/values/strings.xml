@@ -39,6 +39,7 @@
     <string name="exercise_medication_patch">Medikamentenpflaster</string>
     <string name="delete">Löschen</string>
     <string name="open">Öffnen</string>
+    <string name="open_google_translate">Google Translate öffnen</string>
 
 
 </resources>
