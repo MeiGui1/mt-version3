@@ -2,10 +2,12 @@ package com.example.frontend.Service;
 
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
+import com.example.frontend.Models.ExercisePhoto;
 import com.example.frontend.Models.Note;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDrug;
+import com.example.frontend.Models.PatientExercise;
 
 import java.util.List;
 
@@ -78,4 +80,19 @@ public interface JsonPlaceHolderApi {
     @PUT("note/{id}")
     Call<ResponseBody> updateNote(@Path("id") int note_id, @Body Note note);
 
+    //Exercise Page
+    @GET("patientexercise/{id}")
+    Call<List<PatientExercise>> getSelectedPatientExercises(@Path("id") int patient_id);
+
+    @POST("patientexercise")
+    Call<ResponseBody> createPatientExercise(@Body PatientExercise patientExercise);
+
+    @DELETE("patientexercise/{patient_id}/{exercisetype_title}")
+    Call<ResponseBody> deletePatientExercise(@Path("patient_id") int patient_id, @Path("exercisetype_title") String exercisetype_title);
+
+    @POST("exercisephoto")
+    Call<ResponseBody> createExercisePhoto(@Body ExercisePhoto exercisePhoto);
+
+    @GET("exercisephoto_last_id")
+    Call<Integer> getLastPhotoId();
 }

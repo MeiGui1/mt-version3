@@ -66,6 +66,12 @@ public class PatientSelectionActivity extends AppCompatActivity {
                     for (Patient patient : allPatients) {
                         addPatientBtn(patient);
                     }
+                    LinearLayout ll1 = (LinearLayout) findViewById(R.id.llFirstColumn);
+                    LinearLayout ll2 = (LinearLayout) findViewById(R.id.llSecondColumn);
+                    LinearLayout ll3 = (LinearLayout) findViewById(R.id.llThirdColumn);
+                    ll1.invalidate();
+                    ll2.invalidate();
+                    ll3.invalidate();
                 }
             }
 

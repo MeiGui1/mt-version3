@@ -1,16 +1,65 @@
 package com.example.frontend.Fragments;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.example.frontend.Models.ExercisePhoto;
+import com.example.frontend.Models.Note;
+import com.example.frontend.Models.PatientExercise;
 import com.example.frontend.R;
+import com.example.frontend.Service.JsonPlaceHolderApi;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ExercisesFragment extends Fragment {
 
     private int patientId;
+    private List<PatientExercise> patientExercisesOfPatient = new ArrayList<>();
+    private ImageView ivObservation;
+    private ImageView ivElongation;
+    private ImageView ivPatch;
+    private ImageView ivTemple;
+    private ImageView ivCheek;
+    private Button btnCamera;
+    private static final int REQUEST_IMAGE_CAPTURE = 101;
+    private LinearLayout llPictures;
+
+    private View.OnClickListener onClickListener;
+
+    Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -19,5 +68,207 @@ public class ExercisesFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_exercises, container, false);
 
+    }
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        showInitialSelection();
+        onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String exerciseTitle ="";
+                switch (view.getId()){
+                    case R.id.iv_observation:
+                        exerciseTitle = "Selbstbeobachtung";
+                        break;
+                    case R.id.iv_elongation:
+                        exerciseTitle = "Muskeldehnung";
+                        break;
+                    case R.id.iv_patch:
+                        exerciseTitle = "Medikamentenpflaster";
+                        break;
+                    case R.id.iv_cheek:
+                        exerciseTitle = "MassageWange";
+                        break;
+                    case R.id.iv_temple:
+                        exerciseTitle = "MassageSchlaefe";
+                        break;
+                }
+                if(view.isSelected()){
+                    view.setSelected(false);
+                    view.setBackgroundColor(0);
+
+                    removePatientExercise(patientId, exerciseTitle);
+                } else{
+                    view.setSelected(true);
+                    view.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+
+                    PatientExercise newPatientExercise = new PatientExercise();
+                    newPatientExercise.setExerciseTypeTitle(exerciseTitle);
+                    newPatientExercise.setPatientId(patientId);
+                    addPatientExercise(newPatientExercise);
+                }
+            }
+        };
+        ivObservation = (ImageView) view.findViewById(R.id.iv_observation);
+        ivObservation.setOnClickListener(onClickListener);
+        ivElongation = (ImageView) view.findViewById(R.id.iv_elongation);
+        ivElongation.setOnClickListener(onClickListener);
+        ivPatch = (ImageView) view.findViewById(R.id.iv_patch);
+        ivPatch.setOnClickListener(onClickListener);
+        ivTemple = (ImageView) view.findViewById(R.id.iv_temple);
+        ivTemple.setOnClickListener(onClickListener);
+        ivCheek = (ImageView) view.findViewById(R.id.iv_cheek);
+        ivCheek.setOnClickListener(onClickListener);
+
+        llPictures = (LinearLayout)view.findViewById(R.id.llPictures);
+        btnCamera = (Button) view.findViewById(R.id.btnCamera);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent imageTakeIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if(imageTakeIntent.resolveActivity(getActivity().getPackageManager()) != null){
+                    startActivityForResult(imageTakeIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Bundle extras = data.getExtras();
+        Bitmap imageBitmap = (Bitmap) extras.get("data");
+        addNewExercisePhoto(imageBitmap);
+    }
+
+    public byte[] bitmapToByte(Bitmap drawing) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        drawing.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        byte[] drawingByteArray = bos.toByteArray();
+        return drawingByteArray;
+    }
+
+    public void showInitialSelection(){
+        Call<List<PatientExercise>> call = jsonPlaceHolderApi.getSelectedPatientExercises(patientId);
+        call.enqueue(new Callback<List<PatientExercise>>() {
+            @Override
+            public void onResponse(Call<List<PatientExercise>> call, Response<List<PatientExercise>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "not succesful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    patientExercisesOfPatient = response.body();
+                    for (PatientExercise patientExercise : patientExercisesOfPatient) {
+                        switch (patientExercise.getExerciseTypeTitle()){
+                            case "Selbstbeobachtung":
+                                ivObservation.setSelected(true);
+                                ivObservation.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                break;
+                            case "Muskeldehnung":
+                                ivElongation.setSelected(true);
+                                ivElongation.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                break;
+                            case "Medikamentenpflaster":
+                                ivPatch.setSelected(true);
+                                ivPatch.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                break;
+                            case "MassageWange":
+                                ivCheek.setSelected(true);
+                                ivCheek.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                break;
+                            case "MassageSchlaefe":
+                                ivTemple.setSelected(true);
+                                ivTemple.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PatientExercise>> call, Throwable t) {
+                Toast.makeText(getActivity(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    public void addPatientExercise(PatientExercise patientExercise){
+        Call<ResponseBody> call = jsonPlaceHolderApi.createPatientExercise(patientExercise);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), "createPatientExercise NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void removePatientExercise(int patientId, String exerciseTitle){
+        Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientExercise(patientId, exerciseTitle);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
+    }
+
+    public void addBitmapToView(final Bitmap photo, final int exercisePhotoId) {
+        final ImageView image = new ImageView(getContext());
+        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(0, 0, 0, 20);
+        image.setLayoutParams(param);
+        image.setAdjustViewBounds(true);
+        image.setPadding(5, 5, 5, 5);
+        image.setImageBitmap(photo);
+        image.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast.makeText(getActivity(), "NewId " + exercisePhotoId, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
+        llPictures.addView(image);
+        llPictures.invalidate();
+    }
+    public void addNewExercisePhoto(final Bitmap photoBitmap) {
+        ExercisePhoto newPhoto = new ExercisePhoto();
+        newPhoto.setPatientId(patientId);
+        newPhoto.setPhotoBytes(bitmapToByte(photoBitmap));
+
+        Call<ResponseBody> call = jsonPlaceHolderApi.createExercisePhoto(newPhoto);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                getInsertPhotoId(photoBitmap);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), "createNote NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public void getInsertPhotoId(final Bitmap photoBitmap){
+        Call<Integer> call = jsonPlaceHolderApi.getLastPhotoId();
+        call.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                int id = response.body();
+                addBitmapToView(photoBitmap, id);
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(getActivity(), "getId NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

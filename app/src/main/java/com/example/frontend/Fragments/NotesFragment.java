@@ -1,8 +1,6 @@
 package com.example.frontend.Fragments;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,8 +17,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Layout;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,9 +33,7 @@ import android.widget.Toast;
 
 import com.example.frontend.Fragments.Notes.PaintView;
 import com.example.frontend.Globals;
-import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.Note;
-import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
@@ -56,7 +50,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.frontend.Fragments.Notes.PaintView.DEFAULT_COLOR;
 
 public class NotesFragment extends Fragment {
 
@@ -108,7 +101,7 @@ public class NotesFragment extends Fragment {
                 view.post(new Runnable() {
                     public void run() {
                         cView = view;
-                        linearLayout = (LinearLayout) cView.findViewById(R.id.linearLayout);
+                        linearLayout = (LinearLayout) cView.findViewById(R.id.llPictures);
                         chosenImageView = (ImageView) view.findViewById(R.id.ChoosenImageView);
                         setUpCanvas();
                     }
@@ -238,6 +231,7 @@ public class NotesFragment extends Fragment {
                     ((LinearLayout) linearLayout).removeAllViews();
                 }
                 addPatientNotesToView();
+                linearLayout.invalidate();
                 return true;
         }
         return super.onOptionsItemSelected(item);
