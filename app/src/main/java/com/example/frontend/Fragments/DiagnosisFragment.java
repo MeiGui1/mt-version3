@@ -172,7 +172,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         final Button btnDiagnosisType = new Button(getContext());
         btnDiagnosisType.setText(diagnosisType.getName());
         TooltipCompat.setTooltipText(btnDiagnosisType.getRootView(), diagnosisType.getDescription());
-        btnDiagnosisType.setTextSize(16);
+        btnDiagnosisType.setTextSize(15);
         btnDiagnosisType.setSingleLine(true);
         btnDiagnosisType.setPadding(0, 30, 0, 30);
         btnDiagnosisType.setBackgroundResource(R.drawable.button_selector_effect);

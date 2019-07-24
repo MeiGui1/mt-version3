@@ -32,4 +32,9 @@
     <string name="rubber">Radierer</string>
     <string name="pen">Stift</string>
     <string name="saved">Gespeichert</string>
+    <string name="exercise_observation">Selbstbeobachtung</string>
+    <string name="exercise_massage_temple">Massage der Schläfenmuskulatur</string>
+    <string name="exercise_massage_cheek">Massage der Wangenmuskulatur</string>
+    <string name="exercise_muscle_elongation">Muskeldehnung</string>
+    <string name="exercise_medication_patch">Medikamentenpflaster</string>
 </resources>
