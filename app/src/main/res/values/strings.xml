@@ -12,7 +12,7 @@
     <string name="diagnosis">Diagnosen</string>
     <string name="exercises">Übungen</string>
     <string name="paindetails">Schmerzdetails</string>
-    <string name="psychosocial">Psychosoziale Konextfaktoren</string>
+    <string name="psychosocial">Psychosoziale Kontextfaktoren</string>
     <string name="diagnosis_and_therapy">Anamnese, Diagnose und Therapie</string>
     <string name="tools">Tools</string>
     <string name="translator">Sprachübersetzer</string>
@@ -41,5 +41,19 @@
     <string name="open">Öffnen</string>
     <string name="open_google_translate">Google Translate öffnen</string>
 
+    <!-- 3D Modelle, Überbegriffe -->
+    <string name="bruxism">Bruxismus</string>
+    <string name="mastication">Mastikation</string>
+    <string name="sensitive_teeth">Empfindliche Zähne</string>
+    <string name="tooth_erosion">Zahnerosion</string>
+    <string name="tooth_cavity">Zahnhöhlen</string>
+    <string name="migraine">Migräne</string>
+    <string name="damaged_myelin_sheath">Verletzung der Myelinscheide</string>
+    <string name="nervous_system">Nervensystem</string>
+    <string name="peripheral_neuropathy">Periphere Neuropathie</string>
+    <string name="tooth_cross_section">Zahnquerschnitt</string>
 
+    <string name="jaw_joint">Kiefergelenk</string>
+    <string name="teeth">Zähne</string>
+    <string name="nerves">Nerven</string>
 </resources>
