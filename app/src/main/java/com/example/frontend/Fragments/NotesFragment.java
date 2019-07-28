@@ -341,6 +341,12 @@ public class NotesFragment extends Fragment {
     }
 
     public void saveAsTemplate(Bitmap bitmap){
+        if(eraserMode){
+            eraserItem.setIcon(R.drawable.ic_rubber);
+            paint.setXfermode(null);
+            paint.setStrokeWidth(3);
+            eraserMode = false;
+        }
         if (bitmap != null) {
             ContentValues contentValues = new ContentValues(3);
             contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, "Draw On Me");
@@ -359,6 +365,12 @@ public class NotesFragment extends Fragment {
     }
 
     public void openTemplate(){
+        if(eraserMode){
+            eraserItem.setIcon(R.drawable.ic_rubber);
+            paint.setXfermode(null);
+            paint.setStrokeWidth(3);
+            eraserMode = false;
+        }
         Intent choosePictureIntent = new Intent(
                 Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
