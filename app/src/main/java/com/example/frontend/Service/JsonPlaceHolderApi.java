@@ -71,6 +71,9 @@ public interface JsonPlaceHolderApi {
     @GET("note/{id}")
     Call<Note> getNote(@Path("id") int note_id);
 
+    @GET("note_last_id")
+    Call<Integer> getLastNoteId();
+
     @POST("note")
     Call<ResponseBody> createNote(@Body Note note);
 

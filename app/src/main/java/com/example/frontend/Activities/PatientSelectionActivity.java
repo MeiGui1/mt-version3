@@ -69,9 +69,9 @@ public class PatientSelectionActivity extends AppCompatActivity {
                     LinearLayout ll1 = (LinearLayout) findViewById(R.id.llFirstColumn);
                     LinearLayout ll2 = (LinearLayout) findViewById(R.id.llSecondColumn);
                     LinearLayout ll3 = (LinearLayout) findViewById(R.id.llThirdColumn);
-                    ll1.invalidate();
-                    ll2.invalidate();
-                    ll3.invalidate();
+                    refreshView(ll1);
+                    refreshView(ll2);
+                    refreshView(ll3);
                 }
             }
 
@@ -113,5 +113,9 @@ public class PatientSelectionActivity extends AppCompatActivity {
                 columnCounter = 1;
                 break;
         }
+    }
+    private void refreshView(View view){
+        view.setVisibility(View.GONE);
+        view.setVisibility(View.VISIBLE);
     }
 }

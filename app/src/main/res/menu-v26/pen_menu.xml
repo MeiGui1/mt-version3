@@ -25,7 +25,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/clear"
-        android:icon="@drawable/ic_delete"
+        android:icon="@drawable/ic_new_note"
         android:title="@string/new_note"
         app:showAsAction="ifRoom" />
 

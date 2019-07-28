@@ -73,6 +73,7 @@ public class NotesFragment extends Fragment {
     boolean eraserMode = false;
     private MenuItem eraserItem;
     List<Note> allNotesOfPatient = new ArrayList<>();
+    int lastNoteId;
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -124,7 +125,7 @@ public class NotesFragment extends Fragment {
                     for (Note note : allNotesOfPatient) {
                         addByteArrayToView(note.getId(), note.getNoteBytes(), note.isSelected());
                     }
-                    linearLayout.invalidate();;
+                    linearLayout.invalidate();
                 }
             }
 
@@ -227,10 +228,6 @@ public class NotesFragment extends Fragment {
                 newNote.setPatientId(patientId);
                 newNote.setNoteBytes(savedByte);
                 addNewNote(newNote);
-                if(((LinearLayout) linearLayout).getChildCount() > 0){
-                    ((LinearLayout) linearLayout).removeAllViews();
-                }
-                addPatientNotesToView();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -253,11 +250,11 @@ public class NotesFragment extends Fragment {
         image.setPadding(5, 5, 5, 5);
         if(isSelected){
             image.setSelected(true);
-            image.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+            image.setBackgroundColor(getResources().getColor(R.color.colorBlue));
         }
-        image.setOnClickListener(new View.OnClickListener() {
+        image.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onLongClick(View view) {
                 if (image.isSelected()) {
                     image.setSelected(false);
                     image.setBackgroundColor(0);
@@ -268,20 +265,21 @@ public class NotesFragment extends Fragment {
                     updateNote(noteId, updatedNote);
                 } else {
                     image.setSelected(true);
-                    image.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                    image.setBackgroundColor(getResources().getColor(R.color.colorBlue));
                     Note updatedNote = new Note();
                     updatedNote.setSelected(true);
                     updatedNote.setNoteBytes(drawing);
                     updatedNote.setPatientId(patientId);
                     updateNote(noteId, updatedNote);
                 }
+                return true;
             }
         });
 
-        image.setOnLongClickListener(new View.OnLongClickListener() {
+        image.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
-            public boolean onLongClick(View view) {
+            public void onClick(View view) {
                 if(eraserMode){
                     eraserItem.setIcon(R.drawable.ic_rubber);
                     paint.setXfermode(null);
@@ -326,7 +324,6 @@ public class NotesFragment extends Fragment {
                         return true;
                     }
                 });
-                return true;
             }
         });
         image.setImageBitmap(bmp);
@@ -338,6 +335,7 @@ public class NotesFragment extends Fragment {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                getInsertNoteId(note.getNoteBytes());
             }
 
             @Override
@@ -402,12 +400,24 @@ public class NotesFragment extends Fragment {
                 bmpFactoryOptions.inJustDecodeBounds = false;
                 bmp = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(
                         imageFileUri), null, bmpFactoryOptions);
-
+/*
                 alteredBitmap = Bitmap.createBitmap(bmp.getWidth(), bmp
                         .getHeight(), bmp.getConfig());
+                      */
+
+                alteredBitmap = Bitmap.createBitmap(paintWidth, paintHeight, bmp.getConfig());
                 canvas = new Canvas(alteredBitmap);
                 matrix = new Matrix();
-                canvas.drawBitmap(bmp, matrix, paint);
+                int width = 0;
+                int height = 0;
+                if(paintHeight>bmp.getHeight()){
+                    height = paintHeight/2-bmp.getHeight()/2;
+                }
+                if(paintWidth>bmp.getWidth()){
+                    width = paintWidth/2-bmp.getWidth()/2;
+                }
+                canvas.drawColor(Color.WHITE);
+                canvas.drawBitmap(bmp, width, height, paint);
 
                 chosenImageView.setImageBitmap(alteredBitmap);
                 chosenImageView.setOnTouchListener(new View.OnTouchListener() {
@@ -445,5 +455,38 @@ public class NotesFragment extends Fragment {
                 Log.v("ERROR", e.toString());
             }
         }
+    }
+
+    public void getInsertNoteId(final byte[] noteByte) {
+        Call<Integer> call = jsonPlaceHolderApi.getLastNoteId();
+        call.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                lastNoteId = response.body();
+                addByteArrayToView(lastNoteId, noteByte, false);
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(getActivity(), "getId NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void deleteNote(int noteId) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.deleteNote(noteId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
+    }
+
+    private void refreshView(View view){
+        view.setVisibility(View.GONE);
+        view.setVisibility(View.VISIBLE);
     }
 }
