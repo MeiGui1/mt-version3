@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="false"
+        android:largeHeap="true" >
         <activity
             android:name=".Activities.PatientSelectionActivity"
             android:label="@string/title_activity_patient_selection"

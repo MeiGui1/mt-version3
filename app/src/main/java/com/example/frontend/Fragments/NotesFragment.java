@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -245,6 +247,7 @@ public class NotesFragment extends Fragment {
         final ImageView image = new ImageView(getContext());
         RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         param.setMargins(0, 0, 0, 20);
+        image.setId(noteId);
         image.setLayoutParams(param);
         image.setAdjustViewBounds(true);
         image.setPadding(5, 5, 5, 5);
@@ -252,29 +255,6 @@ public class NotesFragment extends Fragment {
             image.setSelected(true);
             image.setBackgroundColor(getResources().getColor(R.color.colorBlue));
         }
-        image.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (image.isSelected()) {
-                    image.setSelected(false);
-                    image.setBackgroundColor(0);
-                    Note updatedNote = new Note();
-                    updatedNote.setSelected(false);
-                    updatedNote.setNoteBytes(drawing);
-                    updatedNote.setPatientId(patientId);
-                    updateNote(noteId, updatedNote);
-                } else {
-                    image.setSelected(true);
-                    image.setBackgroundColor(getResources().getColor(R.color.colorBlue));
-                    Note updatedNote = new Note();
-                    updatedNote.setSelected(true);
-                    updatedNote.setNoteBytes(drawing);
-                    updatedNote.setPatientId(patientId);
-                    updateNote(noteId, updatedNote);
-                }
-                return true;
-            }
-        });
 
         image.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ClickableViewAccessibility")
@@ -327,6 +307,7 @@ public class NotesFragment extends Fragment {
             }
         });
         image.setImageBitmap(bmp);
+        registerForContextMenu(image);
         linearLayout.addView(image);
     }
 
@@ -393,17 +374,9 @@ public class NotesFragment extends Fragment {
             Uri imageFileUri = intent.getData();
             try {
                 BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
-                bmpFactoryOptions.inJustDecodeBounds = true;
-                bmp = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(
-                        imageFileUri), null, bmpFactoryOptions);
-
                 bmpFactoryOptions.inJustDecodeBounds = false;
                 bmp = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(
                         imageFileUri), null, bmpFactoryOptions);
-/*
-                alteredBitmap = Bitmap.createBitmap(bmp.getWidth(), bmp
-                        .getHeight(), bmp.getConfig());
-                      */
 
                 alteredBitmap = Bitmap.createBitmap(paintWidth, paintHeight, bmp.getConfig());
                 canvas = new Canvas(alteredBitmap);
@@ -488,5 +461,43 @@ public class NotesFragment extends Fragment {
     private void refreshView(View view){
         view.setVisibility(View.GONE);
         view.setVisibility(View.VISIBLE);
+    }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.note_menu, menu);
+        lastNoteId = v.getId();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        ImageView selectedIv = getView().findViewById(lastNoteId);
+        switch (item.getItemId()) {
+            case R.id.selectOption:
+                if (selectedIv.isSelected()) {
+                    selectedIv.setSelected(false);
+                    selectedIv.setBackgroundColor(0);
+                    Note updatedNote = new Note();
+                    updatedNote.setSelected(false);
+                    updatedNote.setPatientId(patientId);
+                    updateNote(lastNoteId, updatedNote);
+                } else {
+                    selectedIv.setSelected(true);
+                    selectedIv.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                    Note updatedNote = new Note();
+                    updatedNote.setSelected(true);
+                    updatedNote.setPatientId(patientId);
+                    updateNote(lastNoteId, updatedNote);
+                }
+                return true;
+            case R.id.deleteOption:
+                deleteNote(lastNoteId);
+                linearLayout.removeView(selectedIv);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 }
