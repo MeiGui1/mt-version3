@@ -2,6 +2,7 @@ package com.example.frontend.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -76,6 +77,7 @@ public class NotesFragment extends Fragment {
     private MenuItem eraserItem;
     List<Note> allNotesOfPatient = new ArrayList<>();
     int lastNoteId;
+    Context context;
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -104,6 +106,7 @@ public class NotesFragment extends Fragment {
                 view.post(new Runnable() {
                     public void run() {
                         cView = view;
+                        context = view.getContext();
                         linearLayout = (LinearLayout) cView.findViewById(R.id.llPictures);
                         chosenImageView = (ImageView) view.findViewById(R.id.ChoosenImageView);
                         setUpCanvas();
@@ -125,7 +128,9 @@ public class NotesFragment extends Fragment {
                 } else {
                     allNotesOfPatient = response.body();
                     for (Note note : allNotesOfPatient) {
-                        addByteArrayToView(note.getId(), note.getNoteBytes(), note.isSelected());
+                        if(note!=null){
+                            addByteArrayToView(note.getId(), note.getNoteBytes(), note.isSelected());
+                        }
                     }
                     linearLayout.invalidate();
                 }
@@ -244,7 +249,7 @@ public class NotesFragment extends Fragment {
 
     public void addByteArrayToView(final int noteId, final byte[] drawing, boolean isSelected) {
         final Bitmap bmp = BitmapFactory.decodeByteArray(drawing, 0, drawing.length);
-        final ImageView image = new ImageView(getContext());
+        final ImageView image = new ImageView(context);
         RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         param.setMargins(0, 0, 0, 20);
         image.setId(noteId);
