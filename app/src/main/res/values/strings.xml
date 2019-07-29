@@ -57,4 +57,20 @@
     <string name="jaw_joint">Kiefergelenk</string>
     <string name="teeth">Zähne</string>
     <string name="nerves">Nerven</string>
+
+    <!-- Psychosoziale Kontextfaktoren -->
+    <string name="actual_situation">Aktuelle Situation</string>
+    <string name="after_therapy">Nach der Behandlung</string>
+
+    <string name="pain">Schmerz</string>
+    <string name="family">Familie</string>
+    <string name="financial">Finanziell</string>
+    <string name="work">Arbeit</string>
+    <string name="event">Ereignis</string>
+
+
+
+
+
+
 </resources>
