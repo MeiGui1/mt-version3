@@ -10,12 +10,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.example.frontend.Fragments.Dialogs.DrugDialog;
+import com.example.frontend.Fragments.Dialogs.ReasonDialog;
 import com.example.frontend.R;
 
-public class PsychosocialFragment extends Fragment {
+public class PsychosocialFragment extends Fragment implements ReasonDialog.ReasonDialogListener {
 
     private int patientId;
 
@@ -31,9 +35,21 @@ public class PsychosocialFragment extends Fragment {
     private Button btnFinancialAfter;
     private Button btnEventAfter;
 
+    private ImageView btnReason;
+
     private int xDelta;
     private int yDelta;
     private RelativeLayout rlActual;
+
+    private boolean reasonDrugs;
+    private boolean reasonExercises;
+    private boolean reasonAwareness;
+    private boolean reasonOthers;
+    private String reasonOthersText;
+
+
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,6 +85,14 @@ public class PsychosocialFragment extends Fragment {
         btnFinancialAfter.setOnTouchListener(new ChoiceTouchListener());
         btnEventAfter = view.findViewById(R.id.btnEventAfter);
         btnEventAfter.setOnTouchListener(new ChoiceTouchListener());
+
+        btnReason = view.findViewById(R.id.btnReason);
+        btnReason.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openReasonDialog();
+            }
+        });
     }
 
     private final class ChoiceTouchListener implements View.OnTouchListener{
@@ -84,6 +108,7 @@ public class PsychosocialFragment extends Fragment {
                     yDelta = Y - lParams.topMargin;
                     break;
                 case MotionEvent.ACTION_UP:
+                    //TODO: PUT REQUEST
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
                     break;
@@ -108,5 +133,28 @@ public class PsychosocialFragment extends Fragment {
             rlActual.invalidate();
             return true;
         }
+    }
+
+    public void openReasonDialog() {
+        ReasonDialog reasonDialog = new ReasonDialog();
+        reasonDialog.setTargetFragment(PsychosocialFragment.this, 1);
+        reasonDialog.show(getActivity().getSupportFragmentManager(), "Reason Dialog");
+    }
+
+    @Override
+    public void applyTexts(boolean drugsReason, boolean exercisesReason, boolean awarenessReason, boolean otherReasons, String otherReasonsText) {
+        String test = String.valueOf(drugsReason);
+        Toast.makeText(getActivity(), test, Toast.LENGTH_LONG).show();
+
+        /*
+        if (!amount.isEmpty()) {
+            selectedPatientDrug.setAmount(amount);
+        }
+        if (!dosis.isEmpty()) {
+            selectedPatientDrug.setDosis(dosis);
+        }
+        addNewPatientDrug(selectedPatientDrug);
+        selectedDrugButton.setSelected(true);
+        */
     }
 }

@@ -68,4 +68,12 @@
     <string name="work">Arbeit</string>
     <string name="event">Ereignis</string>
 
+    <string name="improvement_reason">Grund für Besserung</string>
+    <!--
+    <string name="drugs">Medikamente</string>
+    <string name="exercises">Übungen</string>
+    -->
+    <string name="awareness">Gefördetes Bewusstsein</string>
+    <string name="other_reasons">Andere Gründe</string>
+
 </resources>
