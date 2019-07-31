@@ -9,6 +9,8 @@ import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.Models.PatientExercise;
+import com.example.frontend.Models.PsychoSocialAfter;
+import com.example.frontend.Models.PsychoSocialBefore;
 
 import java.util.List;
 
@@ -109,6 +111,33 @@ public interface JsonPlaceHolderApi {
 
 
     //PsychoSocial Page
+
+    @POST("psychosocial/before")
+    Call<ResponseBody> createPsychoSocialBefore(@Body PsychoSocialBefore psychoSocialBefore);
+
+    @PUT("psychosocial/before/{patient_id}")
+    Call<ResponseBody> updatePsychoSocialBefore(@Path("patient_id") int patient_id, @Body PsychoSocialBefore psychoSocialBefore);
+
+    @GET("psychosocial/before/{patient_id}")
+    Call<PsychoSocialBefore> getPsychoSocialBefore(@Path("patient_id") int patient_id);
+
+    @GET("psychosocial/before/exists/{patient_id}")
+    Call<Boolean> existsPsychoSocialBefore(@Path("patient_id") int patient_id);
+
+
+    @POST("psychosocial/after")
+    Call<ResponseBody> createPsychoSocialAfter(@Body PsychoSocialAfter psychoSocialAfter);
+
+    @PUT("psychosocial/after/{patient_id}")
+    Call<ResponseBody> updatePsychoSocialAfter(@Path("patient_id") int patient_id, @Body PsychoSocialAfter psychoSocialAfter);
+
+    @GET("psychosocial/after/{patient_id}")
+    Call<PsychoSocialAfter> getPsychoSocialAfter(@Path("patient_id") int patient_id);
+
+    @GET("psychosocial/after/exists/{patient_id}")
+    Call<Boolean> existsPsychoSocialAfter(@Path("patient_id") int patient_id);
+
+
     @POST("psychosocial/reason")
     Call<ResponseBody> createImprovementReason(@Body ImprovementReason improvementReason);
 

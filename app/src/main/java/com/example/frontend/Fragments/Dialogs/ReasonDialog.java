@@ -140,8 +140,6 @@ public class ReasonDialog extends AppCompatDialogFragment {
                     return;
                 } else {
                     boolean improvementReasonExists = response.body();
-                    Toast.makeText(getActivity(), response.body().toString() + patientId, Toast.LENGTH_SHORT).show();
-
                     if(improvementReasonExists){
                         getImprovementReason();                    }
                 }
