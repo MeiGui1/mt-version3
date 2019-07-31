@@ -30,7 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/other_reasons"
-        android:layout_below="@id/cbAwareness">
+        android:layout_below="@id/cbAwareness"
+        >
     </CheckBox>
 
     <EditText
@@ -39,5 +40,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/cbOthers"
         android:layout_marginLeft="30dp"
+        android:visibility="invisible"
         />
 </RelativeLayout>

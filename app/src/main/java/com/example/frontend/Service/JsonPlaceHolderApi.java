@@ -3,6 +3,7 @@ package com.example.frontend.Service;
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.ExercisePhoto;
+import com.example.frontend.Models.ImprovementReason;
 import com.example.frontend.Models.Note;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
@@ -83,6 +84,7 @@ public interface JsonPlaceHolderApi {
     @PUT("note/{id}")
     Call<ResponseBody> updateNote(@Path("id") int note_id, @Body Note note);
 
+
     //Exercise Page
     @GET("patientexercise/{id}")
     Call<List<PatientExercise>> getSelectedPatientExercises(@Path("id") int patient_id);
@@ -104,4 +106,18 @@ public interface JsonPlaceHolderApi {
 
     @DELETE("exercisephoto/{id}")
     Call<ResponseBody> deleteExercisePhoto(@Path("id") int photo_id);
+
+
+    //PsychoSocial Page
+    @POST("psychosocial/reason")
+    Call<ResponseBody> createImprovementReason(@Body ImprovementReason improvementReason);
+
+    @PUT("psychosocial/reason/{patient_id}")
+    Call<ResponseBody> updateImprovementReason(@Path("patient_id") int patient_id, @Body ImprovementReason improvementReason);
+
+    @GET("psychosocial/reason/{patient_id}")
+    Call<ImprovementReason> getImprovementReason(@Path("patient_id") int patient_id);
+
+    @GET("psychosocial/reason/exists/{patient_id}")
+    Call<Boolean> existsImprovementReason(@Path("patient_id") int patient_id);
 }
