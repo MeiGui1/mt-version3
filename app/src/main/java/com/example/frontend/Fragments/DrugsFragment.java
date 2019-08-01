@@ -1,5 +1,6 @@
 package com.example.frontend.Fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -97,6 +98,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
         btnDrugType.setTransformationMethod(null);
         if (allDrugIdsOfPatient.contains(drugType.getId())) {
             btnDrugType.setSelected(true);
+            btnDrugType.setTextColor(Color.WHITE);
         }
 
         btnDrugType.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +107,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
                 if (btnDrugType.isSelected()) {
                     deletePatientDrug(patientId, drugType.getId());
                     btnDrugType.setSelected(false);
+                    btnDrugType.setTextColor(Color.BLACK);
                 } else {
                     selectedPatientDrug.setPatientId(patientId);
                     selectedPatientDrug.setDrugId(drugType.getId());
@@ -205,5 +208,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
         }
         addNewPatientDrug(selectedPatientDrug);
         selectedDrugButton.setSelected(true);
+        selectedDrugButton.setTextColor(Color.WHITE);
     }
 }

@@ -292,6 +292,8 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
                     } else {
                         if(initialSetUpBeforeDone){
                             addNewPsychoSocialBefore(psychoSocialBeforeOfPatient);
+                        }else{
+                            initialSetUpBeforeDone = true;
                         }
                     }
                 }
@@ -352,6 +354,8 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
                     } else {
                         if(initialSetUpAfterDone) {
                             addNewPsychoSocialAfter(psychoSocialAfterOfPatient);
+                        }else{
+                            initialSetUpAfterDone = true;
                         }
                     }
                 }

@@ -38,7 +38,7 @@
     <string name="exercise_muscle_elongation">Muskeldehnung</string>
     <string name="exercise_medication_patch">Medikamentenpflaster</string>
     <string name="delete">Löschen</string>
-    <string name="select">Auswählen</string>
+    <string name="select_deselect">Auswählen/Abwählen</string>
     <string name="open">Öffnen</string>
     <string name="open_google_translate">Google Translate öffnen</string>
 

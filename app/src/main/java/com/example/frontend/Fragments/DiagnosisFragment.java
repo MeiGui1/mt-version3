@@ -172,13 +172,15 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         final Button btnDiagnosisType = new Button(getContext());
         btnDiagnosisType.setText(diagnosisType.getName());
         TooltipCompat.setTooltipText(btnDiagnosisType.getRootView(), diagnosisType.getDescription());
-        btnDiagnosisType.setTextSize(15);
-        btnDiagnosisType.setSingleLine(true);
-        btnDiagnosisType.setPadding(0, 30, 0, 30);
+        btnDiagnosisType.setTextSize(16);
+//        btnDiagnosisType.setSingleLine(true);
+        btnDiagnosisType.setHeight(140);
+        btnDiagnosisType.setPadding(20, 20, 20, 20);
         btnDiagnosisType.setBackgroundResource(R.drawable.button_selector_effect);
         btnDiagnosisType.setTransformationMethod(null);
         if (allPatientDiagnosisIdsOfClass.contains(diagnosisType.getId())) {
             btnDiagnosisType.setSelected(true);
+            btnDiagnosisType.setTextColor(Color.WHITE);
         }
         btnDiagnosisType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,6 +188,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
                 if (btnDiagnosisType.isSelected()) {
                     deletePatientDiagnosis(patientId, diagnosisType.getId());
                     btnDiagnosisType.setSelected(false);
+                    btnDiagnosisType.setTextColor(Color.BLACK);
                 } else {
                     selectedPatientDiagnosis.setPatientId(patientId);
                     selectedPatientDiagnosis.setDiagnosisId(diagnosisType.getId());
@@ -269,5 +272,6 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         }
         addNewPatientDiagnosis(selectedPatientDiagnosis);
         selectedDiagnosisBtn.setSelected(true);
+        selectedDiagnosisBtn.setTextColor(Color.WHITE);
     }
 }

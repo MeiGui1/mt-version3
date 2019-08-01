@@ -61,7 +61,7 @@ public class NotesFragment extends Fragment {
     private int patientId;
     private LinearLayout linearLayout;
     private ImageView chosenImageView;
-    private int paintWidth = Globals.getInstance().getFragmentWidth()/4*3;
+    private int paintWidth = Globals.getInstance().getFragmentWidth() / 4 * 3;
     private int paintHeight = Globals.getInstance().getFragmentHeight();
     Bitmap bmp = Bitmap.createBitmap(paintWidth, paintHeight, Bitmap.Config.ARGB_8888);
     Bitmap alteredBitmap = Bitmap.createBitmap(paintWidth, paintHeight, Bitmap.Config.ARGB_8888);
@@ -117,7 +117,7 @@ public class NotesFragment extends Fragment {
         addPatientNotesToView();
     }
 
-    public void addPatientNotesToView(){
+    public void addPatientNotesToView() {
         Call<List<Note>> call = jsonPlaceHolderApi.getAllNotesOfPatient(patientId);
         call.enqueue(new Callback<List<Note>>() {
             @Override
@@ -128,7 +128,7 @@ public class NotesFragment extends Fragment {
                 } else {
                     allNotesOfPatient = response.body();
                     for (Note note : allNotesOfPatient) {
-                        if(note!=null){
+                        if (note != null) {
                             addByteArrayToView(note.getId(), note.getNoteBytes(), note.isSelected());
                         }
                     }
@@ -145,8 +145,8 @@ public class NotesFragment extends Fragment {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public void setUpCanvas(){
-        if(init){
+    public void setUpCanvas() {
+        if (init) {
             canvas = new Canvas(alteredBitmap);
             canvas.drawColor(0xffffffff);
             paint = new Paint();
@@ -206,12 +206,12 @@ public class NotesFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.rubber:
-                if(!eraserMode){
+                if (!eraserMode) {
                     item.setIcon(R.drawable.ic_pen_white);
                     paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                     paint.setStrokeWidth(15);
                     eraserMode = true;
-                }else {
+                } else {
                     item.setIcon(R.drawable.ic_rubber);
                     paint.setXfermode(null);
                     paint.setStrokeWidth(3);
@@ -256,7 +256,7 @@ public class NotesFragment extends Fragment {
         image.setLayoutParams(param);
         image.setAdjustViewBounds(true);
         image.setPadding(5, 5, 5, 5);
-        if(isSelected){
+        if (isSelected) {
             image.setSelected(true);
             image.setBackgroundColor(getResources().getColor(R.color.colorBlue));
         }
@@ -265,7 +265,7 @@ public class NotesFragment extends Fragment {
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public void onClick(View view) {
-                if(eraserMode){
+                if (eraserMode) {
                     eraserItem.setIcon(R.drawable.ic_rubber);
                     paint.setXfermode(null);
                     paint.setStrokeWidth(3);
@@ -288,12 +288,12 @@ public class NotesFragment extends Fragment {
                                 downy = event.getY();
                                 break;
                             case MotionEvent.ACTION_MOVE:
-                                    upx = event.getX();
-                                    upy = event.getY();
-                                    canvas.drawLine(downx, downy, upx, upy, paint);
-                                    chosenImageView.invalidate();
-                                    downx = upx;
-                                    downy = upy;
+                                upx = event.getX();
+                                upy = event.getY();
+                                canvas.drawLine(downx, downy, upx, upy, paint);
+                                chosenImageView.invalidate();
+                                downx = upx;
+                                downy = upy;
                                 break;
                             case MotionEvent.ACTION_UP:
                                 upx = event.getX();
@@ -345,8 +345,8 @@ public class NotesFragment extends Fragment {
         });
     }
 
-    public void saveAsTemplate(Bitmap bitmap){
-        if(eraserMode){
+    public void saveAsTemplate(Bitmap bitmap) {
+        if (eraserMode) {
             eraserItem.setIcon(R.drawable.ic_rubber);
             paint.setXfermode(null);
             paint.setStrokeWidth(3);
@@ -369,8 +369,8 @@ public class NotesFragment extends Fragment {
         }
     }
 
-    public void openTemplate(){
-        if(eraserMode){
+    public void openTemplate() {
+        if (eraserMode) {
             eraserItem.setIcon(R.drawable.ic_rubber);
             paint.setXfermode(null);
             paint.setStrokeWidth(3);
@@ -398,14 +398,19 @@ public class NotesFragment extends Fragment {
                 alteredBitmap = Bitmap.createBitmap(paintWidth, paintHeight, bmp.getConfig());
                 canvas = new Canvas(alteredBitmap);
                 matrix = new Matrix();
+
                 int width = 0;
                 int height = 0;
-                if(paintHeight>bmp.getHeight()){
-                    height = paintHeight/2-bmp.getHeight()/2;
+                if (paintHeight < bmp.getHeight() || paintWidth < bmp.getWidth()) {
+                    bmp = resize(bmp, paintWidth, paintHeight);
                 }
-                if(paintWidth>bmp.getWidth()){
-                    width = paintWidth/2-bmp.getWidth()/2;
+                if (paintHeight > bmp.getHeight()) {
+                    height = paintHeight / 2 - bmp.getHeight() / 2;
                 }
+                if (paintWidth > bmp.getWidth()) {
+                    width = paintWidth / 2 - bmp.getWidth() / 2;
+                }
+
                 canvas.drawColor(Color.WHITE);
                 canvas.drawBitmap(bmp, width, height, paint);
 
@@ -469,13 +474,14 @@ public class NotesFragment extends Fragment {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
         });
     }
 
-    private void refreshView(View view){
+    private void refreshView(View view) {
         view.setVisibility(View.GONE);
         view.setVisibility(View.VISIBLE);
     }
@@ -515,6 +521,27 @@ public class NotesFragment extends Fragment {
                 return true;
             default:
                 return super.onContextItemSelected(item);
+        }
+    }
+
+    private static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {
+        if (maxHeight > 0 && maxWidth > 0) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+            float ratioBitmap = (float) width / (float) height;
+            float ratioMax = (float) maxWidth / (float) maxHeight;
+
+            int finalWidth = maxWidth;
+            int finalHeight = maxHeight;
+            if (ratioMax > ratioBitmap) {
+                finalWidth = (int) ((float) maxHeight * ratioBitmap);
+            } else {
+                finalHeight = (int) ((float) maxWidth / ratioBitmap);
+            }
+            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
+            return image;
+        } else {
+            return image;
         }
     }
 }

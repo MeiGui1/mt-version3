@@ -23,6 +23,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PatientSelectionActivity extends AppCompatActivity {
+    private TextView btnPatientTitle;
+    private LinearLayout ll1;
+    private LinearLayout ll2;
+    private LinearLayout ll3;
     private String username = "";
     private List<Patient> allPatients;
     private int columnCounter = 1;
@@ -39,12 +43,27 @@ public class PatientSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_selection);
 
+        ll1 = (LinearLayout) findViewById(R.id.llFirstColumn);
+        ll2 = (LinearLayout) findViewById(R.id.llSecondColumn);
+        ll3 = (LinearLayout) findViewById(R.id.llThirdColumn);
+        btnPatientTitle = (TextView) findViewById(R.id.btnPatient);
+        btnPatientTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                refreshView(ll1);
+                refreshView(ll2);
+                refreshView(ll3);
+            }
+        });
+
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             username = extras.getString("usernameKey");
         }
         addAllPatients();
     }
+
 
     public void navigateNextActivity(Patient patient) {
         //jump to Menu
@@ -66,9 +85,6 @@ public class PatientSelectionActivity extends AppCompatActivity {
                     for (Patient patient : allPatients) {
                         addPatientBtn(patient);
                     }
-                    LinearLayout ll1 = (LinearLayout) findViewById(R.id.llFirstColumn);
-                    LinearLayout ll2 = (LinearLayout) findViewById(R.id.llSecondColumn);
-                    LinearLayout ll3 = (LinearLayout) findViewById(R.id.llThirdColumn);
                     refreshView(ll1);
                     refreshView(ll2);
                     refreshView(ll3);
@@ -94,9 +110,6 @@ public class PatientSelectionActivity extends AppCompatActivity {
                 navigateNextActivity(patient);
             }
         });
-        LinearLayout ll1 = (LinearLayout) findViewById(R.id.llFirstColumn);
-        LinearLayout ll2 = (LinearLayout) findViewById(R.id.llSecondColumn);
-        LinearLayout ll3 = (LinearLayout) findViewById(R.id.llThirdColumn);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(10, 20, 10, 20);
         switch (columnCounter) {
