@@ -7,6 +7,9 @@
     <color name="colorBlue">#B72D3B8D</color>
     <color name="colorLightBlue">#372D3B8D</color>
     <color name="colorVeryLightBlue">#1D2D3B8D</color>
+    <color name="colorVeryLightGreen">#1D338D2D</color>
+    <color name="colorLightGreen">#632D8D2F</color>
+    <color name="colorDarkGreen">#095E15</color>
     <color name="white">#FFFFFF</color>
 
     <color name="button_pressed">#632D3B8D</color>

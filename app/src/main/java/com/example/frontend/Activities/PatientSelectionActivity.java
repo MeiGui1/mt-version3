@@ -50,9 +50,10 @@ public class PatientSelectionActivity extends AppCompatActivity {
         btnPatientTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                refreshView(ll1);
-                refreshView(ll2);
-                refreshView(ll3);
+                ll1.removeAllViews();
+                ll2.removeAllViews();
+                ll3.removeAllViews();
+                addAllPatients();
             }
         });
 
@@ -85,9 +86,6 @@ public class PatientSelectionActivity extends AppCompatActivity {
                     for (Patient patient : allPatients) {
                         addPatientBtn(patient);
                     }
-                    refreshView(ll1);
-                    refreshView(ll2);
-                    refreshView(ll3);
                 }
             }
 

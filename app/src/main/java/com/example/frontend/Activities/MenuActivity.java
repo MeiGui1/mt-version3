@@ -44,6 +44,8 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
+        setTitle(getString(R.string.overview));
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             patient = (Patient) extras.getSerializable("patient");
@@ -213,6 +215,7 @@ public class MenuActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, psychosocialFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_psychosocial);
                 break;
+                /*
             case R.id.btnRecognizer:
                 setTitle(getString(R.string.recognizer));
                 RecognizerFragment recognizerFrag = new RecognizerFragment();
@@ -220,6 +223,7 @@ public class MenuActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, recognizerFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_recognizer);
                 break;
+                */
             case R.id.btnTranslator:
                 setTitle(getString(R.string.translator));
                 TranslatorFragment translatorFrag = new TranslatorFragment();

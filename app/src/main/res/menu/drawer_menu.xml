@@ -28,10 +28,12 @@
                         android:id="@+id/nav_psychosocial"
                         android:icon="@drawable/ic_psychosocial"
                         android:title="@string/psychosocial" />
+                    <!--
                     <item
                         android:id="@+id/nav_recognizer"
                         android:icon="@drawable/ic_recognizer"
                         android:title="@string/recognizer" />
+                    -->
                     <item
                         android:id="@+id/nav_translator"
                         android:icon="@drawable/ic_translator"
