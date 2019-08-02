@@ -260,4 +260,9 @@ public class MenuActivity extends AppCompatActivity {
     }
 
 
+    public void navigateBackToPatients(View view) {
+        setTitle("Patienten");
+        Intent intent = new Intent(MenuActivity.this, PatientSelectionActivity.class);
+        startActivity(intent);
+    }
 }

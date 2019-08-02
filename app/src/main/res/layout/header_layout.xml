@@ -8,7 +8,8 @@
     android:gravity="bottom"
     android:orientation="horizontal"
     android:padding="16dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:onClick="navigateBackToPatients">
 
     <TextView
         android:id="@+id/tvUsername"

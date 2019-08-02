@@ -95,6 +95,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         radioGroup = (RadioGroup) cView.findViewById(R.id.rgClasses);
         for (String diagnosisClass : allDiagnosisClasses) {
             final RadioButton radioBtn = new RadioButton(getContext());
+            radioBtn.setId(allDiagnosisClasses.indexOf(diagnosisClass));
             RadioGroup.LayoutParams lp = new RadioGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
@@ -116,6 +117,12 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
                 }
             });
             radioGroup.addView(radioBtn);
+            if(firstRadioBtn){
+                allPatientDiagnosisIdsOfClass.clear();
+                addDiagnosisButtons((String)radioBtn.getText());
+                radioGroup.check(radioBtn.getId());
+                firstRadioBtn = false;
+            }
         }
     }
 

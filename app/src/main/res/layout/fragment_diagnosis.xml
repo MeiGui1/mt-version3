@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
-        android:padding="30dp"
+        android:paddingHorizontal="50dp"
+        android:paddingTop="50dp"
         >
     </RadioGroup>
 
@@ -22,7 +23,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:fillViewport="true"
-        android:paddingHorizontal="70dp"
+        android:paddingHorizontal="50dp"
         android:paddingTop="30dp"
         android:paddingBottom="100dp">
 

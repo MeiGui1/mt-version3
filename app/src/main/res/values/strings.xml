@@ -76,4 +76,11 @@
     <string name="awareness">Gefördetes Bewusstsein</string>
     <string name="other_reasons">Andere Gründe</string>
 
+    <!-- Medien -->
+    <string name="gallery">Galerie</string>
+    <string name="videos">Videos</string>
+    <string name="documents">Dokumente</string>
+    <string name="websites">Webseiten</string>
+
+
 </resources>
