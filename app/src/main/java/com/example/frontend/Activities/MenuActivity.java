@@ -122,12 +122,14 @@ public class MenuActivity extends AppCompatActivity {
                         psychosocialFrag.setArguments(bundlePatientId);
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, psychosocialFrag).commit();
                         break;
+                        /*
                     case R.id.nav_recognizer:
                         setTitle(getString(R.string.recognizer));
                         RecognizerFragment recognizerFrag = new RecognizerFragment();
                         recognizerFrag.setArguments(bundlePatientId);
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, recognizerFrag).commit();
                         break;
+                        */
                     case R.id.nav_translator:
                         setTitle(getString(R.string.translator));
                         TranslatorFragment translatorFrag = new TranslatorFragment();

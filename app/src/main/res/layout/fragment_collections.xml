@@ -8,7 +8,7 @@
     >
 
     <RadioGroup
-        android:id="@+id/rgClasses"
+        android:id="@+id/rgMedia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -16,58 +16,78 @@
         android:paddingHorizontal="50dp"
         android:paddingTop="50dp"
         >
+
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rbGallery"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/radiobutton_selector"
+            android:button="@null"
+            android:drawableLeft="@drawable/ic_image_black"
             android:gravity="center"
-            android:padding="10dp"
-            android:textSize="18sp"
+            android:paddingVertical="10dp"
+            android:paddingLeft="70dp"
+            android:paddingRight="66dp"
             android:singleLine="true"
             android:text="@string/gallery"
-            android:button="@null"
-            />
+            android:textColor="@color/radiobutton_text_selected"
+            android:textSize="18sp" />
+
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rbVideos"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/radiobutton_selector"
+            android:button="@null"
+            android:drawableLeft="@drawable/ic_movie_black"
             android:gravity="center"
-            android:padding="10dp"
-            android:textSize="18sp"
+            android:paddingVertical="10dp"
+            android:paddingLeft="70dp"
+            android:paddingRight="66dp"
             android:singleLine="true"
             android:text="@string/videos"
-            android:button="@null"
-            />
+            android:textColor="@color/radiobutton_text_selected"
+            android:textSize="18sp" />
+
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rbDocuments"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/radiobutton_selector"
+            android:button="@null"
+            android:drawableLeft="@drawable/ic_document_black"
             android:gravity="center"
-            android:padding="10dp"
-            android:textSize="18sp"
+            android:paddingVertical="10dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="46dp"
             android:singleLine="true"
             android:text="@string/documents"
-            android:button="@null"
-            />
+            android:textColor="@color/radiobutton_text_selected"
+            android:textSize="18sp" />
+
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/rbWebsites"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/radiobutton_selector"
+            android:button="@null"
+            android:drawableLeft="@drawable/ic_web_black"
             android:gravity="center"
-            android:padding="10dp"
-            android:textSize="18sp"
+            android:paddingVertical="10dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="46dp"
             android:singleLine="true"
             android:text="@string/websites"
-            android:button="@null"
-            />
+            android:textColor="@color/radiobutton_text_selected"
+            android:textSize="18sp" />
     </RadioGroup>
 
     <ScrollView
-        android:id="@+id/svDiagnoses"
+        android:id="@+id/svMedia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -81,28 +101,36 @@
             android:layout_height="match_parent"
             android:baselineAligned="false"
             android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@color/colorVeryLightBlue"
             android:weightSum="3">
 
             <LinearLayout
                 android:id="@+id/llFirstColumn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp"
+                android:backgroundTint="@color/colorVeryLightBlue"/>
 
             <LinearLayout
                 android:id="@+id/llSecondColumn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical" />
+                android:backgroundTint="@color/colorVeryLightBlue"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp" />
 
             <LinearLayout
                 android:id="@+id/llThirdColumn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingHorizontal="10dp"
                 android:layout_weight="1"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:backgroundTint="@color/colorVeryLightBlue"/>
         </LinearLayout>
     </ScrollView>
 

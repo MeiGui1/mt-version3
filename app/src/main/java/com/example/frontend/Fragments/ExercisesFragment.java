@@ -1,6 +1,7 @@
 package com.example.frontend.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.frontend.Models.ExercisePhoto;
@@ -30,6 +32,7 @@ import com.example.frontend.Models.Note;
 import com.example.frontend.Models.PatientExercise;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -58,6 +61,9 @@ public class ExercisesFragment extends Fragment {
     private LinearLayout llPictures;
     private int lastPhotoId;
 
+    Dialog myDialog;
+
+
     private View.OnClickListener onClickListener;
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
@@ -79,6 +85,7 @@ public class ExercisesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         showInitialSelection();
+        myDialog = new Dialog(getActivity());
         onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,7 +148,7 @@ public class ExercisesFragment extends Fragment {
         addExercisePhotosToView();
     }
 
-    public void addExercisePhotosToView(){
+    public void addExercisePhotosToView() {
         Call<List<ExercisePhoto>> call = jsonPlaceHolderApi.getExercisePhotosOfPatient(patientId);
         call.enqueue(new Callback<List<ExercisePhoto>>() {
             @Override
@@ -262,6 +269,12 @@ public class ExercisesFragment extends Fragment {
         image.setAdjustViewBounds(true);
         image.setPadding(5, 5, 5, 5);
         image.setImageBitmap(photo);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopup(photo);
+            }
+        });
         registerForContextMenu(image);
         llPictures.addView(image);
     }
@@ -326,9 +339,25 @@ public class ExercisesFragment extends Fragment {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
         });
+    }
+
+    private void showPopup(Bitmap image) {
+        myDialog.setContentView(R.layout.popup_image);
+        TextView btnClose;
+        PhotoView photoView = (PhotoView) myDialog.findViewById(R.id.ivDisplay);
+        photoView.setImageBitmap(image);
+        btnClose = (TextView) myDialog.findViewById(R.id.btnCloseImage);
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+            }
+        });
+        myDialog.show();
     }
 }
