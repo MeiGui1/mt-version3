@@ -5,8 +5,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,13 +19,16 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.VideoView;
 
+import com.example.frontend.Activities.MainActivity;
 import com.example.frontend.Models.Note;
 import com.example.frontend.R;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -78,55 +82,16 @@ public class CollectionsFragment extends Fragment {
                 clearScrollView();
                 switch (checkedId) {
                     case R.id.rbGallery:
-                        rbGallery.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_white, 0, 0, 0);
-                        List<String> allImagePaths = new ArrayList<>();
-                        allImagePaths = getImagesPath();
-                        for (final String path : allImagePaths) {
-                            ImageView newIv = new ImageView(getContext());
-                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                    220);
-                            lp.setMargins(0, 10, 0, 10);
-                            newIv.setLayoutParams(lp);
-                            final Bitmap myBitmap = BitmapFactory.decodeFile(path);
-                            Bitmap cutBitmap = scaleCenterCrop(myBitmap, 220, 280);
-                            newIv.setAdjustViewBounds(true);
-                            newIv.setImageBitmap(cutBitmap);
-                            newIv.setPadding(7, 7, 7, 7);
-                            newIv.setId(allImagePaths.indexOf(path));
-                            newIv.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    showPopup(myBitmap);
-                                }
-                            });
-                            registerForContextMenu(newIv);
-                            switch (columnCounter) {
-                                case 1:
-                                    ll1.addView(newIv);
-                                    columnCounter++;
-                                    break;
-                                case 2:
-                                    ll2.addView(newIv);
-                                    columnCounter++;
-                                    break;
-                                case 3:
-                                    ll3.addView(newIv);
-                                    columnCounter = 1;
-                                    break;
-                            }
-                        }
+                        setUpGallery();
                         break;
                     case R.id.rbVideos:
-                        rbVideos.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_movie_white, 0, 0, 0);
-
+                        setUpVideos();
                         break;
                     case R.id.rbDocuments:
-                        rbDocuments.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_document_white, 0, 0, 0);
-
+                        setUpDocuments();
                         break;
                     case R.id.rbWebsites:
-                        rbWebsites.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_web_white, 0, 0, 0);
-
+                        setUpWebsites();
                         break;
                 }
             }
@@ -171,6 +136,31 @@ public class CollectionsFragment extends Fragment {
             listOfAllImages.add(PathOfImage);
         }
         return listOfAllImages;
+    }
+
+    public ArrayList<String> getVideosPath() {
+        Uri uri;
+        ArrayList<String> listOfAllVideos = new ArrayList<String>();
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+        String PathOfVideo = null;
+        uri = android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = {MediaStore.MediaColumns.DATA,
+                MediaStore.Video.Media.BUCKET_DISPLAY_NAME};
+
+        cursor = getActivity().getContentResolver().query(uri, projection, null,
+                null, null);
+
+        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        column_index_folder_name = cursor
+                .getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_DISPLAY_NAME);
+        while (cursor.moveToNext()) {
+            PathOfVideo = cursor.getString(column_index_data);
+
+            listOfAllVideos.add(PathOfVideo);
+        }
+        return listOfAllVideos;
     }
 
     public Bitmap scaleCenterCrop(Bitmap source, int newHeight, int newWidth) {
@@ -243,7 +233,7 @@ public class CollectionsFragment extends Fragment {
         }
     }
 
-    private void showPopup(Bitmap image) {
+    private void showImagePopup(Bitmap image) {
         myDialog.setContentView(R.layout.popup_image);
         TextView btnClose;
         PhotoView photoView = (PhotoView) myDialog.findViewById(R.id.ivDisplay);
@@ -257,4 +247,143 @@ public class CollectionsFragment extends Fragment {
         });
         myDialog.show();
     }
+
+    private void showVideoPopup(String path) {
+        myDialog.setContentView(R.layout.popup_video);
+        TextView btnClose;
+        final VideoView videoView = (VideoView) myDialog.findViewById(R.id.vvDisplay);
+        videoView.setVideoPath(path);
+
+
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+                    @Override
+                    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                        /*
+                         * add media controller
+                         */
+                        MediaController mc = new MediaController(getContext());
+                        videoView.setMediaController(mc);
+                        /*
+                         * and set its position on screen
+                         */
+                        mc.setAnchorView(videoView);
+
+                        ((ViewGroup) mc.getParent()).removeView(mc);
+
+                        ((FrameLayout) myDialog.findViewById(R.id.vvWrapper))
+                                .addView(mc);
+                        mc.setVisibility(View.VISIBLE);
+                    }
+                });
+                videoView.start();
+
+            }
+        });
+
+
+
+        btnClose = (TextView) myDialog.findViewById(R.id.btnCloseImage);
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+            }
+        });
+        myDialog.show();
+    }
+
+    private void setUpGallery() {
+        rbGallery.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_white, 0, 0, 0);
+        List<String> allImagePaths = new ArrayList<>();
+        allImagePaths = getImagesPath();
+        for (final String path : allImagePaths) {
+            ImageView newIv = new ImageView(getContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    220);
+            lp.setMargins(0, 10, 0, 10);
+            newIv.setLayoutParams(lp);
+            final Bitmap myBitmap = BitmapFactory.decodeFile(path);
+            Bitmap cutBitmap = scaleCenterCrop(myBitmap, 220, 280);
+            newIv.setAdjustViewBounds(true);
+            newIv.setImageBitmap(cutBitmap);
+            newIv.setPadding(7, 7, 7, 7);
+            newIv.setId(allImagePaths.indexOf(path));
+            newIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showImagePopup(myBitmap);
+                }
+            });
+            registerForContextMenu(newIv);
+            switch (columnCounter) {
+                case 1:
+                    ll1.addView(newIv);
+                    columnCounter++;
+                    break;
+                case 2:
+                    ll2.addView(newIv);
+                    columnCounter++;
+                    break;
+                case 3:
+                    ll3.addView(newIv);
+                    columnCounter = 1;
+                    break;
+            }
+        }
+    }
+
+    private void setUpVideos() {
+        rbVideos.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_movie_white, 0, 0, 0);
+        List<String> allVideoPaths = new ArrayList<>();
+        allVideoPaths = getVideosPath();
+        for (final String path : allVideoPaths) {
+            ImageView newIv = new ImageView(getContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    220);
+            lp.setMargins(0, 10, 0, 10);
+            newIv.setLayoutParams(lp);
+            final Bitmap myBitmap = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
+            Bitmap cutBitmap = scaleCenterCrop(myBitmap, 220, 280);
+            newIv.setAdjustViewBounds(true);
+            newIv.setImageBitmap(cutBitmap);
+            newIv.setPadding(7, 7, 7, 7);
+            newIv.setId(allVideoPaths.indexOf(path));
+            newIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showVideoPopup(path);
+                }
+            });
+            registerForContextMenu(newIv);
+            switch (columnCounter) {
+                case 1:
+                    ll1.addView(newIv);
+                    columnCounter++;
+                    break;
+                case 2:
+                    ll2.addView(newIv);
+                    columnCounter++;
+                    break;
+                case 3:
+                    ll3.addView(newIv);
+                    columnCounter = 1;
+                    break;
+            }
+        }
+
+    }
+
+    private void setUpDocuments() {
+        rbDocuments.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_document_white, 0, 0, 0);
+
+    }
+
+    private void setUpWebsites() {
+        rbDocuments.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_web_white, 0, 0, 0);
+
+    }
+
 }
