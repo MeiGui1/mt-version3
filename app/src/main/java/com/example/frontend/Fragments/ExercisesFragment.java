@@ -114,7 +114,7 @@ public class ExercisesFragment extends Fragment {
                     removePatientExercise(patientId, exerciseTitle);
                 } else {
                     view.setSelected(true);
-                    view.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                    view.setBackgroundColor(getResources().getColor(R.color.colorBlue));
 
                     PatientExercise newPatientExercise = new PatientExercise();
                     newPatientExercise.setExerciseTypeTitle(exerciseTitle);
@@ -202,23 +202,23 @@ public class ExercisesFragment extends Fragment {
                         switch (patientExercise.getExerciseTypeTitle()) {
                             case "Selbstbeobachtung":
                                 ivObservation.setSelected(true);
-                                ivObservation.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                ivObservation.setBackgroundColor(getResources().getColor(R.color.colorBlue));
                                 break;
                             case "Muskeldehnung":
                                 ivElongation.setSelected(true);
-                                ivElongation.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                ivElongation.setBackgroundColor(getResources().getColor(R.color.colorBlue));
                                 break;
                             case "Medikamentenpflaster":
                                 ivPatch.setSelected(true);
-                                ivPatch.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                ivPatch.setBackgroundColor(getResources().getColor(R.color.colorBlue));
                                 break;
                             case "MassageWange":
                                 ivCheek.setSelected(true);
-                                ivCheek.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                ivCheek.setBackgroundColor(getResources().getColor(R.color.colorBlue));
                                 break;
                             case "MassageSchlaefe":
                                 ivTemple.setSelected(true);
-                                ivTemple.setBackgroundColor(getResources().getColor(R.color.colorDarkBlue));
+                                ivTemple.setBackgroundColor(getResources().getColor(R.color.colorBlue));
                                 break;
                         }
                     }

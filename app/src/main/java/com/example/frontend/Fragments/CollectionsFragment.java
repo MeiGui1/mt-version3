@@ -1,20 +1,28 @@
 package com.example.frontend.Fragments;
 
 import android.app.Dialog;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +40,11 @@ import com.example.frontend.Activities.MainActivity;
 import com.example.frontend.Models.Note;
 import com.example.frontend.R;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +64,8 @@ public class CollectionsFragment extends Fragment {
     private int columnCounter = 1;
     private int longClickedMedia;
     Dialog myDialog;
+    boolean documentSelected = false;
+    ColorStateList defaultTextColor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,12 +96,15 @@ public class CollectionsFragment extends Fragment {
                 clearScrollView();
                 switch (checkedId) {
                     case R.id.rbGallery:
+                        documentSelected = false;
                         setUpGallery();
                         break;
                     case R.id.rbVideos:
+                        documentSelected = false;
                         setUpVideos();
                         break;
                     case R.id.rbDocuments:
+                        documentSelected = true;
                         setUpDocuments();
                         break;
                     case R.id.rbWebsites:
@@ -163,6 +180,64 @@ public class CollectionsFragment extends Fragment {
         return listOfAllVideos;
     }
 
+    public void getPDFsPath(File dir) {
+        String pdfPattern = ".pdf";
+        File FileList[] = dir.listFiles();
+
+        if (FileList != null) {
+            for (int i = 0; i < FileList.length; i++) {
+                if (FileList[i].isDirectory()) {
+                    getPDFsPath(FileList[i]);
+                } else {
+                    if (FileList[i].getName().endsWith(pdfPattern)) {
+                        final TextView newIv = new TextView(getContext());
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                180);
+                        lp.setMargins(0, 10, 0, 10);
+                        newIv.setLayoutParams(lp);
+                        newIv.setPadding(0, 25, 0, 15);
+                        newIv.setId(ViewCompat.generateViewId());
+                        newIv.setText(FileList[i].getName());
+                        defaultTextColor = newIv.getTextColors();
+                        newIv.setGravity(Gravity.CENTER);
+                        Drawable resizedDrawable = resize(getResources().getDrawable(R.drawable.pdf_thumbnail));
+
+                        newIv.setCompoundDrawablesWithIntrinsicBounds(null, resizedDrawable, null, null);
+                        newIv.setCompoundDrawablePadding(-15);
+                        newIv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                //showImagePopup(myBitmap);
+                            }
+                        });
+                        registerForContextMenu(newIv);
+                        switch (columnCounter) {
+                            case 1:
+                                ll1.addView(newIv);
+                                columnCounter++;
+                                break;
+                            case 2:
+                                ll2.addView(newIv);
+                                columnCounter++;
+                                break;
+                            case 3:
+                                ll3.addView(newIv);
+                                columnCounter = 1;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Drawable resize(Drawable image) {
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 100, 100, false);
+        return new BitmapDrawable(getResources(), bitmapResized);
+    }
+
     public Bitmap scaleCenterCrop(Bitmap source, int newHeight, int newWidth) {
         int sourceWidth = source.getWidth();
         int sourceHeight = source.getHeight();
@@ -205,12 +280,16 @@ public class CollectionsFragment extends Fragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        ImageView selectedIv = getView().findViewById(longClickedMedia);
+        View selectedIv = getView().findViewById(longClickedMedia);
         switch (item.getItemId()) {
             case R.id.selectOption:
                 if (selectedIv.isSelected()) {
                     selectedIv.setSelected(false);
                     selectedIv.setBackgroundColor(0);
+                    if(documentSelected){
+                        TextView tv = getView().findViewById(longClickedMedia);
+                        tv.setTextColor(defaultTextColor);
+                    }
                     Note updatedNote = new Note();
                     /*
                     updatedNote.setSelected(false);
@@ -220,6 +299,10 @@ public class CollectionsFragment extends Fragment {
                 } else {
                     selectedIv.setSelected(true);
                     selectedIv.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                    if(documentSelected){
+                        TextView tv = getView().findViewById(longClickedMedia);
+                        tv.setTextColor(Color.WHITE);
+                    }
                     Note updatedNote = new Note();
                     /*
                     updatedNote.setSelected(true);
@@ -282,7 +365,6 @@ public class CollectionsFragment extends Fragment {
 
             }
         });
-
 
 
         btnClose = (TextView) myDialog.findViewById(R.id.btnCloseImage);
@@ -357,7 +439,6 @@ public class CollectionsFragment extends Fragment {
                     showVideoPopup(path);
                 }
             });
-            registerForContextMenu(newIv);
             switch (columnCounter) {
                 case 1:
                     ll1.addView(newIv);
@@ -378,7 +459,8 @@ public class CollectionsFragment extends Fragment {
 
     private void setUpDocuments() {
         rbDocuments.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_document_white, 0, 0, 0);
-
+        File dir = Environment.getExternalStorageDirectory();
+        getPDFsPath(dir);
     }
 
     private void setUpWebsites() {
