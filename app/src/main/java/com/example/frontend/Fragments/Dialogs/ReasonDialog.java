@@ -59,7 +59,7 @@ public class ReasonDialog extends AppCompatDialogFragment {
 
                     }
                 })
-                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String otherReasonsText = "";

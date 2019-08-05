@@ -1,0 +1,28 @@
+package com.example.frontend.Models;
+
+import com.google.gson.annotations.SerializedName;
+
+public class PatientWebsite {
+
+    @SerializedName("patient_id")
+    private int patientId;
+
+    @SerializedName("websitetype_id")
+    private int websiteTypeId;
+
+    public int getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
+    }
+
+    public int getWebsiteTypeId() {
+        return websiteTypeId;
+    }
+
+    public void setWebsiteTypeId(int websiteTypeId) {
+        this.websiteTypeId = websiteTypeId;
+    }
+}

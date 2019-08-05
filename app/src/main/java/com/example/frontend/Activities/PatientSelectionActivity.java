@@ -44,6 +44,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
     private List<Patient> allPatients;
     private int columnCounter = 1;
     Context context = this;
+    private boolean editPatient = false;
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -74,7 +75,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         btnAddPatient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openPatientDialog();
+                openPatientDialog(null);
             }
         });
 
@@ -85,8 +86,11 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         addAllPatients();
     }
 
-    public void openPatientDialog() {
+    public void openPatientDialog(Patient patient) {
         PatientDialog patientDialog = new PatientDialog();
+        Bundle args = new Bundle();
+        args.putSerializable("patient", patient);
+        patientDialog.setArguments(args);
         patientDialog.show(getSupportFragmentManager(), "Patient Dialog");
     }
 
@@ -99,7 +103,17 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         if (!gender.isEmpty()) {
             newPatient.setGender(gender);
         }
-        addNewPatient(newPatient);
+        if(editPatient)
+        {
+            updatePatient(lastPatientId, newPatient);
+            ll1.removeAllViews();
+            ll2.removeAllViews();
+            ll3.removeAllViews();
+            addAllPatients();
+            editPatient = false;
+        }else{
+            addNewPatient(newPatient);
+        }
     }
 
     public void addNewPatient(final Patient patient) {
@@ -125,6 +139,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
     }
 
     public void addAllPatients() {
+        columnCounter = 1;
         Call<List<Patient>> call = jsonPlaceHolderApi.getAllPatients();
         call.enqueue(new Callback<List<Patient>>() {
             @Override
@@ -207,6 +222,8 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         Button selectedIv = findViewById(lastPatientId);
         switch (item.getItemId()) {
             case R.id.editOption:
+                editPatient = true;
+                setUpPatientDialog(lastPatientId);
 
                 return true;
             case R.id.deleteOption:
@@ -218,8 +235,41 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         }
     }
 
+    public void setUpPatientDialog(int id) {
+        Call<Patient> call = jsonPlaceHolderApi.getPatient(id);
+        call.enqueue(new Callback<Patient>() {
+            @Override
+            public void onResponse(Call<Patient> call, Response<Patient> response) {
+                Patient patient = response.body();
+                openPatientDialog(patient);
+            }
+
+            @Override
+            public void onFailure(Call<Patient> call, Throwable t) {
+                Toast.makeText(PatientSelectionActivity.this, "get patient Id NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void deletePatient(int patientId) {
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatient(patientId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                ll1.removeAllViews();
+                ll2.removeAllViews();
+                ll3.removeAllViews();
+                addAllPatients();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
+    }
+
+    public void updatePatient(int patientId, final Patient updatedPatient) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.updatePatient(patientId, updatedPatient);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -227,6 +277,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(PatientSelectionActivity.this, "create patient NOT successful", Toast.LENGTH_SHORT).show();
             }
         });
     }

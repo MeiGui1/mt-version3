@@ -86,6 +86,18 @@
             android:textSize="18sp" />
     </RadioGroup>
 
+    <ImageView
+        android:id="@+id/btnAddWebsite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/button_style_round"
+        android:padding="10dp"
+        android:src="@drawable/ic_add"
+        android:text="Button" />
     <ScrollView
         android:id="@+id/svMedia"
         android:layout_width="match_parent"
@@ -93,9 +105,8 @@
         android:layout_weight="1"
         android:fillViewport="true"
         android:paddingHorizontal="50dp"
-        android:paddingTop="30dp"
-        android:paddingBottom="100dp">
-
+        android:layout_marginBottom="70dp"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -110,9 +121,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:backgroundTint="@color/colorVeryLightBlue"
                 android:orientation="vertical"
-                android:paddingHorizontal="10dp"
-                android:backgroundTint="@color/colorVeryLightBlue"/>
+                android:paddingHorizontal="10dp">
+
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/llSecondColumn"

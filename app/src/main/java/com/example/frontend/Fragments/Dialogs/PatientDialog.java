@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
@@ -28,6 +29,7 @@ public class PatientDialog extends AppCompatDialogFragment {
     private EditText etName;
     private boolean nameEmpty = true;
     private RadioGroup rgGender;
+    Patient patient;
 
     public interface PatientDialogListener {
         void applyTexts(String name, String gender);
@@ -44,12 +46,14 @@ public class PatientDialog extends AppCompatDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        patient = (Patient) getArguments().getSerializable("patient");
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.layout_patient_dialog, null);
 
         builder.setView(view)
-                .setTitle(R.string.create_new_patient)
+                .setTitle(R.string.create_patient)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -78,6 +82,7 @@ public class PatientDialog extends AppCompatDialogFragment {
         etName = view.findViewById(R.id.etName);
         rgGender = view.findViewById(R.id.rgGender);
 
+
         etName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -105,6 +110,7 @@ public class PatientDialog extends AppCompatDialogFragment {
                 validateInputs();
             }
         });
+
         return builder.create();
     }
 
@@ -113,6 +119,17 @@ public class PatientDialog extends AppCompatDialogFragment {
         super.onStart();
         AlertDialog dialog = (AlertDialog) getDialog();
         dialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
+
+
+        if(patient != null){
+            dialog.setTitle(R.string.edit_patient);
+            etName.setText(patient.getShortname());
+            if(patient.getGender().equals("Female")) {
+                rgGender.check(R.id.rbFemale);
+            }else{
+                rgGender.check(R.id.rbMale);
+            }
+        }
 
     }
 

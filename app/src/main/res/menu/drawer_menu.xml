@@ -67,12 +67,12 @@
         </item>
 
     </group>
-    <item android:title="Communicate">
+    <item android:title="@string/conclusion">
         <menu>
             <item
                 android:id="@+id/nav_person"
-                android:icon="@drawable/ic_person"
-                android:title="Person" />
+                android:icon="@drawable/ic_summary"
+                android:title="@string/create_summary" />
         </menu>
     </item>
 </menu>

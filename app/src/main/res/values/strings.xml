@@ -5,7 +5,8 @@
     <string name="navigation_drawer_close">Navigation schliessen</string>
     <string name="title_activity_patient_selection">PatientSelectionActivity</string>
 
-    <string name="create_new_patient">Neuen Patienten erfassen</string>
+    <string name="edit_patient">Patienten bearbeiten</string>
+    <string name="create_patient">Neuen Patienten erfassen</string>
     <string name="name">Name</string>
     <string name="gender">Anrede</string>
     <string name="mrs">Frau</string>
@@ -95,5 +96,16 @@
     <string name="documents">Dokumente</string>
     <string name="websites">Webseiten</string>
 
+    <string name="title">Titel</string>
+    <string name="url">URL</string>
+    <string name="description">Beschreibung</string>
+    <string name="title_example">(z.B. Google)</string>
+    <string name="url_example">(z.B. www.google.ch)</string>
+    <string name="description_example">(z.B. Google ist eine Internet-Suchmaschine …)</string>
+    <string name="add_website">Webseite hinzufügen</string>
+
+    <!-- Zusammenfassung -->
+    <string name="conclusion">Abschluss</string>
+    <string name="create_summary">Zusammenfassung erstellen</string>
 
 </resources>

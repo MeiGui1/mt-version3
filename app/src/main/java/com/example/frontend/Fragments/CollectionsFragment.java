@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -21,23 +22,32 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.TooltipCompat;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.example.frontend.Activities.MainActivity;
+import com.example.frontend.Fragments.Dialogs.PatientDialog;
+import com.example.frontend.Fragments.Dialogs.WebsiteDialog;
 import com.example.frontend.Models.Note;
+import com.example.frontend.Models.Patient;
+import com.example.frontend.Models.WebsiteType;
 import com.example.frontend.R;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnDrawListener;
@@ -50,7 +60,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectionsFragment extends Fragment {
+public class CollectionsFragment extends Fragment implements WebsiteDialog.WebsiteDialogListener {
 
     private int patientId;
     private int selectedRadioButton;
@@ -66,8 +76,10 @@ public class CollectionsFragment extends Fragment {
     private int columnCounter = 1;
     private int longClickedMedia;
     Dialog myDialog;
-    boolean documentSelected = false;
+    private int lastWebsiteTypeId;
+
     ColorStateList defaultTextColor;
+    ImageView btnAddWebsite;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,6 +93,13 @@ public class CollectionsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         cview = view;
+        btnAddWebsite = view.findViewById(R.id.btnAddWebsite);
+        btnAddWebsite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openWebsiteDialog();
+            }
+        });
         rgMedia = view.findViewById(R.id.rgMedia);
         rbGallery = view.findViewById(R.id.rbGallery);
         rbVideos = view.findViewById(R.id.rbVideos);
@@ -98,18 +117,16 @@ public class CollectionsFragment extends Fragment {
                 clearScrollView();
                 switch (checkedId) {
                     case R.id.rbGallery:
-                        documentSelected = false;
                         setUpGallery();
                         break;
                     case R.id.rbVideos:
-                        documentSelected = false;
                         setUpVideos();
                         break;
                     case R.id.rbDocuments:
-                        documentSelected = true;
                         setUpDocuments();
                         break;
                     case R.id.rbWebsites:
+                        btnAddWebsite.setVisibility(View.VISIBLE);
                         setUpWebsites();
                         break;
                 }
@@ -126,6 +143,7 @@ public class CollectionsFragment extends Fragment {
     }
 
     private void clearScrollView() {
+        btnAddWebsite.setVisibility(View.INVISIBLE);
         columnCounter = 1;
         ll1.removeAllViews();
         ll2.removeAllViews();
@@ -193,38 +211,43 @@ public class CollectionsFragment extends Fragment {
                 } else {
                     if (FileList[i].getName().endsWith(pdfPattern)) {
                         final File file = FileList[i];
-                        final TextView newIv = new TextView(getContext());
+                        final LinearLayout llPdf = new LinearLayout(getContext());
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                                 180);
+                        llPdf.setLayoutParams(lp);
+                        final TextView newIv = new TextView(getContext());
                         lp.setMargins(0, 10, 0, 10);
                         newIv.setLayoutParams(lp);
                         newIv.setPadding(0, 25, 0, 15);
-                        newIv.setId(ViewCompat.generateViewId());
+                        llPdf.setId(ViewCompat.generateViewId());
                         newIv.setText(FileList[i].getName());
+                        newIv.setBackgroundColor(getResources().getColor(R.color.white));
                         defaultTextColor = newIv.getTextColors();
                         newIv.setGravity(Gravity.CENTER);
                         Drawable resizedDrawable = resize(getResources().getDrawable(R.drawable.pdf_thumbnail));
 
                         newIv.setCompoundDrawablesWithIntrinsicBounds(null, resizedDrawable, null, null);
                         newIv.setCompoundDrawablePadding(-15);
-                        newIv.setOnClickListener(new View.OnClickListener() {
+                        llPdf.addView(newIv);
+                        llPdf.setPadding(7, 0, 7, 7);
+                        llPdf.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 showPDFPopup(file);
                             }
                         });
-                        registerForContextMenu(newIv);
+                        registerForContextMenu(llPdf);
                         switch (columnCounter) {
                             case 1:
-                                ll1.addView(newIv);
+                                ll1.addView(llPdf);
                                 columnCounter++;
                                 break;
                             case 2:
-                                ll2.addView(newIv);
+                                ll2.addView(llPdf);
                                 columnCounter++;
                                 break;
                             case 3:
-                                ll3.addView(newIv);
+                                ll3.addView(llPdf);
                                 columnCounter = 1;
                                 break;
                         }
@@ -277,40 +300,22 @@ public class CollectionsFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.media_menu, menu);
-        longClickedMedia = v.getId();
+        lastWebsiteTypeId = v.getId();
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        View selectedIv = getView().findViewById(longClickedMedia);
+        View selectedIv = getView().findViewById(lastWebsiteTypeId);
         switch (item.getItemId()) {
             case R.id.selectOption:
                 if (selectedIv.isSelected()) {
                     selectedIv.setSelected(false);
                     selectedIv.setBackgroundColor(0);
-                    if(documentSelected){
-                        TextView tv = getView().findViewById(longClickedMedia);
-                        tv.setTextColor(defaultTextColor);
-                    }
-                    Note updatedNote = new Note();
-                    /*
-                    updatedNote.setSelected(false);
-                    updatedNote.setPatientId(patientId);
-                    updateNote(lastNoteId, updatedNote);
-                    */
+                    //deletePatientWebsite(lastWebsiteTypeId, patientId);
                 } else {
                     selectedIv.setSelected(true);
                     selectedIv.setBackgroundColor(getResources().getColor(R.color.colorBlue));
-                    if(documentSelected){
-                        TextView tv = getView().findViewById(longClickedMedia);
-                        tv.setTextColor(Color.WHITE);
-                    }
-                    Note updatedNote = new Note();
-                    /*
-                    updatedNote.setSelected(true);
-                    updatedNote.setPatientId(patientId);
-                    updateNote(lastNoteId, updatedNote);
-                    */
+                    //addPatientWebsite(lastWebsiteTypeId, patientId);
                 }
                 return true;
             default:
@@ -383,10 +388,33 @@ public class CollectionsFragment extends Fragment {
         PDFView pdfView = myDialog.findViewById(R.id.pdfView);
         pdfView.setBackgroundColor(getResources().getColor(R.color.black));
         pdfView.fromFile(file)
-                .pages(0, 2, 1, 3, 3, 3)
                 .enableSwipe(true)
                 .spacing(20)
                 .load();
+        btnClose = (TextView) myDialog.findViewById(R.id.btnCloseImage);
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+            }
+        });
+        myDialog.show();
+    }
+
+    private void showWebsitePopup(String url) {
+        myDialog.setContentView(R.layout.popup_website);
+        TextView btnClose;
+
+        if(!url.startsWith("www.")&& !url.startsWith("http://")&& !url.startsWith("https://")){
+            url = "www."+url;
+        }
+        if(!url.startsWith("https://") && !url.startsWith("http://")){
+            url = "https://"+url;
+        }
+
+        WebView webView = (WebView) myDialog.findViewById(R.id.websiteView);
+        webView.loadUrl(url);
+
         btnClose = (TextView) myDialog.findViewById(R.id.btnCloseImage);
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -484,8 +512,91 @@ public class CollectionsFragment extends Fragment {
     }
 
     private void setUpWebsites() {
-        rbDocuments.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_web_white, 0, 0, 0);
-
+        rbWebsites.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_web_white, 0, 0, 0);
+        addWebsiteButtons();
     }
 
+    private void addWebsiteButtons() {
+        WebsiteType wt1 = new WebsiteType();
+        wt1.setName("Zentrum für Zahnmedizin");
+        wt1.setUrl("www.zzm.uzh.ch/de.html");
+        wt1.setDescription("Das Zentrum für Zahnmedizin ist Teil der Universität Zürich. Als international anerkanntes Klinik-, Ausbildungs- und Forschungszentrum vereint es sieben spezialisierte Kliniken und Institute unter einem Dach. Rund 130 Zahnärztinnen und Zahnärzte setzen sich tagtäglich dafür ein, die Kaufunktion unserer Patienten zu verbessern, ihre Zähne zu erhalten oder zu verschönern, um so ihre Lebensqualität zu erhöhen.");
+        WebsiteType wt2 = new WebsiteType();
+        wt2.setName("Zentrum für Zahnmedizin");
+        wt2.setUrl("www.google.com");
+        wt2.setDescription("Bessern, ihre Zähne zu erhalten oder zu verschönern, um so ihre Lebensqualität zu erhöhen.");
+        List<WebsiteType> websiteTypes = new ArrayList<>();
+        websiteTypes.add(wt1);
+        websiteTypes.add(wt2);
+        for (final WebsiteType wt : websiteTypes) {
+            addWebsiteButton(lastWebsiteTypeId, wt);
+
+        }
+    }
+
+    private void addWebsiteButton(int websiteId, final WebsiteType wt){
+        final LinearLayout ll = new LinearLayout(getContext());
+        ll.setId(ViewCompat.generateViewId());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                200);
+        // TooltipCompat.setTooltipText(ll, wt.getDescription());
+        ll.setPadding(7, 7, 7, 7);
+        ll.setLayoutParams(lp);
+        ll.setOrientation(LinearLayout.VERTICAL);
+
+        TextView tvTitle = new TextView(getContext());
+        LinearLayout.LayoutParams lpTitle = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                60);
+        tvTitle.setLayoutParams(lpTitle);
+        tvTitle.setText(wt.getName());
+        tvTitle.setTextSize(22);
+        tvTitle.setPadding(10, 10, 10, 0);
+        tvTitle.setTextColor(getResources().getColor(R.color.colorDarkBlue));
+        tvTitle.setBackgroundColor(getResources().getColor(R.color.white));
+
+        TextView tvUrl = new TextView(getContext());
+        LinearLayout.LayoutParams lpUrl = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                140);
+        tvUrl.setLayoutParams(lpUrl);
+        tvUrl.setText(wt.getUrl());
+        tvTitle.setTextSize(18);
+        tvUrl.setPadding(10, 0, 10, 0);
+        tvUrl.setBackgroundColor(getResources().getColor(R.color.white));
+
+        ll.addView(tvTitle);
+        ll.addView(tvUrl);
+        registerForContextMenu(ll);
+
+        ll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showWebsitePopup(wt.getUrl());
+            }
+        });
+        switch (columnCounter) {
+            case 1:
+                ll1.addView(ll);
+                columnCounter++;
+                break;
+            case 2:
+                ll2.addView(ll);
+                columnCounter++;
+                break;
+            case 3:
+                ll3.addView(ll);
+                columnCounter = 1;
+                break;
+        }
+    }
+
+    public void openWebsiteDialog() {
+        WebsiteDialog websiteDialog = new WebsiteDialog();
+        websiteDialog.setTargetFragment(CollectionsFragment.this, 1);
+        websiteDialog.show(getActivity().getSupportFragmentManager(), "Website Dialog");
+    }
+
+    @Override
+    public void applyTexts(WebsiteType websiteType) {
+        addWebsiteButton(lastWebsiteTypeId, websiteType);
+    }
 }

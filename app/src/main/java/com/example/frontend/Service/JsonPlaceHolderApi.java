@@ -29,11 +29,17 @@ public interface JsonPlaceHolderApi {
     @GET("patient")
     Call<List<Patient>> getAllPatients();
 
+    @GET("patient/{id}")
+    Call<Patient> getPatient(@Path("id") int patient_id);
+
     @GET("patient/patient_last_id")
     Call<Integer> getLastPatientId();
 
     @POST("patient")
     Call<ResponseBody> createPatient(@Body Patient patient);
+
+    @PUT("patient/{id}")
+    Call<ResponseBody> updatePatient(@Path("id") int patient_id, @Body Patient patient);
 
     @DELETE("patient/{id}")
     Call<ResponseBody> deletePatient(@Path("id") int patient_id);
