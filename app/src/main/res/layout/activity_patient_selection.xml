@@ -5,28 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="7"
+    android:paddingVertical="80dp"
     tools:context=".Activities.PatientSelectionActivity">
-    <TextView
-        android:id="@+id/btnPatient"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="1dp"
-        android:layout_weight="6"
-        android:gravity="bottom"
-        android:text="Patienten"
-        android:textSize="24sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="80dp">
+
+        <TextView
+            android:id="@+id/btnPatient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="1dp"
+            android:text="Patienten"
+            android:textSize="24sp" />
+
+        <ImageView
+            android:id="@+id/btnAddPatient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/button_style_round"
+            android:padding="10dp"
+            android:src="@drawable/ic_person_add"
+            android:text="Button" />
+    </RelativeLayout>
+
 
     <ScrollView
         android:id="@+id/svPatients"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:fillViewport="true"
         android:paddingHorizontal="70dp"
         android:paddingTop="30dp"
-        android:paddingBottom="100dp">
+        android:paddingBottom="30dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +54,7 @@
             <LinearLayout
                 android:id="@+id/llFirstColumn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical" />
 

@@ -2,28 +2,41 @@ package com.example.frontend.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.frontend.Fragments.Dialogs.DrugDialog;
+import com.example.frontend.Fragments.Dialogs.PatientDialog;
+import com.example.frontend.Fragments.DrugsFragment;
+import com.example.frontend.Models.Note;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class PatientSelectionActivity extends AppCompatActivity {
+public class PatientSelectionActivity extends AppCompatActivity implements PatientDialog.PatientDialogListener {
     private TextView btnPatientTitle;
+    private ImageView btnAddPatient;
+    int lastPatientId;
     private LinearLayout ll1;
     private LinearLayout ll2;
     private LinearLayout ll3;
@@ -57,6 +70,13 @@ public class PatientSelectionActivity extends AppCompatActivity {
             }
         });
 
+        btnAddPatient = (ImageView) findViewById(R.id.btnAddPatient);
+        btnAddPatient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openPatientDialog();
+            }
+        });
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -65,6 +85,37 @@ public class PatientSelectionActivity extends AppCompatActivity {
         addAllPatients();
     }
 
+    public void openPatientDialog() {
+        PatientDialog patientDialog = new PatientDialog();
+        patientDialog.show(getSupportFragmentManager(), "Patient Dialog");
+    }
+
+    @Override
+    public void applyTexts(String name, String gender) {
+        Patient newPatient = new Patient();
+        if (!name.isEmpty()) {
+            newPatient.setShortname(name);
+        }
+        if (!gender.isEmpty()) {
+            newPatient.setGender(gender);
+        }
+        addNewPatient(newPatient);
+    }
+
+    public void addNewPatient(final Patient patient) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.createPatient(patient);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                getInsertPatientId(patient);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(PatientSelectionActivity.this, "createNote NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     public void navigateNextActivity(Patient patient) {
         //jump to Menu
@@ -84,7 +135,7 @@ public class PatientSelectionActivity extends AppCompatActivity {
                     allPatients = response.body();
 
                     for (Patient patient : allPatients) {
-                        addPatientBtn(patient);
+                        addPatientBtn(patient.getId(), patient);
                     }
                 }
             }
@@ -95,8 +146,9 @@ public class PatientSelectionActivity extends AppCompatActivity {
         });
     }
 
-    public void addPatientBtn(final Patient patient) {
+    public void addPatientBtn(int id, final Patient patient) {
         Button btnPatient = new Button(context);
+        btnPatient.setId(id);
         btnPatient.setText(patient.getShortname());
         btnPatient.setTextSize(18);
         btnPatient.setPadding(0, 30, 0, 30);
@@ -108,6 +160,7 @@ public class PatientSelectionActivity extends AppCompatActivity {
                 navigateNextActivity(patient);
             }
         });
+        registerForContextMenu(btnPatient);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(10, 20, 10, 20);
         switch (columnCounter) {
@@ -125,8 +178,57 @@ public class PatientSelectionActivity extends AppCompatActivity {
                 break;
         }
     }
-    private void refreshView(View view){
-        view.setVisibility(View.GONE);
-        view.setVisibility(View.VISIBLE);
+
+    public void getInsertPatientId(final Patient patient) {
+        Call<Integer> call = jsonPlaceHolderApi.getLastPatientId();
+        call.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                lastPatientId = response.body();
+                addPatientBtn(lastPatientId, patient);
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(PatientSelectionActivity.this, "getId NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.edit_delete_menu, menu);
+        lastPatientId = v.getId();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Button selectedIv = findViewById(lastPatientId);
+        switch (item.getItemId()) {
+            case R.id.editOption:
+
+                return true;
+            case R.id.deleteOption:
+                deletePatient(lastPatientId);
+                ((ViewManager)selectedIv.getParent()).removeView(selectedIv);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    public void deletePatient(int patientId) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.deletePatient(patientId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
+    }
+
 }

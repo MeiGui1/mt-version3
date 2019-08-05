@@ -172,7 +172,7 @@
             android:src="@drawable/ic_camera"
             android:scaleType="fitCenter"
             android:padding="10dp"
-            android:background="@drawable/button_selector_effect"
+            android:background="@drawable/button_style_round"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"/>
 

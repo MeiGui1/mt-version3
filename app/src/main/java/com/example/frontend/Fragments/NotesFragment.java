@@ -481,12 +481,6 @@ public class NotesFragment extends Fragment {
         });
     }
 
-    private void refreshView(View view) {
-        view.setVisibility(View.GONE);
-        view.setVisibility(View.VISIBLE);
-    }
-
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);

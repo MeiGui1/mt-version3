@@ -29,11 +29,22 @@ public interface JsonPlaceHolderApi {
     @GET("patient")
     Call<List<Patient>> getAllPatients();
 
+    @GET("patient/patient_last_id")
+    Call<Integer> getLastPatientId();
+
+    @POST("patient")
+    Call<ResponseBody> createPatient(@Body Patient patient);
+
+    @DELETE("patient/{id}")
+    Call<ResponseBody> deletePatient(@Path("id") int patient_id);
 
     //Drug Page
 
     @GET("drugtype")
     Call<List<DrugType>> getAllDrugTypes();
+
+    @GET("drugtype_last_id")
+    Call<Integer> getLastDrugTypeId();
 
     @GET("patientdrug/{patient_id}")
     Call<List<PatientDrug>> getAllDrugsOfPatient(@Path("patient_id") int patient_id);
@@ -52,6 +63,9 @@ public interface JsonPlaceHolderApi {
 
     @GET("diagnosistype/type={type}")
     Call<List<DiagnosisType>> getAllDiagnosisTypesOfClass(@Path("type") String type);
+
+    @GET("diagnosistype_last_id")
+    Call<Integer> getLastDiagnosisTypeId();
 
     @GET("patientdiagnosis/{patient_id}/type={type}")
     Call<List<PatientDiagnosis>> getPatientDiagnosesOfClass(@Path("patient_id") int patient_id, @Path("type") String type);

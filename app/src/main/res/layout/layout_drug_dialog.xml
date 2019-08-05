@@ -4,17 +4,31 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <TextView
+        android:id="@+id/amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/amount"
+        />
     <EditText
         android:id="@+id/edit_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/amountExample"/>
-
+        android:hint="@string/amountExample"
+        android:layout_below="@id/amount"/>
+    <TextView
+        android:id="@+id/dosis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dosis"
+        android:layout_below="@id/edit_amount"
+        android:paddingTop="20dp"
+        />
     <EditText
         android:id="@+id/edit_dosis"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/dosisExample"
-        android:layout_below="@+id/edit_amount"/>
+        android:layout_below="@+id/dosis"/>
 
 </RelativeLayout>

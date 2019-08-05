@@ -4,6 +4,17 @@
     <string name="navigation_drawer_open">Navigation öffnen</string>
     <string name="navigation_drawer_close">Navigation schliessen</string>
     <string name="title_activity_patient_selection">PatientSelectionActivity</string>
+
+    <string name="create_new_patient">Neuen Patienten erfassen</string>
+    <string name="name">Name</string>
+    <string name="gender">Anrede</string>
+    <string name="mrs">Frau</string>
+    <string name="mr">Herr</string>
+    <string name="please_add_name">Bitte geben Sie den Patientennamen ein</string>
+    <string name="please_select_gender">Bitte wählen Sie die Anrede aus</string>
+
+    <string name="edit">Bearbeiten</string>
+
     <string name="overview">Übersicht</string>
     <string name="notes">Notizen</string>
     <string name="models">3D Visualisierungen</string>
@@ -20,10 +31,12 @@
     <string name="inputs">Eingaben</string>
     <string name="cancel">Abbrechen</string>
     <string name="dosisForDrug">Dosierung für das Medikament</string>
+    <string name="dosis">Dosierung</string>
+    <string name="amount">Menge</string>
     <string name="add">Hinzufügen</string>
-    <string name="amountExample">Menge (z.B. 50mg)</string>
-    <string name="dosisExample">Dosierung (z.B. 1010)</string>
-    <string name="diagnosisCommentExample">Zusatzinformation</string>
+    <string name="amountExample">(z.B. 50mg)</string>
+    <string name="dosisExample">(z.B. 1010)</string>
+    <string name="additionalInformation">Zusatzinformation</string>
     <string name="diagnosisDetails">Diagnosedetails</string>
     <string name="save">Speichern</string>
     <string name="save_template">Als Vorlage speichern</string>

@@ -39,6 +39,8 @@ import android.widget.VideoView;
 import com.example.frontend.Activities.MainActivity;
 import com.example.frontend.Models.Note;
 import com.example.frontend.R;
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnDrawListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
@@ -182,7 +184,7 @@ public class CollectionsFragment extends Fragment {
 
     public void getPDFsPath(File dir) {
         String pdfPattern = ".pdf";
-        File FileList[] = dir.listFiles();
+        final File FileList[] = dir.listFiles();
 
         if (FileList != null) {
             for (int i = 0; i < FileList.length; i++) {
@@ -190,6 +192,7 @@ public class CollectionsFragment extends Fragment {
                     getPDFsPath(FileList[i]);
                 } else {
                     if (FileList[i].getName().endsWith(pdfPattern)) {
+                        final File file = FileList[i];
                         final TextView newIv = new TextView(getContext());
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                                 180);
@@ -207,8 +210,7 @@ public class CollectionsFragment extends Fragment {
                         newIv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
-                                //showImagePopup(myBitmap);
+                                showPDFPopup(file);
                             }
                         });
                         registerForContextMenu(newIv);
@@ -336,8 +338,6 @@ public class CollectionsFragment extends Fragment {
         TextView btnClose;
         final VideoView videoView = (VideoView) myDialog.findViewById(R.id.vvDisplay);
         videoView.setVideoPath(path);
-
-
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -367,6 +367,26 @@ public class CollectionsFragment extends Fragment {
         });
 
 
+        btnClose = (TextView) myDialog.findViewById(R.id.btnCloseImage);
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+            }
+        });
+        myDialog.show();
+    }
+
+    private void showPDFPopup(File file) {
+        myDialog.setContentView(R.layout.popup_pdf);
+        TextView btnClose;
+        PDFView pdfView = myDialog.findViewById(R.id.pdfView);
+        pdfView.setBackgroundColor(getResources().getColor(R.color.black));
+        pdfView.fromFile(file)
+                .pages(0, 2, 1, 3, 3, 3)
+                .enableSwipe(true)
+                .spacing(20)
+                .load();
         btnClose = (TextView) myDialog.findViewById(R.id.btnCloseImage);
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
