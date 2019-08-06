@@ -203,8 +203,8 @@ public interface JsonPlaceHolderApi {
     @GET("patientvideo/{patient_id}")
     Call<List<String>> getAllVideoPathsOfPatient(@Path("patient_id") int patient_id);
 
-    @DELETE("patientvideo/{patient_id}/{video_path}")
-    Call<ResponseBody> deletePatientVideo(@Path("patient_id") int patient_id, @Path("video_path") String video_path);
+    @HTTP(method = "DELETE", path = "patientvideo", hasBody = true)
+    Call<ResponseBody> deletePatientVideo(@Body PatientVideo patientVideo);
 
 
 
@@ -217,8 +217,8 @@ public interface JsonPlaceHolderApi {
     @GET("patientdocument/{patient_id}")
     Call<List<String>> getAllDocumentPathsOfPatient(@Path("patient_id") int patient_id);
 
-    @DELETE("patientdocument/{patient_id}/{document_path}")
-    Call<ResponseBody> deletePatientDocument(@Path("patient_id") int patient_id, @Path("document_path") String document_path);
+    @HTTP(method = "DELETE", path = "patientdocument", hasBody = true)
+    Call<ResponseBody> deletePatientDocument(@Body PatientDocument patientDocument);
 
 
 
@@ -251,6 +251,6 @@ public interface JsonPlaceHolderApi {
     @GET("patientwebsite/{patient_id}")
     Call<List<Integer>> getAllWebsiteIdsOfPatient(@Path("patient_id") int patient_id);
 
-    @DELETE("patientwebsite/{patient_id}/{website_id}")
-    Call<ResponseBody> deletePatientWebsite(@Path("patient_id") int patient_id, @Path("website_id") int website_id);
+    @HTTP(method = "DELETE", path = "patientwebsite", hasBody = true)
+    Call<ResponseBody> deletePatientWebsite(@Body PatientWebsite patientWebsite);
 }

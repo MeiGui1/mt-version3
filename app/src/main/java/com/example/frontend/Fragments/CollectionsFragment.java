@@ -37,7 +37,9 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.frontend.Fragments.Dialogs.WebsiteDialog;
+import com.example.frontend.Models.PatientDocument;
 import com.example.frontend.Models.PatientImage;
+import com.example.frontend.Models.PatientVideo;
 import com.example.frontend.Models.WebsiteType;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
@@ -78,6 +80,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     Dialog myDialog;
     private int lastId;
     private List<String> allImagePaths = new ArrayList<>();
+    private List<String> allDocumentPaths = new ArrayList<>();
 
     enum Media {
         GALLERY,
@@ -142,7 +145,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                         break;
                     case R.id.rbDocuments:
                         selectedMedia = DOCUMENTS;
-                        setUpDocuments();
+                        selectAllSelectedDocuments();
                         break;
                     case R.id.rbWebsites:
                         selectedMedia = WEBSITES;
@@ -220,16 +223,17 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         return listOfAllVideos;
     }
 
-    public void getPDFsPath(File dir) {
+    public void getPDFsPath(File dir, List<String> selectedDocuments) {
         String pdfPattern = ".pdf";
         final File FileList[] = dir.listFiles();
 
         if (FileList != null) {
             for (int i = 0; i < FileList.length; i++) {
                 if (FileList[i].isDirectory()) {
-                    getPDFsPath(FileList[i]);
+                    getPDFsPath(FileList[i], selectedDocuments);
                 } else {
                     if (FileList[i].getName().endsWith(pdfPattern)) {
+                        allDocumentPaths.add(FileList[i].getPath());
                         final File file = FileList[i];
                         final LinearLayout llPdf = new LinearLayout(getContext());
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -239,7 +243,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                         lp.setMargins(0, 10, 0, 10);
                         newIv.setLayoutParams(lp);
                         newIv.setPadding(0, 25, 0, 15);
-                        llPdf.setId(ViewCompat.generateViewId());
+                        llPdf.setId(allDocumentPaths.indexOf(FileList[i].getPath()));
                         newIv.setText(FileList[i].getName());
                         newIv.setBackgroundColor(getResources().getColor(R.color.white));
                         defaultTextColor = newIv.getTextColors();
@@ -256,6 +260,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                                 showPDFPopup(file);
                             }
                         });
+                        if(selectedDocuments.contains(FileList[i].getPath())){
+                            llPdf.setSelected(true);
+                            llPdf.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                        }
                         registerForContextMenu(llPdf);
                         switch (columnCounter) {
                             case 1:
@@ -341,6 +349,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                         case VIDEOS:
                             break;
                         case DOCUMENTS:
+                            PatientDocument patientDocument = new PatientDocument();
+                            patientDocument.setDocumentPath(allDocumentPaths.get(longClickedMedia));
+                            patientDocument.setPatientId(patientId);
+                            deletePatientDocument(patientDocument);
                             break;
                         case WEBSITES:
                             break;
@@ -358,6 +370,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                         case VIDEOS:
                             break;
                         case DOCUMENTS:
+                            PatientDocument newPatientDocument = new PatientDocument();
+                            newPatientDocument.setDocumentPath(allDocumentPaths.get(longClickedMedia));
+                            newPatientDocument.setPatientId(patientId);
+                            addNewPatientDocument(newPatientDocument);
                             break;
                         case WEBSITES:
                             break;
@@ -554,10 +570,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
 
     }
 
-    private void setUpDocuments() {
+    private void setUpDocuments(List<String> selectedDocuments) {
         rbDocuments.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_document_white, 0, 0, 0);
         File dir = Environment.getExternalStorageDirectory();
-        getPDFsPath(dir);
+        getPDFsPath(dir, selectedDocuments);
     }
 
     private void setUpWebsites() {
@@ -675,6 +691,52 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                     return;
                 } else {
                     setUpGallery(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+            }
+        });
+    }
+
+    public void addNewPatientDocument(final PatientDocument patientDocument) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.createPatientDocument(patientDocument);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "create PatientDocument NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void deletePatientDocument(final PatientDocument patientDocument) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientDocument(patientDocument);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "delete PatientDocument NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void selectAllSelectedDocuments() {
+        Call<List<String>> call = jsonPlaceHolderApi.getAllDocumentPathsOfPatient(patientId);
+        call.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                } else {
+                    setUpDocuments(response.body());
                 }
             }
 
