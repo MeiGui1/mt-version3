@@ -6,64 +6,64 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.TooltipCompat;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.example.frontend.Activities.MainActivity;
-import com.example.frontend.Fragments.Dialogs.PatientDialog;
 import com.example.frontend.Fragments.Dialogs.WebsiteDialog;
-import com.example.frontend.Models.Note;
-import com.example.frontend.Models.Patient;
+import com.example.frontend.Models.PatientImage;
 import com.example.frontend.Models.WebsiteType;
 import com.example.frontend.R;
+import com.example.frontend.Service.JsonPlaceHolderApi;
 import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.listener.OnDrawListener;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.shockwave.pdfium.PdfDocument;
-import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.example.frontend.Fragments.CollectionsFragment.Media.DOCUMENTS;
+import static com.example.frontend.Fragments.CollectionsFragment.Media.GALLERY;
+import static com.example.frontend.Fragments.CollectionsFragment.Media.VIDEOS;
+import static com.example.frontend.Fragments.CollectionsFragment.Media.WEBSITES;
 
 public class CollectionsFragment extends Fragment implements WebsiteDialog.WebsiteDialogListener {
 
     private int patientId;
-    private int selectedRadioButton;
+
     private RadioGroup rgMedia;
     private RadioButton rbGallery;
     private RadioButton rbVideos;
@@ -76,10 +76,26 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     private int columnCounter = 1;
     private int longClickedMedia;
     Dialog myDialog;
-    private int lastWebsiteTypeId;
+    private int lastId;
+    private List<String> allImagePaths = new ArrayList<>();
 
+    enum Media {
+        GALLERY,
+        VIDEOS,
+        DOCUMENTS,
+        WEBSITES
+    }
+
+    Media selectedMedia = GALLERY;
     ColorStateList defaultTextColor;
     ImageView btnAddWebsite;
+
+
+    Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -117,22 +133,26 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                 clearScrollView();
                 switch (checkedId) {
                     case R.id.rbGallery:
-                        setUpGallery();
+                        selectedMedia = GALLERY;
+                        selectAllSelectedImages();
                         break;
                     case R.id.rbVideos:
+                        selectedMedia = VIDEOS;
                         setUpVideos();
                         break;
                     case R.id.rbDocuments:
+                        selectedMedia = DOCUMENTS;
                         setUpDocuments();
                         break;
                     case R.id.rbWebsites:
+                        selectedMedia = WEBSITES;
                         btnAddWebsite.setVisibility(View.VISIBLE);
                         setUpWebsites();
                         break;
                 }
             }
         });
-        rgMedia.check(R.id.rbGallery);
+        rbGallery.setChecked(true);
     }
 
     private void setDrawablesBlack() {
@@ -300,22 +320,48 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.media_menu, menu);
-        lastWebsiteTypeId = v.getId();
+        longClickedMedia = v.getId();
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        View selectedIv = getView().findViewById(lastWebsiteTypeId);
+        View selectedIv = getView().findViewById(longClickedMedia);
         switch (item.getItemId()) {
             case R.id.selectOption:
                 if (selectedIv.isSelected()) {
                     selectedIv.setSelected(false);
                     selectedIv.setBackgroundColor(0);
-                    //deletePatientWebsite(lastWebsiteTypeId, patientId);
+                    switch (selectedMedia) {
+                        case GALLERY:
+                            PatientImage patientImage = new PatientImage();
+                            patientImage.setImagePath(allImagePaths.get(longClickedMedia));
+                            patientImage.setPatientId(patientId);
+                            deletePatientImage(patientImage);
+                            break;
+                        case VIDEOS:
+                            break;
+                        case DOCUMENTS:
+                            break;
+                        case WEBSITES:
+                            break;
+                    }
                 } else {
                     selectedIv.setSelected(true);
                     selectedIv.setBackgroundColor(getResources().getColor(R.color.colorBlue));
-                    //addPatientWebsite(lastWebsiteTypeId, patientId);
+                    switch (selectedMedia) {
+                        case GALLERY:
+                            PatientImage newPatientImage = new PatientImage();
+                            newPatientImage.setImagePath(allImagePaths.get(longClickedMedia));
+                            newPatientImage.setPatientId(patientId);
+                            addNewPatientImage(newPatientImage);
+                            break;
+                        case VIDEOS:
+                            break;
+                        case DOCUMENTS:
+                            break;
+                        case WEBSITES:
+                            break;
+                    }
                 }
                 return true;
             default:
@@ -405,11 +451,11 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         myDialog.setContentView(R.layout.popup_website);
         TextView btnClose;
 
-        if(!url.startsWith("www.")&& !url.startsWith("http://")&& !url.startsWith("https://")){
-            url = "www."+url;
+        if (!url.startsWith("www.") && !url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "www." + url;
         }
-        if(!url.startsWith("https://") && !url.startsWith("http://")){
-            url = "https://"+url;
+        if (!url.startsWith("https://") && !url.startsWith("http://")) {
+            url = "https://" + url;
         }
 
         WebView webView = (WebView) myDialog.findViewById(R.id.websiteView);
@@ -425,9 +471,8 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         myDialog.show();
     }
 
-    private void setUpGallery() {
+    private void setUpGallery(List<String> selectedImages) {
         rbGallery.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_white, 0, 0, 0);
-        List<String> allImagePaths = new ArrayList<>();
         allImagePaths = getImagesPath();
         for (final String path : allImagePaths) {
             ImageView newIv = new ImageView(getContext());
@@ -447,6 +492,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                     showImagePopup(myBitmap);
                 }
             });
+            if (selectedImages.contains(path)) {
+                newIv.setSelected(true);
+                newIv.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+            }
             registerForContextMenu(newIv);
             switch (columnCounter) {
                 case 1:
@@ -529,12 +578,12 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         websiteTypes.add(wt1);
         websiteTypes.add(wt2);
         for (final WebsiteType wt : websiteTypes) {
-            addWebsiteButton(lastWebsiteTypeId, wt);
+            addWebsiteButton(lastId, wt);
 
         }
     }
 
-    private void addWebsiteButton(int websiteId, final WebsiteType wt){
+    private void addWebsiteButton(int websiteId, final WebsiteType wt) {
         final LinearLayout ll = new LinearLayout(getContext());
         ll.setId(ViewCompat.generateViewId());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -589,6 +638,53 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         }
     }
 
+    public void addNewPatientImage(final PatientImage patientImage) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.createPatientImage(patientImage);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "create PatientImage NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void deletePatientImage(final PatientImage patientImage) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientImage(patientImage);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "delete PatientImage NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void selectAllSelectedImages() {
+        Call<List<String>> call = jsonPlaceHolderApi.getAllImagePathsOfPatient(patientId);
+        call.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                } else {
+                    setUpGallery(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+            }
+        });
+    }
+
+
     public void openWebsiteDialog() {
         WebsiteDialog websiteDialog = new WebsiteDialog();
         websiteDialog.setTargetFragment(CollectionsFragment.this, 1);
@@ -597,6 +693,6 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
 
     @Override
     public void applyTexts(WebsiteType websiteType) {
-        addWebsiteButton(lastWebsiteTypeId, websiteType);
+        addWebsiteButton(lastId, websiteType);
     }
 }

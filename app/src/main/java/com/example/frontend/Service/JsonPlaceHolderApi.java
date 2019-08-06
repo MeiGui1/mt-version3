@@ -7,10 +7,15 @@ import com.example.frontend.Models.ImprovementReason;
 import com.example.frontend.Models.Note;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
+import com.example.frontend.Models.PatientDocument;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.Models.PatientExercise;
+import com.example.frontend.Models.PatientImage;
+import com.example.frontend.Models.PatientVideo;
+import com.example.frontend.Models.PatientWebsite;
 import com.example.frontend.Models.PsychoSocialAfter;
 import com.example.frontend.Models.PsychoSocialBefore;
+import com.example.frontend.Models.WebsiteType;
 
 import java.util.List;
 
@@ -20,6 +25,7 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -169,4 +175,82 @@ public interface JsonPlaceHolderApi {
 
     @GET("psychosocial/reason/exists/{patient_id}")
     Call<Boolean> existsImprovementReason(@Path("patient_id") int patient_id);
+
+
+
+    //Media Page
+
+    @POST("patientimage")
+    Call<ResponseBody> createPatientImage(@Body PatientImage patientImage);
+
+    @GET("patientimage")
+    Call<List<PatientImage>> getAllPatientImages();
+
+    @GET("patientimage/{patient_id}")
+    Call<List<String>> getAllImagePathsOfPatient(@Path("patient_id") int patient_id);
+
+    @HTTP(method = "DELETE", path = "patientimage", hasBody = true)
+    Call<ResponseBody> deletePatientImage(@Body PatientImage patientImage);
+
+
+
+    @POST("patientvideo")
+    Call<ResponseBody> createPatientVideo(@Body PatientVideo patientVideo);
+
+    @GET("patientvideo")
+    Call<List<PatientVideo>> getAllPatientVideos();
+
+    @GET("patientvideo/{patient_id}")
+    Call<List<String>> getAllVideoPathsOfPatient(@Path("patient_id") int patient_id);
+
+    @DELETE("patientvideo/{patient_id}/{video_path}")
+    Call<ResponseBody> deletePatientVideo(@Path("patient_id") int patient_id, @Path("video_path") String video_path);
+
+
+
+    @POST("patientdocument")
+    Call<ResponseBody> createPatientDocument(@Body PatientDocument patientDocument);
+
+    @GET("patientdocument")
+    Call<List<PatientDocument>> getAllPatientDocuments();
+
+    @GET("patientdocument/{patient_id}")
+    Call<List<String>> getAllDocumentPathsOfPatient(@Path("patient_id") int patient_id);
+
+    @DELETE("patientdocument/{patient_id}/{document_path}")
+    Call<ResponseBody> deletePatientDocument(@Path("patient_id") int patient_id, @Path("document_path") String document_path);
+
+
+
+    @POST("websitetype")
+    Call<ResponseBody> createWebsiteType(@Body WebsiteType websiteType);
+
+    @GET("websitetype")
+    Call<List<WebsiteType>> getAllWebsiteTypes();
+
+    @GET("websitetype/{id}")
+    Call<WebsiteType> getWebsiteType(@Path("id") int id);
+
+    @GET("websitetype_last_id")
+    Call<Integer> getLastWebsiteTypeId();
+
+    @DELETE("websitetype/{id}")
+    Call<ResponseBody> deleteWebsiteType(@Path("id") int id);
+
+    @PUT("websitetype/{id}")
+    Call<ResponseBody> updateWebsiteType(@Path("id") int id, @Body WebsiteType websiteType);
+
+
+
+    @POST("patientwebsite")
+    Call<ResponseBody> createPatientWebsite(@Body PatientWebsite patientWebsite);
+
+    @GET("patientwebsite")
+    Call<List<PatientWebsite>> getAllPatientWebsites();
+
+    @GET("patientwebsite/{patient_id}")
+    Call<List<Integer>> getAllWebsiteIdsOfPatient(@Path("patient_id") int patient_id);
+
+    @DELETE("patientwebsite/{patient_id}/{website_id}")
+    Call<ResponseBody> deletePatientWebsite(@Path("patient_id") int patient_id, @Path("website_id") int website_id);
 }

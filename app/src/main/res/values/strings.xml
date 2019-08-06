@@ -106,6 +106,6 @@
 
     <!-- Zusammenfassung -->
     <string name="conclusion">Abschluss</string>
-    <string name="create_summary">Zusammenfassung erstellen</string>
+    <string name="download_summary">Zusammenfassung herunterladen</string>
 
 </resources>
