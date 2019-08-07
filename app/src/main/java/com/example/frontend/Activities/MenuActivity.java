@@ -183,7 +183,10 @@ public class MenuActivity extends AppCompatActivity {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if(getFragmentManager().getBackStackEntryCount() > 0)
+                getFragmentManager().popBackStack();
+            else
+                super.onBackPressed();
         }
     }
 
