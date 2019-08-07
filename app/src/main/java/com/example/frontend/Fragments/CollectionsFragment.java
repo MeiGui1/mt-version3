@@ -18,11 +18,11 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -39,7 +39,7 @@ import android.widget.VideoView;
 import com.example.frontend.Fragments.Dialogs.WebsiteDialog;
 import com.example.frontend.Models.PatientDocument;
 import com.example.frontend.Models.PatientImage;
-import com.example.frontend.Models.PatientVideo;
+import com.example.frontend.Models.PatientWebsite;
 import com.example.frontend.Models.WebsiteType;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
@@ -78,9 +78,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     private int columnCounter = 1;
     private int longClickedMedia;
     Dialog myDialog;
-    private int lastId;
+    private int lastWebsitTypeId;
     private List<String> allImagePaths = new ArrayList<>();
     private List<String> allDocumentPaths = new ArrayList<>();
+    private List<Integer> selectedWebsites;
 
     enum Media {
         GALLERY,
@@ -150,7 +151,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                     case R.id.rbWebsites:
                         selectedMedia = WEBSITES;
                         btnAddWebsite.setVisibility(View.VISIBLE);
-                        setUpWebsites();
+                        selectAllSelectedWebsites();
                         break;
                 }
             }
@@ -355,6 +356,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                             deletePatientDocument(patientDocument);
                             break;
                         case WEBSITES:
+                            PatientWebsite patientWebsite = new PatientWebsite();
+                            patientWebsite.setWebsiteTypeId(longClickedMedia);
+                            patientWebsite.setPatientId(patientId);
+                            deletePatientWebsite(patientWebsite);
                             break;
                     }
                 } else {
@@ -376,6 +381,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                             addNewPatientDocument(newPatientDocument);
                             break;
                         case WEBSITES:
+                            PatientWebsite newPatientWebsite = new PatientWebsite();
+                            newPatientWebsite.setWebsiteTypeId(longClickedMedia);
+                            newPatientWebsite.setPatientId(patientId);
+                            addNewPatientWebsite(newPatientWebsite);
                             break;
                     }
                 }
@@ -576,32 +585,38 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         getPDFsPath(dir, selectedDocuments);
     }
 
-    private void setUpWebsites() {
+    private void setUpWebsites(List<Integer> selectedWebsites) {
         rbWebsites.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_web_white, 0, 0, 0);
-        addWebsiteButtons();
+        addWebsiteButtons(selectedWebsites);
     }
 
-    private void addWebsiteButtons() {
-        WebsiteType wt1 = new WebsiteType();
-        wt1.setName("Zentrum für Zahnmedizin");
-        wt1.setUrl("www.zzm.uzh.ch/de.html");
-        wt1.setDescription("Das Zentrum für Zahnmedizin ist Teil der Universität Zürich. Als international anerkanntes Klinik-, Ausbildungs- und Forschungszentrum vereint es sieben spezialisierte Kliniken und Institute unter einem Dach. Rund 130 Zahnärztinnen und Zahnärzte setzen sich tagtäglich dafür ein, die Kaufunktion unserer Patienten zu verbessern, ihre Zähne zu erhalten oder zu verschönern, um so ihre Lebensqualität zu erhöhen.");
-        WebsiteType wt2 = new WebsiteType();
-        wt2.setName("Zentrum für Zahnmedizin");
-        wt2.setUrl("www.google.com");
-        wt2.setDescription("Bessern, ihre Zähne zu erhalten oder zu verschönern, um so ihre Lebensqualität zu erhöhen.");
-        List<WebsiteType> websiteTypes = new ArrayList<>();
-        websiteTypes.add(wt1);
-        websiteTypes.add(wt2);
-        for (final WebsiteType wt : websiteTypes) {
-            addWebsiteButton(lastId, wt);
+    private void addWebsiteButtons(List<Integer> selectedWebsitesOfPatient) {
+        selectedWebsites = selectedWebsitesOfPatient;
+        //Get all WebsiteTypes of Patient
+        Call<List<WebsiteType>> call = jsonPlaceHolderApi.getAllWebsiteTypes();
+        call.enqueue(new Callback<List<WebsiteType>>() {
+            @Override
+            public void onResponse(Call<List<WebsiteType>> call, Response<List<WebsiteType>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "GetPatientDiagnosesOfClass not successful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    List<WebsiteType> websiteTypes = response.body();
+                    for (final WebsiteType wt : websiteTypes) {
+                        addWebsiteButton(wt.getId(), wt);
+                    }
+                }
+            }
 
-        }
+            @Override
+            public void onFailure(Call<List<WebsiteType>> call, Throwable t) {
+                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void addWebsiteButton(int websiteId, final WebsiteType wt) {
+    private void addWebsiteButton(final int websiteId, final WebsiteType wt) {
         final LinearLayout ll = new LinearLayout(getContext());
-        ll.setId(ViewCompat.generateViewId());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 200);
         // TooltipCompat.setTooltipText(ll, wt.getDescription());
@@ -630,14 +645,19 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
 
         ll.addView(tvTitle);
         ll.addView(tvUrl);
-        registerForContextMenu(ll);
 
+        if(selectedWebsites.contains(websiteId)){
+            ll.setSelected(true);
+            ll.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+        }
+        ll.setId(websiteId);
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showWebsitePopup(wt.getUrl());
             }
         });
+        registerForContextMenu(ll);
         switch (columnCounter) {
             case 1:
                 ll1.addView(ll);
@@ -746,6 +766,85 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         });
     }
 
+    public void addNewPatientWebsite(final PatientWebsite patientWebsite) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.createPatientWebsite(patientWebsite);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "create PatientWebsite NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void deletePatientWebsite(final PatientWebsite patientWebsite) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientWebsite(patientWebsite);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "delete PatientWebsite NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void selectAllSelectedWebsites() {
+        Call<List<Integer>> call = jsonPlaceHolderApi.getAllWebsiteIdsOfPatient(patientId);
+        call.enqueue(new Callback<List<Integer>>() {
+            @Override
+            public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                } else {
+                    setUpWebsites(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Integer>> call, Throwable t) {
+            }
+        });
+    }
+
+
+    public void addNewWebsiteType(final WebsiteType websiteType) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.createWebsiteType(websiteType);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                getInsertWebsiteTypeId(websiteType);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "create WebsiteType NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void getInsertWebsiteTypeId(final WebsiteType websiteType) {
+        Call<Integer> call = jsonPlaceHolderApi.getLastWebsiteTypeId();
+        call.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                lastWebsitTypeId = response.body();
+                addWebsiteButton(lastWebsitTypeId, websiteType);
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(getContext(), "get lastWebsiteTypeId NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     public void openWebsiteDialog() {
         WebsiteDialog websiteDialog = new WebsiteDialog();
@@ -755,6 +854,6 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
 
     @Override
     public void applyTexts(WebsiteType websiteType) {
-        addWebsiteButton(lastId, websiteType);
+        addNewWebsiteType(websiteType);
     }
 }

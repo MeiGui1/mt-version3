@@ -7,7 +7,7 @@ public class PatientWebsite {
     @SerializedName("patient_id")
     private int patientId;
 
-    @SerializedName("websitetype_id")
+    @SerializedName("website_id")
     private int websiteTypeId;
 
     public int getPatientId() {
