@@ -5,6 +5,8 @@ import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.ExercisePhoto;
 import com.example.frontend.Models.ImprovementReason;
 import com.example.frontend.Models.Note;
+import com.example.frontend.Models.PainBeginning;
+import com.example.frontend.Models.PainCurrent;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDocument;
@@ -253,4 +255,31 @@ public interface JsonPlaceHolderApi {
 
     @HTTP(method = "DELETE", path = "patientwebsite", hasBody = true)
     Call<ResponseBody> deletePatientWebsite(@Body PatientWebsite patientWebsite);
+
+
+    //Pain Page
+    @POST("pain/beginning")
+    Call<ResponseBody> createPainBeginning(@Body PainBeginning painBeginning);
+
+    @PUT("pain/beginning/{patient_id}")
+    Call<ResponseBody> updatePainBeginning(@Path("patient_id") int patient_id, @Body PainBeginning painBeginning);
+
+    @GET("pain/beginning/{patient_id}")
+    Call<PainBeginning> getPainBeginning(@Path("patient_id") int patient_id);
+
+    @GET("pain/beginning/exists/{patient_id}")
+    Call<Boolean> existsPainBeginning(@Path("patient_id") int patient_id);
+
+
+    @POST("pain/current")
+    Call<ResponseBody> createPainCurrent(@Body PainCurrent painCurrent);
+
+    @PUT("pain/current/{patient_id}")
+    Call<ResponseBody> updatePainCurrent(@Path("patient_id") int patient_id, @Body PainCurrent painCurrent);
+
+    @GET("pain/current/{patient_id}")
+    Call<PainCurrent> getPainCurrent(@Path("patient_id") int patient_id);
+
+    @GET("pain/current/exists/{patient_id}")
+    Call<Boolean> existsPainCurrent(@Path("patient_id") int patient_id);
 }

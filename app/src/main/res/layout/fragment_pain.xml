@@ -8,7 +8,7 @@
     android:paddingHorizontal="50dp">
 
     <RadioGroup
-        android:id="@+id/rgMedia"
+        android:id="@+id/rgBeginningCurrent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -16,7 +16,7 @@
         android:paddingTop="30dp">
 
         <RadioButton
-            android:id="@+id/rbGallery"
+            android:id="@+id/rbBeginning"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -30,7 +30,7 @@
             android:textSize="18sp" />
 
         <RadioButton
-            android:id="@+id/rbVideos"
+            android:id="@+id/rbCurrent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -71,6 +71,7 @@
                 android:weightSum="3">
 
                 <ImageView
+                    android:id="@+id/ivLocationTeeth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -81,6 +82,7 @@
                     android:src="@drawable/teeth" />
 
                 <ImageView
+                    android:id="@+id/ivLocationFaceRight"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -91,6 +93,7 @@
                     android:src="@drawable/face_right" />
 
                 <ImageView
+                    android:id="@+id/ivLocationFaceLeft"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -189,7 +192,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="ziehend"
+                        android:text="kribbelnd"
                         android:textAllCaps="false" />
 
                     <Button
@@ -198,7 +201,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="kribbelnd"
+                        android:text="prickelnd"
                         android:textAllCaps="false" />
 
                     <Button
@@ -293,8 +296,8 @@
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:background="@color/colorVeryLightBlue"
-                        android:padding="1dp"
+                        android:background="@drawable/imageview_border"
+                        android:padding="7dp"
                         android:src="@drawable/pattern_perm_slightfluc" />
 
                     <ImageView
@@ -303,8 +306,8 @@
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:background="@color/colorVeryLightBlue"
-                        android:padding="1dp"
+                        android:background="@drawable/imageview_border"
+                        android:padding="7dp"
                         android:src="@drawable/pattern_perm_strongfluc" />
 
                     <ImageView
@@ -313,8 +316,8 @@
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:background="@color/colorVeryLightBlue"
-                        android:padding="1dp"
+                        android:background="@drawable/imageview_border"
+                        android:padding="7dp"
                         android:src="@drawable/pattern_att_freeint" />
 
                     <ImageView
@@ -322,8 +325,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
-                        android:background="@color/colorVeryLightBlue"
-                        android:padding="1dp"
+                        android:background="@drawable/imageview_border"
+                        android:padding="7dp"
                         android:src="@drawable/pattern_perm_nofreeint" />
                 </LinearLayout>
             </LinearLayout>
