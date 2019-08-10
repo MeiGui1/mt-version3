@@ -136,6 +136,7 @@
                     android:weightSum="4">
 
                     <Button
+                        android:id="@+id/btnDull"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="20dp"
@@ -145,6 +146,7 @@
                         android:textAllCaps="false" />
 
                     <Button
+                        android:id="@+id/btnPulling"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="20dp"
@@ -154,6 +156,7 @@
                         android:textAllCaps="false" />
 
                     <Button
+                        android:id="@+id/btnPulsating"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="20dp"
@@ -163,6 +166,7 @@
                         android:textAllCaps="false" />
 
                     <Button
+                        android:id="@+id/btnStinging"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -178,6 +182,7 @@
                     android:weightSum="4">
 
                     <Button
+                        android:id="@+id/btnBurning"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="20dp"
@@ -187,6 +192,7 @@
                         android:textAllCaps="false" />
 
                     <Button
+                        android:id="@+id/btnPinsandneedles"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="20dp"
@@ -196,6 +202,7 @@
                         android:textAllCaps="false" />
 
                     <Button
+                        android:id="@+id/btnTingling"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="20dp"
@@ -205,6 +212,7 @@
                         android:textAllCaps="false" />
 
                     <Button
+                        android:id="@+id/btnNumb"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -291,6 +299,7 @@
                     android:weightSum="4">
 
                     <ImageView
+                        android:id="@+id/btnPermSlightFluc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
@@ -301,6 +310,7 @@
                         android:src="@drawable/pattern_perm_slightfluc" />
 
                     <ImageView
+                        android:id="@+id/btnPermStrongFluc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
@@ -311,6 +321,7 @@
                         android:src="@drawable/pattern_perm_strongfluc" />
 
                     <ImageView
+                        android:id="@+id/btnAttFreeInt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
@@ -321,6 +332,7 @@
                         android:src="@drawable/pattern_att_freeint" />
 
                     <ImageView
+                        android:id="@+id/btnAttNoFreeInt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

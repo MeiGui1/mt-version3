@@ -1,13 +1,15 @@
 package com.example.frontend.Models;
 
+import android.util.Base64;
+
 import java.io.Serializable;
 
 public class PainCurrent implements Serializable {
     private int patient_id;
     private int intensity;
-    private byte[] location_teeth;
-    private byte[] location_face_left;
-    private byte[] location_face_right;
+    private String location_teeth;
+    private String location_face_left;
+    private String location_face_right;
     private String pain_pattern;
     private boolean dull;
     private boolean pulling;
@@ -35,27 +37,33 @@ public class PainCurrent implements Serializable {
     }
 
     public byte[] getLocation_teeth() {
-        return location_teeth;
+        byte[] bytes = Base64.decode(location_teeth, Base64.NO_WRAP);
+        return bytes;
     }
 
     public void setLocation_teeth(byte[] location_teeth) {
-        this.location_teeth = location_teeth;
+        String string = Base64.encodeToString(location_teeth, Base64.NO_WRAP);
+        this.location_teeth = string;
     }
 
     public byte[] getLocation_face_left() {
-        return location_face_left;
+        byte[] bytes = Base64.decode(location_face_left, Base64.NO_WRAP);
+        return bytes;
     }
 
     public void setLocation_face_left(byte[] location_face_left) {
-        this.location_face_left = location_face_left;
+        String string = Base64.encodeToString(location_face_left, Base64.NO_WRAP);
+        this.location_face_left = string;
     }
 
     public byte[] getLocation_face_right() {
-        return location_face_right;
+        byte[] bytes = Base64.decode(location_face_right, Base64.NO_WRAP);
+        return bytes;
     }
 
     public void setLocation_face_right(byte[] location_face_right) {
-        this.location_face_right = location_face_right;
+        String string = Base64.encodeToString(location_face_right, Base64.NO_WRAP);
+        this.location_face_right = string;
     }
 
     public String getPain_pattern() {
