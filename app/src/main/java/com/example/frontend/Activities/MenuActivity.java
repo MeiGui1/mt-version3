@@ -1,6 +1,8 @@
 package com.example.frontend.Activities;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -10,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -31,6 +34,8 @@ import com.example.frontend.Globals;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
 
+import java.util.Locale;
+
 public class MenuActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -49,6 +54,8 @@ public class MenuActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             patient = (Patient) extras.getSerializable("patient");
+            Globals g = Globals.getInstance();
+            g.setPatient(patient);
             bundlePatientId.putInt("patientId", patient.getId());
         }
 
@@ -183,7 +190,7 @@ public class MenuActivity extends AppCompatActivity {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            if(getFragmentManager().getBackStackEntryCount() > 0)
+            if (getFragmentManager().getBackStackEntryCount() > 0)
                 getFragmentManager().popBackStack();
             else
                 super.onBackPressed();
@@ -267,6 +274,8 @@ public class MenuActivity extends AppCompatActivity {
         }
 
     }
+
+
 
 
     public void navigateBackToPatients(View view) {

@@ -2,12 +2,18 @@ package com.example.frontend;
 
 import android.graphics.Bitmap;
 
+import com.example.frontend.Models.Patient;
+
+import java.util.Locale;
+
 public class Globals {
     private static Globals instance;
 
     //Global variables
     private int fragmentWidth = 200;
     private int fragmentHeight = 200;
+    Patient patient = new Patient();
+    String language = Locale.getDefault().getLanguage();;
 
     // Restrict the constructor from being instantiated
     private Globals(){}
@@ -35,5 +41,23 @@ public class Globals {
         return instance;
     }
 
+    public static void setInstance(Globals instance) {
+        Globals.instance = instance;
+    }
 
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 }

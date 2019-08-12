@@ -104,8 +104,35 @@
     <string name="description_example">(z.B. Google ist eine Internet-Suchmaschine …)</string>
     <string name="add_website">Webseite hinzufügen</string>
 
+    <!-- Schmerzdetails -->
+    <string name="beginning">Anfang</string>
+    <string name="current">Aktuell</string>
+
+    <string name="pain_quality">Schmerzart</string>
+    <string name="pain_location">Schmerzlokalisation</string>
+    <string name="pain_intensity">Schmerzintensität</string>
+    <string name="pain_pattern">Schmerzmuster</string>
+
+    <string name="dull">dumpf</string>
+    <string name="pulling">ziehend</string>
+    <string name="pulsating">pulsierend</string>
+    <string name="stinging">stechend</string>
+    <string name="burning">brennend</string>
+    <string name="pinsandneedles">kribbelnd</string>
+    <string name="tingling">prickelnd</string>
+    <string name="numb">taub</string>
+
+    <string name="no_pain">Kein Schmerz</string>
+    <string name="unbearable_pain">Unerträglicher Schmerz</string>
+
     <!-- Zusammenfassung -->
     <string name="conclusion">Abschluss</string>
     <string name="download_summary">Zusammenfassung herunterladen</string>
+
+    <!-- Sprachen -->
+    <string name="change_language">Sprache ändern</string>
+    <string name="english">Englisch</string>
+    <string name="german">Deutsch</string>
+    <string name="french">Französisch</string>
 
 </resources>

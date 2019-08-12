@@ -25,7 +25,7 @@
             android:gravity="center"
             android:paddingVertical="10dp"
             android:singleLine="true"
-            android:text="Anfang"
+            android:text="@string/beginning"
             android:textColor="@color/radiobutton_text_selected"
             android:textSize="18sp" />
 
@@ -39,7 +39,7 @@
             android:gravity="center"
             android:paddingVertical="10dp"
             android:singleLine="true"
-            android:text="Aktuell"
+            android:text="@string/current"
             android:textColor="@color/radiobutton_text_selected"
             android:textSize="18sp" />
     </RadioGroup>
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="20dp"
                 android:paddingBottom="10dp"
-                android:text="Schmerzlokalisation"
+                android:text="@string/pain_location"
                 android:textSize="22sp" />
 
             <LinearLayout
@@ -125,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:paddingBottom="10dp"
-                    android:text="Schmerzart"
+                    android:text="@string/pain_quality"
                     android:textSize="22sp" />
 
                 <LinearLayout
@@ -142,7 +142,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="dumpf"
+                        android:text="@string/dull"
                         android:textAllCaps="false" />
 
                     <Button
@@ -152,7 +152,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="ziehend"
+                        android:text="@string/pulling"
                         android:textAllCaps="false" />
 
                     <Button
@@ -162,7 +162,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="pulsierend"
+                        android:text="@string/pulsating"
                         android:textAllCaps="false" />
 
                     <Button
@@ -171,7 +171,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="stechend"
+                        android:text="@string/stinging"
                         android:textAllCaps="false" />
                 </LinearLayout>
 
@@ -188,7 +188,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="brennend"
+                        android:text="@string/burning"
                         android:textAllCaps="false" />
 
                     <Button
@@ -198,7 +198,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="kribbelnd"
+                        android:text="@string/pinsandneedles"
                         android:textAllCaps="false" />
 
                     <Button
@@ -208,7 +208,7 @@
                         android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="prickelnd"
+                        android:text="@string/tingling"
                         android:textAllCaps="false" />
 
                     <Button
@@ -217,7 +217,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@drawable/button_selector_effect"
-                        android:text="taub"
+                        android:text="@string/numb"
                         android:textAllCaps="false" />
                 </LinearLayout>
             </LinearLayout>
@@ -234,7 +234,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:paddingBottom="10dp"
-                    android:text="Schmerzintensität"
+                    android:text="@string/pain_intensity"
                     android:textSize="22sp" />
 
                 <SeekBar
@@ -257,7 +257,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:paddingHorizontal="5dp"
-                    android:text="Kein Schmerz" />
+                    android:text="@string/no_pain" />
 
                     <TextView
                         android:id="@+id/tvIntensity"
@@ -274,7 +274,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:paddingHorizontal="5dp"
-                        android:text="Unerträglicher Schmerz" />
+                        android:text="@string/unbearable_pain" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -289,7 +289,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="20dp"
                     android:paddingBottom="10dp"
-                    android:text="Schmerzmuster"
+                    android:text="@string/pain_pattern"
                     android:textSize="22sp" />
 
                 <LinearLayout

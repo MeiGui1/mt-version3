@@ -27,7 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.MenuActivity"></activity>
+        <activity android:name=".Activities.MenuActivity"
+            android:configChanges="locale"></activity>
         <activity android:name=".Activities.MainActivity">
 
         </activity>
