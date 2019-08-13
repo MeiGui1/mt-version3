@@ -6,18 +6,24 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.TooltipCompat;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.example.frontend.Fragments.Dialogs.DrugDialog;
+import com.example.frontend.Fragments.Dialogs.DrugTypeDialog;
 import com.example.frontend.Models.DrugType;
+import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
@@ -34,7 +40,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
-public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogListener {
+public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogListener, DrugTypeDialog.DrugTypeDialogListener {
     private View cView;
     private List<DrugType> allDrugTypes = new ArrayList<>();
     private List<PatientDrug> allDrugsOfPatient = new ArrayList<>();
@@ -43,6 +49,12 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     private Button selectedDrugButton;
     private int patientId;
     private int columnCounter = 1;
+    private LinearLayout ll1;
+    private LinearLayout ll2;
+    private LinearLayout ll3;
+    private boolean editDrugType = false;
+    private int lastDrugTypeId;
+    private ImageView btnAddNewDrug;
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -62,11 +74,22 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         cView = view;
+        ll1 = (LinearLayout) cView.findViewById(R.id.llFirstColumn);
+        ll2 = (LinearLayout) cView.findViewById(R.id.llSecondColumn);
+        ll3 = (LinearLayout) cView.findViewById(R.id.llThirdColumn);
+        btnAddNewDrug = (ImageView) cView.findViewById(R.id.btnAddDrug);
+        btnAddNewDrug.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDrugTypeDialog(null);
+            }
+        });
         selectedDrugButton = new Button(getContext());
         addDrugButtons(patientId);
     }
 
     public void addAllDrugsTypes() {
+        columnCounter = 1;
         Call<List<DrugType>> call = jsonPlaceHolderApi.getAllDrugTypes();
         call.enqueue(new Callback<List<DrugType>>() {
             @Override
@@ -77,7 +100,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
                     allDrugTypes = response.body();
 
                     for (DrugType drugType : allDrugTypes) {
-                        addDrugTypeBtn(drugType);
+                        addDrugTypeBtn(drugType.getId(), drugType);
                     }
                 }
             }
@@ -88,14 +111,16 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
         });
     }
 
-    public void addDrugTypeBtn(final DrugType drugType) {
+    public void addDrugTypeBtn(int id, final DrugType drugType) {
         final Button btnDrugType = new Button(getContext());
         btnDrugType.setText(drugType.getName());
-        TooltipCompat.setTooltipText(btnDrugType.getRootView(), drugType.getDescription());
+       // TooltipCompat.setTooltipText(btnDrugType.getRootView(), drugType.getDescription());
+        btnDrugType.setId(id);
         btnDrugType.setTextSize(18);
         btnDrugType.setPadding(0, 30, 0, 30);
         btnDrugType.setBackgroundResource(R.drawable.button_selector_effect);
         btnDrugType.setTransformationMethod(null);
+        registerForContextMenu(btnDrugType);
         if (allDrugIdsOfPatient.contains(drugType.getId())) {
             btnDrugType.setSelected(true);
             btnDrugType.setTextColor(Color.WHITE);
@@ -116,9 +141,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
                 }
             }
         });
-        LinearLayout ll1 = (LinearLayout) cView.findViewById(R.id.llFirstColumn);
-        LinearLayout ll2 = (LinearLayout) cView.findViewById(R.id.llSecondColumn);
-        LinearLayout ll3 = (LinearLayout) cView.findViewById(R.id.llThirdColumn);
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(10, 20, 10, 20);
         switch (columnCounter) {
@@ -210,4 +233,138 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
         selectedDrugButton.setSelected(true);
         selectedDrugButton.setTextColor(Color.WHITE);
     }
+
+    public void openDrugTypeDialog(DrugType drugType) {
+        DrugTypeDialog drugTypeDialog = new DrugTypeDialog();
+        Bundle args = new Bundle();
+        args.putSerializable("drugtype", drugType);
+        drugTypeDialog.setArguments(args);
+        drugTypeDialog.setTargetFragment(DrugsFragment.this, 1);
+        drugTypeDialog.show(getActivity().getSupportFragmentManager(), "DrugType Dialog");
+    }
+
+    @Override
+    public void applyDrugType(String name, String description) {
+        DrugType newDrugType = new DrugType();
+        if (!name.isEmpty()) {
+            newDrugType.setName(name);
+        }
+        if (!description.isEmpty()) {
+            newDrugType.setDescription(description);
+        }
+        if(editDrugType)
+        {
+            updateDrugType(lastDrugTypeId, newDrugType);
+            ll1.removeAllViews();
+            ll2.removeAllViews();
+            ll3.removeAllViews();
+            addDrugButtons(patientId);
+            editDrugType = false;
+        }else{
+            addNewDrugType(newDrugType);
+        }
+    }
+
+    public void addNewDrugType(final DrugType drugType) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.createDrugType(drugType);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                getInsertDrugTypeId(drugType);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), "createDrugType NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void getInsertDrugTypeId(final DrugType drugType) {
+        Call<Integer> call = jsonPlaceHolderApi.getLastDrugTypeId();
+        call.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                lastDrugTypeId = response.body();
+                addDrugTypeBtn(lastDrugTypeId, drugType);
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(getActivity(), "getId NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void updateDrugType(int drugTypeId, final DrugType updatedDrugType) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.updateDrugType(drugTypeId, updatedDrugType);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), "create drugType NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.edit_delete_menu, menu);
+        lastDrugTypeId = v.getId();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Button selectedBtn = cView.findViewById(lastDrugTypeId);
+        switch (item.getItemId()) {
+            case R.id.editOption:
+                editDrugType = true;
+                setUpDrugTypeDialog(lastDrugTypeId);
+                return true;
+            case R.id.deleteOption:
+                deleteDrugType(lastDrugTypeId);
+                ((ViewManager)selectedBtn.getParent()).removeView(selectedBtn);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    public void setUpDrugTypeDialog(int id) {
+        Call<DrugType> call = jsonPlaceHolderApi.getDrugType(id);
+        call.enqueue(new Callback<DrugType>() {
+            @Override
+            public void onResponse(Call<DrugType> call, Response<DrugType> response) {
+                DrugType drugType = response.body();
+                openDrugTypeDialog(drugType);
+            }
+
+            @Override
+            public void onFailure(Call<DrugType> call, Throwable t) {
+                Toast.makeText(getActivity(), "get drugType Id NOT successful", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void deleteDrugType(int drugTypeId) {
+        Call<ResponseBody> call = jsonPlaceHolderApi.deleteDrugType(drugTypeId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                ll1.removeAllViews();
+                ll2.removeAllViews();
+                ll3.removeAllViews();
+                addDrugButtons(patientId);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
+    }
+
 }

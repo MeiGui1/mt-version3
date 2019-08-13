@@ -135,4 +135,16 @@
     <string name="english">English</string>
     <string name="german">German</string>
     <string name="french">French</string>
+
+    <string name="type">Classification</string>
+    <string name="add_new_diagnosis">Create Diagnosis</string>
+    <string name="edit_diagnosistype">Edit Diagnosis</string>
+    <string name="name_example"></string>
+    <string name="type_example"></string>
+    <string name="diagnosis_description_example"></string>
+
+    <string name="add_new_drug">Create Drug</string>
+    <string name="edit_drugtype">Edit Drug</string>
+    <string name="drug_name_example"></string>
+    <string name="drug_description_example"></string>
 </resources>

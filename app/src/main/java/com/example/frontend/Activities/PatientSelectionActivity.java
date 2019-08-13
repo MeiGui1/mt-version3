@@ -126,7 +126,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(PatientSelectionActivity.this, "createNote NOT successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PatientSelectionActivity.this, "createPatient NOT successful", Toast.LENGTH_SHORT).show();
             }
         });
     }

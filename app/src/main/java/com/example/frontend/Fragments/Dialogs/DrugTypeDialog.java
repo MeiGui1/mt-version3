@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
@@ -25,35 +26,27 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class PatientDialog extends AppCompatDialogFragment {
+public class DrugTypeDialog extends AppCompatDialogFragment {
     private EditText etName;
-    private boolean nameEmpty = true;
-    private RadioGroup rgGender;
-    Patient patient;
+    private EditText etDescription;
+    DrugType drugType;
 
-    public interface PatientDialogListener {
-        void applyTexts(String name, String gender);
+    public interface DrugTypeDialogListener {
+        void applyDrugType(String name, String description);
     }
 
-    public PatientDialogListener listener;
-
-
-    Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+    public DrugTypeDialogListener listener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        patient = (Patient) getArguments().getSerializable("patient");
+        drugType = (DrugType) getArguments().getSerializable("drugtype");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.layout_patient_dialog, null);
+        View view = inflater.inflate(R.layout.layout_drugtype_dialog, null);
 
         builder.setView(view)
-                .setTitle(R.string.create_patient)
+                .setTitle(R.string.add_new_drug)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -64,23 +57,15 @@ public class PatientDialog extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String name = "";
-                        String gender = "";
+                        String description = "";
                         name = etName.getText().toString();
-                        switch (rgGender.getCheckedRadioButtonId()) {
-                            case R.id.rbMale:
-                                gender = "Male";
-                                break;
-                            case R.id.rbFemale:
-                                gender = "Female";
-                                break;
-
-                        }
-                        listener.applyTexts(name, gender);
+                        description = etDescription.getText().toString();
+                        listener.applyDrugType(name, description);
                     }
                 });
 
         etName = view.findViewById(R.id.etName);
-        rgGender = view.findViewById(R.id.rgGender);
+        etDescription = view.findViewById(R.id.etDescription);
 
 
         etName.addTextChangedListener(new TextWatcher() {
@@ -91,23 +76,17 @@ public class PatientDialog extends AppCompatDialogFragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                AlertDialog dialog = (AlertDialog) getDialog();
                 if(charSequence.length() != 0){
-                    nameEmpty = false;
+                    dialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(true);
                 }else{
-                    nameEmpty = true;
+                    dialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
                 }
-                validateInputs();
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
 
-            }
-        });
-        rgGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                validateInputs();
             }
         });
 
@@ -120,34 +99,21 @@ public class PatientDialog extends AppCompatDialogFragment {
         AlertDialog dialog = (AlertDialog) getDialog();
         dialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
 
-
-        if(patient != null){
-            dialog.setTitle(R.string.edit_patient);
-            etName.setText(patient.getShortname());
-            if(patient.getGender().equals("Female")) {
-                rgGender.check(R.id.rbFemale);
-            }else{
-                rgGender.check(R.id.rbMale);
-            }
+        if(drugType != null){
+            dialog.setTitle(R.string.edit_drugtype);
+            etName.setText(drugType.getName());
+            etDescription.setText(drugType.getDescription());
         }
 
     }
 
-    private void validateInputs(){
-        AlertDialog dialog = (AlertDialog) getDialog();
-        if(!nameEmpty && !(rgGender.getCheckedRadioButtonId()==-1)){
-            dialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(true);
-        }else{
-            dialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
-        }
-    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            listener = (PatientDialogListener) context;
+            listener = (DrugTypeDialogListener) getTargetFragment();
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement PatientDialogListener ");
+            throw new ClassCastException(context.toString() + " must implement DrugTypeDialogListener ");
         }
     }
 

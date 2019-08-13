@@ -54,8 +54,20 @@ public interface JsonPlaceHolderApi {
 
     //Drug Page
 
+    @POST("drugtype")
+    Call<ResponseBody> createDrugType(@Body DrugType drugType);
+
+    @PUT("drugtype/{id}")
+    Call<ResponseBody> updateDrugType(@Path("id") int drugtype_id, @Body DrugType drugType);
+
+    @GET("drugtype/{id}")
+    Call<DrugType> getDrugType(@Path("id") int drugtype_id);
+
     @GET("drugtype")
     Call<List<DrugType>> getAllDrugTypes();
+
+    @DELETE("drugtype/{id}")
+    Call<ResponseBody> deleteDrugType(@Path("id") int drugtype_id);
 
     @GET("drugtype_last_id")
     Call<Integer> getLastDrugTypeId();
@@ -72,11 +84,23 @@ public interface JsonPlaceHolderApi {
 
     //Diagnosis Page
 
+    @POST("diagnosistype")
+    Call<ResponseBody> createDiagnosisType(@Body DiagnosisType diagnosisType);
+
+    @PUT("diagnosistype/{id}")
+    Call<ResponseBody> updateDiagnosisType(@Path("id") int diagnosistype_id, @Body DiagnosisType diagnosisType);
+
+    @GET("diagnosistype/{id}")
+    Call<DiagnosisType> getDiagnosisType(@Path("id") int diagnosistype_id);
+
     @GET("diagnosistype/type")
     Call<List<String>> getDiagnosisClasses();
 
     @GET("diagnosistype/type={type}")
     Call<List<DiagnosisType>> getAllDiagnosisTypesOfClass(@Path("type") String type);
+
+    @DELETE("diagnosistype/{id}")
+    Call<ResponseBody> deleteDiagnosisType(@Path("id") int diagnosistype_id);
 
     @GET("diagnosistype_last_id")
     Call<Integer> getLastDiagnosisTypeId();

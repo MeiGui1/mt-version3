@@ -1,6 +1,8 @@
 package com.example.frontend.Models;
 
-public class DiagnosisType {
+import java.io.Serializable;
+
+public class DiagnosisType implements Serializable {
 
     private int id;
 
