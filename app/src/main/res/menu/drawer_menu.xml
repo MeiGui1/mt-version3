@@ -70,7 +70,7 @@
     <item android:title="@string/conclusion">
         <menu>
             <item
-                android:id="@+id/nav_person"
+                android:id="@+id/nav_pdf"
                 android:icon="@drawable/ic_summary"
                 android:title="@string/download_summary" />
         </menu>
