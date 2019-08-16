@@ -30,6 +30,37 @@ public class PatientDrug {
         return dosis;
     }
 
+    public String getDosisInText() {
+        String dosisInText = "";
+        if (dosis != null && !dosis.isEmpty()) {
+            if (dosis.charAt(0) == 'i') {
+                dosisInText = "morgens";
+            }
+            if (dosis.charAt(1) == '1') {
+                if(!dosisInText.equals(""))
+                {
+                    dosisInText = dosisInText + "-";
+                }
+                dosisInText = dosisInText + "mittags";
+            }
+            if (dosis.charAt(2) == '1') {
+                if(!dosisInText.equals(""))
+                {
+                    dosisInText = dosisInText + "-";
+                }
+                dosisInText = dosisInText + "abends";
+            }
+            if (dosis.charAt(3) == '1') {
+                if(!dosisInText.equals(""))
+                {
+                    dosisInText = dosisInText + "-";
+                }
+                dosisInText = dosisInText + "nachts";
+            }
+        }
+        return dosisInText;
+    }
+
     public void setPatientId(int patientId) {
         this.patientId = patientId;
     }

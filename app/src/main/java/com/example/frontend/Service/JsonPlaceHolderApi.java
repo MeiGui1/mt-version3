@@ -90,6 +90,9 @@ public interface JsonPlaceHolderApi {
     @PUT("diagnosistype/{id}")
     Call<ResponseBody> updateDiagnosisType(@Path("id") int diagnosistype_id, @Body DiagnosisType diagnosisType);
 
+    @GET("diagnosistype")
+    Call<List<DiagnosisType>> getAllDiagnosisTypes();
+
     @GET("diagnosistype/{id}")
     Call<DiagnosisType> getDiagnosisType(@Path("id") int diagnosistype_id);
 
@@ -107,6 +110,9 @@ public interface JsonPlaceHolderApi {
 
     @GET("patientdiagnosis/{patient_id}/type={type}")
     Call<List<PatientDiagnosis>> getPatientDiagnosesOfClass(@Path("patient_id") int patient_id, @Path("type") String type);
+
+    @GET("patientdiagnosis/{patient_id}")
+    Call<List<PatientDiagnosis>> getPatientDiagnoses(@Path("patient_id") int patient_id);
 
     @POST("patientdiagnosis")
     Call<ResponseBody> createPatientDiagnosis(@Body PatientDiagnosis patientDiagnosis);
