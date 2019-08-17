@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -36,6 +37,8 @@ import com.example.frontend.Fragments.TranslatorFragment;
 import com.example.frontend.Globals;
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
+import com.example.frontend.Models.ExercisePhoto;
+import com.example.frontend.Models.ExerciseType;
 import com.example.frontend.Models.Note;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
@@ -43,6 +46,8 @@ import com.example.frontend.Models.PatientDocument;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.Models.PatientExercise;
 import com.example.frontend.Models.PatientImage;
+import com.example.frontend.Models.PatientWebsite;
+import com.example.frontend.Models.WebsiteType;
 import com.example.frontend.R;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 import com.itextpdf.text.BadElementException;
@@ -50,6 +55,7 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
@@ -63,8 +69,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -94,8 +105,13 @@ public class MenuActivity extends AppCompatActivity {
     private List<DrugType> allDrugTypes = new ArrayList<>();
     private List<PatientDrug> allPatientDrugs = new ArrayList<>();
     private List<PatientExercise> allPatientExercises = new ArrayList<>();
-    private List<PatientImage> allPatientImages = new ArrayList<>();
-    private List<PatientDocument> allPatientDocument = new ArrayList<>();
+    private List<ExercisePhoto> allExercisPhotos = new ArrayList<>();
+    private List<ExerciseType> allExerciseTypes = new ArrayList<>();
+    private List<String> allPatientImagesPath = new ArrayList<>();
+    private List<String> allPatientDocumentsPath = new ArrayList<>();
+    private List<Integer> allPatientWebsites = new ArrayList<>();
+    private List<WebsiteType> allWebsiteTypes = new ArrayList<>();
+    private Chunk newLineChunk = new Chunk("\n");
 
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -258,6 +274,12 @@ public class MenuActivity extends AppCompatActivity {
     private void createPdf() {
         getAllDrugTypes();
         getPatientDrugs();
+        getAllExerciseTypes();
+        getPatientExercises();
+        getPatientDocuments();
+        getPatientImages();
+        getAllWebsiteTypes();
+        getPatientWebsites();
         getPatientDiagnoses();
     }
 
@@ -269,11 +291,12 @@ public class MenuActivity extends AppCompatActivity {
         String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + fileName + ".pdf";
         try {
             PdfWriter.getInstance(mDoc, new FileOutputStream(filePath));
+            //PdfWriter.getInstance(mDoc, new FileOutputStream(filePath)).setStrictImageSequence(true);
             String timeStamp = new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime());
-            BaseColor darkBlueColor = new BaseColor(15,28,75);
+            BaseColor darkBlueColor = new BaseColor(15, 28, 75);
             Font fontTitle = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, BaseColor.DARK_GRAY);
-            Font fontParagraphTitle = new Font(Font.FontFamily.HELVETICA, 16, Font.NORMAL, darkBlueColor);
-            Font fontListTitle = new Font(Font.FontFamily.HELVETICA, 14, Font.ITALIC, BaseColor.DARK_GRAY);
+            Font fontParagraphTitle = new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, darkBlueColor);
+            Font fontListTitle = new Font(Font.FontFamily.HELVETICA, 12, Font.ITALIC, BaseColor.DARK_GRAY);
             //open the document for writing
             mDoc.setMargins(70, 70, 80, 80);
             mDoc.open();
@@ -289,7 +312,7 @@ public class MenuActivity extends AppCompatActivity {
                 strGreeting = "Sehr geehrter Herr " + patient.getShortname() + ",";
             }
             addLineBreak(mDoc, 8);
-            Chunk title = new Chunk("Schmerzsprechstunde am Zentrum für Zahnmedizin");
+            Chunk title = new Chunk("Schmerzsprechstunde am Zentrum für Zahnmedizin", fontTitle);
             Paragraph pTitle = new Paragraph(title);
             mDoc.add(pTitle);
 
@@ -297,7 +320,9 @@ public class MenuActivity extends AppCompatActivity {
             Paragraph pGreeting = new Paragraph(strGreeting);
             mDoc.add(pGreeting);
             addLineBreak(mDoc, 1);
-            mDoc.add(new Paragraph("gerne berichten wir über Ihre Schmerzsprechstunde vom " + timeStamp + " und geben Ihnen eine Zusammenfassung Ihrer bisherigen Befunde und des weiteren Vorgehens."));
+            Paragraph pIntroduction = new Paragraph(new Paragraph("gerne berichten wir über Ihre Schmerzsprechstunde vom " + timeStamp + " und geben Ihnen eine Zusammenfassung Ihrer Befunde und des weiteren Vorgehens."));
+            pIntroduction.setAlignment(Element.ALIGN_JUSTIFIED);
+            mDoc.add(pIntroduction);
 
             Drawable d = getResources().getDrawable(R.drawable.uzh_logo);
             Image uzh_logo = createImageWithDrawable(d);
@@ -314,7 +339,8 @@ public class MenuActivity extends AppCompatActivity {
                 if (allPatientDiagnoses.size() > 1) {
                     strFollowingDiagnosis = "folgenden Diagnosen";
                 }
-                mDoc.add(new Paragraph("Aufgrund Ihrer Symptome und der bisherigen Befunde wurden die " + strFollowingDiagnosis + " gestellt:"));
+                Paragraph pDiagnosisIntroduction = new Paragraph("Aufgrund Ihrer Symptome und der bisherigen Befunde wurden die " + strFollowingDiagnosis + " gestellt:");
+                mDoc.add(pDiagnosisIntroduction);
                 com.itextpdf.text.List list = new com.itextpdf.text.List(com.itextpdf.text.List.UNORDERED);
                 for (PatientDiagnosis pd : allPatientDiagnoses) {
                     for (DiagnosisType dt : allDiagnosisTypes) {
@@ -330,9 +356,8 @@ public class MenuActivity extends AppCompatActivity {
                                 Chunk strDiagnosisDesc = new Chunk("\n" + dt.getDescription());
                                 listItem.add(strDiagnosisDesc);
                             }
-
+                            listItem.setAlignment(Element.ALIGN_JUSTIFIED);
                             list.add(listItem);
-
                         }
                     }
                 }
@@ -367,6 +392,7 @@ public class MenuActivity extends AppCompatActivity {
                                 Chunk strDiagnosisDesc = new Chunk("\n" + dt.getDescription());
                                 listItem.add(strDiagnosisDesc);
                             }
+                            listItem.setAlignment(Element.ALIGN_JUSTIFIED);
                             list.add(listItem);
                         }
                     }
@@ -374,25 +400,152 @@ public class MenuActivity extends AppCompatActivity {
                 mDoc.add(new Paragraph("Wir empfehlen Ihnen die Einnahme von" + strFollowingDrugs + ":"));
                 mDoc.add(list);
             }
-            if (!allNotesOfPatient.isEmpty()) {
+            if (!allPatientExercises.isEmpty()) {
                 addLineBreak(mDoc, 1);
-                Chunk notesTitle = new Chunk("Notizen", fontParagraphTitle);
+                Chunk exerciseTitle = new Chunk("Übungen", fontParagraphTitle);
+                Paragraph pExerciseTitle = new Paragraph(exerciseTitle);
+                mDoc.add(pExerciseTitle);
+                mDoc.add(new Paragraph("Um Ihre Verspannungen im Gesicht zu lösen empfehlen wir Ihnen Folgendes:"));
+                com.itextpdf.text.List listExercises = new com.itextpdf.text.List(com.itextpdf.text.List.UNORDERED);
+                for (PatientExercise pe : allPatientExercises) {
+                    for (ExerciseType et : allExerciseTypes) {
+                        if (pe.getExerciseTypeTitle().equals(et.getTitle())) {
+                            Paragraph listItem = new ListItem();
+                            Chunk exerciseName = new Chunk();
+                            Drawable exerciseDrawable = null;
+                            switch (et.getTitle()) {
+                                case "Selbstbeobachtung":
+                                    exerciseName = new Chunk("Entspannte Unterkieferhaltung und Selbstbeobachtung", fontListTitle);
+                                    exerciseDrawable = getResources().getDrawable(R.drawable.uebung_selbstbeobachtung);
+                                    break;
+                                case "Muskeldehnung":
+                                    exerciseName = new Chunk("Muskeldehnung", fontListTitle);
+                                    exerciseDrawable = getResources().getDrawable(R.drawable.uebung_muskeldehnung);
+                                    break;
+                                case "Medikamentenpflaster":
+                                    exerciseName = new Chunk("Medikamentenpflaster", fontListTitle);
+                                    exerciseDrawable = getResources().getDrawable(R.drawable.uebung_pflaster);
+                                    break;
+                                case "MassageWange":
+                                    exerciseName = new Chunk("Massage der Wangenmuskulatur", fontListTitle);
+                                    exerciseDrawable = getResources().getDrawable(R.drawable.uebung_massagewangen);
+                                    break;
+                                case "MassageSchlaefe":
+                                    exerciseName = new Chunk("Massage der Schläfenmuskulatur", fontListTitle);
+                                    exerciseDrawable = getResources().getDrawable(R.drawable.uebung_massageschlaefe);
+                                    break;
+                            }
+                            listItem.add(exerciseName);
+                            if (et.getExplanation() != null) {
+                                Chunk strDiagnosisDesc = new Chunk("\n" + et.getExplanation());
+                                listItem.add(strDiagnosisDesc);
+                            }
+                            listItem.add(newLineChunk);
+                            listItem.add(newLineChunk);
+                            Image exerciseImage = createImageWithDrawable(exerciseDrawable);
+                            exerciseImage.scalePercent(40);
+                            Chunk imageChunk = new Chunk(exerciseImage, 0, 0, true);
+                            listItem.add(imageChunk);
+                            listItem.add(newLineChunk);
+                            listItem.setAlignment(Element.ALIGN_JUSTIFIED);
+                            listExercises.add(listItem);
+                        }
+                    }
+                }
+                mDoc.add(listExercises);
+            }
+            if (!allExercisPhotos.isEmpty()) {
+                addLineBreak(mDoc, 1);
+                mDoc.add(new Paragraph("Fotos aus der Sprechstunde als Unterstützung:\n", fontListTitle));
+                Paragraph photoParagraph = new Paragraph();
+                for (ExercisePhoto photo : allExercisPhotos) {
+                    Image exerciseImage = Image.getInstance(photo.getPhotoBytes());
+                    exerciseImage.setBorder(Rectangle.TOP);
+                    exerciseImage.setBorderColor(BaseColor.WHITE);
+                    exerciseImage.setBorderWidth(10f);
+                    Chunk imageChunk = new Chunk(exerciseImage, 0, 0, true);
+                    photoParagraph.add(imageChunk);
+                    photoParagraph.add(new Chunk("      "));
+                }
+                mDoc.add(photoParagraph);
+            }
+            mDoc.newPage();
+            if (!allNotesOfPatient.isEmpty()) {
+                Chunk notesTitle = new Chunk("A1: Notizen/Zeichnungen", fontParagraphTitle);
                 Paragraph pNotesTitle = new Paragraph(notesTitle);
                 mDoc.add(pNotesTitle);
-                mDoc.add(new Paragraph("Folgende Notizen wurden während der Sprechstunde für Sie erstellt:"));
+                if(allNotesOfPatient.size() >1 ){
+                    mDoc.add(new Paragraph("Folgende Notizen/Zeichnungen wurden während der Sprechstunde für Sie erstellt:"));
+                }else{
+                    mDoc.add(new Paragraph("Die folgende Notiz/Zeichnung wurde während der Sprechstunde für Sie erstellt:"));
+                }
                 for (Note note : allNotesOfPatient) {
+                    Paragraph pNote = new Paragraph();
                     Image noteImage = Image.getInstance(note.getNoteBytes());
-                    noteImage.scalePercent(40);
+                    noteImage.setAlignment(Element.ALIGN_CENTER);
+                    noteImage.scaleToFit(280,1000);
                     noteImage.setBorder(Rectangle.BOX);
                     noteImage.setBorderColor(BaseColor.BLACK);
                     noteImage.setBorderWidth(1f);
-                    mDoc.add(noteImage);
+                    pNote.add(noteImage);
+                    mDoc.add(pNote);
                 }
+            }
+            mDoc.newPage();
+            if (!allPatientImagesPath.isEmpty()) {
+                Chunk imageTitle = new Chunk("A2: Bilder", fontParagraphTitle);
+                Paragraph pImageTitle = new Paragraph(imageTitle);
+                mDoc.add(pImageTitle);
+                for (String imagePath : allPatientImagesPath) {
+                    Paragraph pImage = new Paragraph();
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                    Image selectedImage = Image.getInstance(bitmapToByte(bitmap));
+                    selectedImage.setAlignment(Element.ALIGN_CENTER);
+                    selectedImage.scaleToFit(280,1000);
+                    selectedImage.setBorder(Rectangle.BOX);
+                    selectedImage.setBorderColor(BaseColor.BLACK);
+                    selectedImage.setBorderWidth(1f);
+                    pImage.add(selectedImage);
+                    mDoc.add(pImage);
+                }
+            }
+            mDoc.newPage();
+            if (!allPatientWebsites.isEmpty()) {
+                Chunk webisiteTitle = new Chunk("A3: Webseiten", fontParagraphTitle);
+                Paragraph pWebsiteTitle = new Paragraph(webisiteTitle);
+                mDoc.add(pWebsiteTitle);
+                if(allPatientWebsites.size() >1 ){
+                    mDoc.add(new Paragraph("Für weitere Informationen empfehlen wir Ihnen die folgenden Internetseiten:"));
+
+                }else{
+                    mDoc.add(new Paragraph("Für weitere Informationen empfehlen wir Ihnen diese Internetseite:"));
+                }
+                com.itextpdf.text.List list = new com.itextpdf.text.List(com.itextpdf.text.List.UNORDERED);
+                for (Integer pw : allPatientWebsites) {
+                    for (WebsiteType wt : allWebsiteTypes) {
+                        if (wt.getId() == pw) {
+                            ListItem listItem = new ListItem();
+                            Chunk diagnosisName = new Chunk(wt.getName(), fontListTitle);
+                            listItem.add(diagnosisName);
+                            if (wt.getUrl() != null && !wt.getUrl().isEmpty()) {
+                                Chunk strUrl = new Chunk("\n" + wt.getUrl(), fontListTitle);
+                                listItem.add(strUrl);
+                            }
+                            if (wt.getDescription() != null && !wt.getDescription().isEmpty()) {
+                                Chunk strDesc = new Chunk("\n" + wt.getDescription());
+                                listItem.add(strDesc);
+                            }
+                            listItem.setAlignment(Element.ALIGN_JUSTIFIED);
+                            list.add(listItem);
+                        }
+                    }
+                }
+                mDoc.add(list);
             }
 
             //close the document
             mDoc.close();
-            Toast.makeText(this, fileName + ".pdf " + getString(R.string.saved) +"!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, fileName + ".pdf " + getString(R.string.saved) + "!", Toast.LENGTH_SHORT).show();
 
         } catch (
                 Exception e) {
@@ -408,7 +561,6 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private Image createImageWithDrawable(Drawable d) throws IOException, BadElementException {
-        // the drawable (Captain Obvious, to the rescue!!!)
         Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -429,6 +581,12 @@ public class MenuActivity extends AppCompatActivity {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
         }
+    }
+    public byte[] bitmapToByte(Bitmap drawing) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        drawing.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        byte[] drawingByteArray = bos.toByteArray();
+        return drawingByteArray;
     }
 
     private void displayMessage(String message) {
@@ -542,7 +700,7 @@ public class MenuActivity extends AppCompatActivity {
                     return;
                 } else {
                     allNotesOfPatient = response.body();
-                    savePdf();
+                    getExercisePhotos();
                 }
             }
 
@@ -640,4 +798,145 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    public void getExercisePhotos() {
+        Call<List<ExercisePhoto>> call = jsonPlaceHolderApi.getExercisePhotosOfPatient(patient.getId());
+        call.enqueue(new Callback<List<ExercisePhoto>>() {
+            @Override
+            public void onResponse(Call<List<ExercisePhoto>> call, Response<List<ExercisePhoto>> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                } else {
+                    allExercisPhotos = response.body();
+                    savePdf();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ExercisePhoto>> call, Throwable t) {
+                Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getPatientExercises() {
+        Call<List<PatientExercise>> call = jsonPlaceHolderApi.getSelectedPatientExercises(patient.getId());
+        call.enqueue(new Callback<List<PatientExercise>>() {
+            @Override
+            public void onResponse(Call<List<PatientExercise>> call, Response<List<PatientExercise>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "not succesful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allPatientExercises = response.body();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PatientExercise>> call, Throwable t) {
+                Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getAllExerciseTypes() {
+        //Get all ExerciseTypes of Patient
+        Call<List<ExerciseType>> call = jsonPlaceHolderApi.getAllExerciseTypes();
+        call.enqueue(new Callback<List<ExerciseType>>() {
+            @Override
+            public void onResponse(Call<List<ExerciseType>> call, Response<List<ExerciseType>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "Get ExerciseTypes not successful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allExerciseTypes = response.body();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ExerciseType>> call, Throwable t) {
+                Toast.makeText(MenuActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void getAllWebsiteTypes() {
+        //Get all WebsiteTypes of Patient
+        Call<List<WebsiteType>> call = jsonPlaceHolderApi.getAllWebsiteTypes();
+        call.enqueue(new Callback<List<WebsiteType>>() {
+            @Override
+            public void onResponse(Call<List<WebsiteType>> call, Response<List<WebsiteType>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "Get WebsiteTypes not successful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allWebsiteTypes = response.body();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<WebsiteType>> call, Throwable t) {
+                Toast.makeText(MenuActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void getPatientWebsites() {
+        Call<List<Integer>> call = jsonPlaceHolderApi.getAllWebsiteIdsOfPatient(patient.getId());
+        call.enqueue(new Callback<List<Integer>>() {
+            @Override
+            public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "not succesful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allPatientWebsites = response.body();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Integer>> call, Throwable t) {
+                Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getPatientImages() {
+        Call<List<String>> call = jsonPlaceHolderApi.getAllImagePathsOfPatient(patient.getId());
+        call.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "not succesful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allPatientImagesPath = response.body();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void getPatientDocuments() {
+        Call<List<String>> call = jsonPlaceHolderApi.getAllDocumentPathsOfPatient(patient.getId());
+        call.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "not succesful", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    allPatientDocumentsPath = response.body();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+
 }

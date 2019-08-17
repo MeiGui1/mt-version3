@@ -65,7 +65,7 @@
     <string name="diagnosis_description_example">(z.B. Verlagerungen der Knorpelscheibe im Kiefergelenk)</string>
 
     <!-- Übungen -->
-    <string name="exercise_observation">Selbstbeobachtung</string>
+    <string name="exercise_observation">Entsp. Unterkieferhaltung</string>
     <string name="exercise_massage_temple">Massage der Schläfenmuskulatur</string>
     <string name="exercise_massage_cheek">Massage der Wangenmuskulatur</string>
     <string name="exercise_muscle_elongation">Muskeldehnung</string>

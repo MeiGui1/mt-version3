@@ -3,6 +3,7 @@ package com.example.frontend.Service;
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.ExercisePhoto;
+import com.example.frontend.Models.ExerciseType;
 import com.example.frontend.Models.ImprovementReason;
 import com.example.frontend.Models.Note;
 import com.example.frontend.Models.PainBeginning;
@@ -146,6 +147,9 @@ public interface JsonPlaceHolderApi {
 
 
     //Exercise Page
+    @GET("exercisetype")
+    Call<List<ExerciseType>> getAllExerciseTypes();
+
     @GET("patientexercise/{id}")
     Call<List<PatientExercise>> getSelectedPatientExercises(@Path("id") int patient_id);
 
