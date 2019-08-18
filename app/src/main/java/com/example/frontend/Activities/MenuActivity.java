@@ -62,14 +62,19 @@ import com.itextpdf.text.Image;
 
 
 import com.itextpdf.text.ListItem;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfImage;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -290,7 +295,7 @@ public class MenuActivity extends AppCompatActivity {
         //pdf file path
         String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + fileName + ".pdf";
         try {
-            PdfWriter.getInstance(mDoc, new FileOutputStream(filePath));
+            PdfWriter writer = PdfWriter.getInstance(mDoc, new FileOutputStream(filePath));
             //PdfWriter.getInstance(mDoc, new FileOutputStream(filePath)).setStrictImageSequence(true);
             String timeStamp = new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime());
             BaseColor darkBlueColor = new BaseColor(15, 28, 75);
@@ -474,16 +479,16 @@ public class MenuActivity extends AppCompatActivity {
                 Chunk notesTitle = new Chunk("A1: Notizen/Zeichnungen", fontParagraphTitle);
                 Paragraph pNotesTitle = new Paragraph(notesTitle);
                 mDoc.add(pNotesTitle);
-                if(allNotesOfPatient.size() >1 ){
+                if (allNotesOfPatient.size() > 1) {
                     mDoc.add(new Paragraph("Folgende Notizen/Zeichnungen wurden während der Sprechstunde für Sie erstellt:"));
-                }else{
+                } else {
                     mDoc.add(new Paragraph("Die folgende Notiz/Zeichnung wurde während der Sprechstunde für Sie erstellt:"));
                 }
                 for (Note note : allNotesOfPatient) {
                     Paragraph pNote = new Paragraph();
                     Image noteImage = Image.getInstance(note.getNoteBytes());
                     noteImage.setAlignment(Element.ALIGN_CENTER);
-                    noteImage.scaleToFit(280,1000);
+                    noteImage.scaleToFit(280, 1000);
                     noteImage.setBorder(Rectangle.BOX);
                     noteImage.setBorderColor(BaseColor.BLACK);
                     noteImage.setBorderWidth(1f);
@@ -501,7 +506,7 @@ public class MenuActivity extends AppCompatActivity {
                     Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
                     Image selectedImage = Image.getInstance(bitmapToByte(bitmap));
                     selectedImage.setAlignment(Element.ALIGN_CENTER);
-                    selectedImage.scaleToFit(280,1000);
+                    selectedImage.scaleToFit(280, 1000);
                     selectedImage.setBorder(Rectangle.BOX);
                     selectedImage.setBorderColor(BaseColor.BLACK);
                     selectedImage.setBorderWidth(1f);
@@ -514,10 +519,10 @@ public class MenuActivity extends AppCompatActivity {
                 Chunk webisiteTitle = new Chunk("A3: Webseiten", fontParagraphTitle);
                 Paragraph pWebsiteTitle = new Paragraph(webisiteTitle);
                 mDoc.add(pWebsiteTitle);
-                if(allPatientWebsites.size() >1 ){
+                if (allPatientWebsites.size() > 1) {
                     mDoc.add(new Paragraph("Für weitere Informationen empfehlen wir Ihnen die folgenden Internetseiten:"));
 
-                }else{
+                } else {
                     mDoc.add(new Paragraph("Für weitere Informationen empfehlen wir Ihnen diese Internetseite:"));
                 }
                 com.itextpdf.text.List list = new com.itextpdf.text.List(com.itextpdf.text.List.UNORDERED);
@@ -543,8 +548,31 @@ public class MenuActivity extends AppCompatActivity {
                 mDoc.add(list);
             }
 
+
+            PdfReader reader = null;
+            if (!allPatientDocumentsPath.isEmpty()) {
+                for (String documentPath : allPatientDocumentsPath) {
+                    File file = new File(documentPath);
+                    if(file.exists()){
+                        byte[] bytesArray = new byte[(int) file.length()];
+                        FileInputStream fis = new FileInputStream(file);
+                        fis.read(bytesArray); //read file into bytes[]
+                        fis.close();
+                        reader = new PdfReader(bytesArray);
+                        for (int i =1;i <= reader.getNumberOfPages(); i++){
+                            mDoc.newPage();
+                            PdfImportedPage page = writer.getImportedPage(reader, i);
+                            Image img = Image.getInstance(page);
+                            img.scaleToFit(writer.getPageSize());
+                            img.setAbsolutePosition((PageSize.A4.getWidth() - img.getScaledWidth()) / 2, (PageSize.A4.getHeight() - img.getScaledHeight()) / 2);
+                            mDoc.add(img);
+                        }
+                    }
+                }
+            }
             //close the document
             mDoc.close();
+            reader.close();
             Toast.makeText(this, fileName + ".pdf " + getString(R.string.saved) + "!", Toast.LENGTH_SHORT).show();
 
         } catch (
