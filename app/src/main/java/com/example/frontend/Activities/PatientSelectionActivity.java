@@ -25,7 +25,9 @@ import com.example.frontend.Models.Patient;
 import com.example.frontend.R;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,7 +48,14 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
     Context context = this;
     private boolean editPatient = false;
 
+    final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build();
+
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 

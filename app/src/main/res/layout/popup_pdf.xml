@@ -21,6 +21,6 @@
 
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfView"
-        android:layout_width="800dp"
-        android:layout_height="800dp"/>
+        android:layout_width="700dp"
+        android:layout_height="600dp"/>
 </LinearLayout>
