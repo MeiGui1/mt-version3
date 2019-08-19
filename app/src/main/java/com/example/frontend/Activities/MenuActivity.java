@@ -291,7 +291,7 @@ public class MenuActivity extends AppCompatActivity {
     private void savePdf() {
         Document mDoc = new Document();
         //pdf file name
-        String fileName = "Summary - " + patient.getShortname();
+        String fileName = patient.getShortname() + " - Zusammenfassung" ;
         //pdf file path
         String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + fileName + ".pdf";
         try {
@@ -498,20 +498,27 @@ public class MenuActivity extends AppCompatActivity {
             }
             mDoc.newPage();
             if (!allPatientImagesPath.isEmpty()) {
+
                 Chunk imageTitle = new Chunk("A2: Bilder", fontParagraphTitle);
                 Paragraph pImageTitle = new Paragraph(imageTitle);
                 mDoc.add(pImageTitle);
                 for (String imagePath : allPatientImagesPath) {
-                    Paragraph pImage = new Paragraph();
-                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                    Image selectedImage = Image.getInstance(bitmapToByte(bitmap));
-                    selectedImage.setAlignment(Element.ALIGN_CENTER);
-                    selectedImage.scaleToFit(280, 1000);
-                    selectedImage.setBorder(Rectangle.BOX);
-                    selectedImage.setBorderColor(BaseColor.BLACK);
-                    selectedImage.setBorderWidth(1f);
-                    pImage.add(selectedImage);
-                    mDoc.add(pImage);
+                    File file = new File(imagePath);
+                    if (file.exists()) {
+                        Paragraph pImage = new Paragraph();
+                        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                        if (bitmap != null) {
+                            Image selectedImage = Image.getInstance(bitmapToByte(bitmap));
+                            selectedImage.setAlignment(Element.ALIGN_CENTER);
+                            selectedImage.scaleToFit(280, 1000);
+                            selectedImage.setBorder(Rectangle.BOX);
+                            selectedImage.setBorderColor(BaseColor.BLACK);
+                            selectedImage.setBorderWidth(1f);
+                            pImage.add(selectedImage);
+                            mDoc.add(pImage);
+                        }
+
+                    }
                 }
             }
             mDoc.newPage();
@@ -553,13 +560,13 @@ public class MenuActivity extends AppCompatActivity {
             if (!allPatientDocumentsPath.isEmpty()) {
                 for (String documentPath : allPatientDocumentsPath) {
                     File file = new File(documentPath);
-                    if(file.exists()){
+                    if (file.exists() && file != null) {
                         byte[] bytesArray = new byte[(int) file.length()];
                         FileInputStream fis = new FileInputStream(file);
                         fis.read(bytesArray); //read file into bytes[]
                         fis.close();
                         reader = new PdfReader(bytesArray);
-                        for (int i =1;i <= reader.getNumberOfPages(); i++){
+                        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                             mDoc.newPage();
                             PdfImportedPage page = writer.getImportedPage(reader, i);
                             Image img = Image.getInstance(page);
@@ -572,7 +579,9 @@ public class MenuActivity extends AppCompatActivity {
             }
             //close the document
             mDoc.close();
-            reader.close();
+            if(reader != null){
+                reader.close();
+            }
             Toast.makeText(this, fileName + ".pdf " + getString(R.string.saved) + "!", Toast.LENGTH_SHORT).show();
 
         } catch (
@@ -610,6 +619,7 @@ public class MenuActivity extends AppCompatActivity {
                 }
         }
     }
+
     public byte[] bitmapToByte(Bitmap drawing) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         drawing.compress(Bitmap.CompressFormat.PNG, 100, bos);
@@ -922,6 +932,7 @@ public class MenuActivity extends AppCompatActivity {
                     allPatientWebsites = response.body();
                 }
             }
+
             @Override
             public void onFailure(Call<List<Integer>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
@@ -941,12 +952,14 @@ public class MenuActivity extends AppCompatActivity {
                     allPatientImagesPath = response.body();
                 }
             }
+
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
+
     public void getPatientDocuments() {
         Call<List<String>> call = jsonPlaceHolderApi.getAllDocumentPathsOfPatient(patient.getId());
         call.enqueue(new Callback<List<String>>() {
@@ -959,6 +972,7 @@ public class MenuActivity extends AppCompatActivity {
                     allPatientDocumentsPath = response.body();
                 }
             }
+
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();

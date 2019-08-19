@@ -619,6 +619,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         final LinearLayout ll = new LinearLayout(getContext());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 200);
+        lp.setMargins(0,0,0,10);
         // TooltipCompat.setTooltipText(ll, wt.getDescription());
         ll.setPadding(7, 7, 7, 7);
         ll.setLayoutParams(lp);
