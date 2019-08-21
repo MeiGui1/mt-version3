@@ -446,7 +446,7 @@ public class PainFragment extends Fragment {
                         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.face_right);
                         break;
                 }
-                bmp = resize(bmp, 600, 450);
+                bmp = resize(bmp, 600, 400);
                 setUpCanvas(imageView);
             }
         });

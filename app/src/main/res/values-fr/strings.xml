@@ -131,6 +131,7 @@
     <string name="english">Anglais</string>
     <string name="german">Allemand</string>
     <string name="french">Français</string>
+    <string name="russian">Russe</string>
 
     <string name="type">Classification</string>
     <string name="add_new_diagnosis">Créer un diagnostic</string>

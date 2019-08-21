@@ -65,6 +65,17 @@
             android:textAllCaps="false"
             android:layout_marginHorizontal="10dp"
             />
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/russian"
+            android:id="@+id/btnLangRu"
+            android:layout_gravity="center"
+            android:padding="30dp"
+            android:background="@drawable/button_selector_effect"
+            android:textAllCaps="false"
+            android:layout_marginHorizontal="10dp"
+            />
     </LinearLayout>
 
 </LinearLayout>

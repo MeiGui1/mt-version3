@@ -150,6 +150,7 @@
     <string name="english">Englisch</string>
     <string name="german">Deutsch</string>
     <string name="french">Französisch</string>
+    <string name="russian">Russisch</string>
     <string name="open_google_translate">Google Translate öffnen</string>
 
 </resources>

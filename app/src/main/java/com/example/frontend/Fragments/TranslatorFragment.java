@@ -42,6 +42,7 @@ public class TranslatorFragment extends Fragment {
     private Button btnEnglish;
     private Button btnGerman;
     private Button btnFrench;
+    private Button btnRussian;
     private String defaultLang = Locale.getDefault().getLanguage();
 
 
@@ -90,6 +91,14 @@ public class TranslatorFragment extends Fragment {
                 setApplicationLanguage("fr");
             }
         });
+        btnRussian = (Button) view.findViewById(R.id.btnLangRu);
+        btnRussian.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Globals.getInstance().setLanguage("ru");
+                setApplicationLanguage("ru");
+            }
+        });
         markSelectedLanguage();
 
 
@@ -107,6 +116,9 @@ public class TranslatorFragment extends Fragment {
         } else if (lang.equals("fr")) {
             btnFrench.setSelected(true);
             btnFrench.setTextColor(Color.WHITE);
+        } else if (lang.equals("ru")) {
+            btnRussian.setSelected(true);
+            btnRussian.setTextColor(Color.WHITE);
         }
     }
 
