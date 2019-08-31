@@ -39,7 +39,6 @@ public class DiagnosisDialog extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.layout_diagnosis_dialog, null);
         etComment = (EditText)view.findViewById(R.id.edit_comment);
-
         builder.setView(view)
                 .setTitle(R.string.diagnosisDetails)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

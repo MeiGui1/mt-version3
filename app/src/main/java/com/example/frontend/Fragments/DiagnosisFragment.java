@@ -231,6 +231,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
                     btnDiagnosisType.setSelected(false);
                     btnDiagnosisType.setTextColor(Color.BLACK);
                 } else {
+                    selectedPatientDiagnosis = new PatientDiagnosis();
                     selectedPatientDiagnosis.setPatientId(patientId);
                     selectedPatientDiagnosis.setDiagnosisId(diagnosisType.getId());
                     selectedDiagnosisBtn = btnDiagnosisType;
@@ -262,7 +263,6 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Toast.makeText(getActivity(), "createPatientDiagnosis successful " + patientDiagnosis.getPatientId() + patientDiagnosis.getDiagnosisId(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

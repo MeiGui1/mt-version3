@@ -173,6 +173,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
     public void addPatientBtn(int id, final Patient patient) {
         Button btnPatient = new Button(context);
         btnPatient.setId(id);
+        patient.setId(id);
         btnPatient.setText(patient.getShortname());
         btnPatient.setTextSize(18);
         btnPatient.setPadding(0, 30, 0, 30);
