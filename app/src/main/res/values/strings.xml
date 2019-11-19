@@ -152,5 +152,10 @@
     <string name="french">Französisch</string>
     <string name="russian">Russisch</string>
     <string name="open_google_translate">Google Translate öffnen</string>
+    <string name="login">Login</string>
+    <string name="incorrect_attempts">Anzahl Fehlversuche</string>
+    <string name="sign_in">Anmelden</string>
+    <string name="password">Passwort</string>
+    <string name="username">Username</string>
 
 </resources>

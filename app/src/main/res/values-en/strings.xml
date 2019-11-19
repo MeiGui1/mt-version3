@@ -148,4 +148,9 @@
     <string name="edit_drugtype">Edit Drug</string>
     <string name="drug_name_example"></string>
     <string name="drug_description_example"></string>
+    <string name="login">Login</string>
+    <string name="incorrect_attempts">Anzahl Fehlversuche</string>
+    <string name="sign_in">Anmelden</string>
+    <string name="password">Passwort</string>
+    <string name="username">Username</string>
 </resources>

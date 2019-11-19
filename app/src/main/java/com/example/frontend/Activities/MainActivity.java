@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             counter--;
-            tvAttemptsInfo.setText("No of attempts remaining: " + String.valueOf(counter));
+            tvAttemptsInfo.setText("Anzahl Versuche übrig: " + String.valueOf(counter));
             if (counter == 0) {
                 btnLogin.setEnabled(false);
             }

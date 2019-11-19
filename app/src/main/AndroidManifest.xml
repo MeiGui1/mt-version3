@@ -18,7 +18,7 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true" >
         <activity
-            android:name=".Activities.PatientSelectionActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -29,8 +29,7 @@
         </activity>
         <activity android:name=".Activities.MenuActivity"
             android:configChanges="locale"></activity>
-        <activity android:name=".Activities.MainActivity">
-
+        <activity android:name=".Activities.PatientSelectionActivity">
         </activity>
     </application>
 
