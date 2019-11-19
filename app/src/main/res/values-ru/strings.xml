@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">PaCons</string>
+    <string name="app_name">PaCons2</string>
+    <string name="title_activity_menu">MenuActivity</string>
     <string name="navigation_drawer_open">Открыть навигацию</string>
     <string name="navigation_drawer_close">Закрыть навигацию</string>
+    <string name="title_activity_patient_selection">PatientSelectionActivity</string>
 
     <!-- Patienten -->
     <string name="edit_patient">Исправить пациента</string>

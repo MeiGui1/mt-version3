@@ -109,6 +109,7 @@ public class ModelsFragment extends Fragment {
                 // Enable Javascript
                 WebSettings webSettings = modelView.getSettings();
                 webSettings.setJavaScriptEnabled(true);
+                webSettings.setDomStorageEnabled(true);
 
                 // Force links and redirects to open in the WebView instead of in a browser
                 modelView.setWebViewClient(new WebViewClient());

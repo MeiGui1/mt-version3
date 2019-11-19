@@ -39,14 +39,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //jump to Menu for faster testing puroposes
-        Intent intent = new Intent(MainActivity.this, PatientSelectionActivity.class);
-        intent.putExtra("usernameKey", "Admin");
-        startActivity(intent);
+        //Intent intent = new Intent(MainActivity.this, PatientSelectionActivity.class);
+        //intent.putExtra("usernameKey", "Admin");
+        //startActivity(intent);
     }
 
     private void validate(String username, String password) {
         if (username.equals("Admin") && password.equals("123")) {
-            Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+            Intent intent = new Intent(MainActivity.this, PatientSelectionActivity.class);
             intent.putExtra("usernameKey", etUsername.getText().toString());
             startActivity(intent);
         } else {
