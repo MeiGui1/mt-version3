@@ -256,7 +256,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
                 return true;
             case R.id.deleteOption:
                 deletePatient(lastPatientId);
-                ((ViewManager)selectedIv.getParent()).removeView(selectedIv);
+                //((ViewManager)selectedIv.getParent()).removeView(selectedIv);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -284,7 +284,10 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
     public void deletePatient(int patientId) {
         db.deletePatient(patientId);
 
-        addAllPatients();*/
+        ll1.removeAllViews();
+        ll2.removeAllViews();
+        ll3.removeAllViews();
+        addAllPatients();
         /*
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatient(patientId);
         call.enqueue(new Callback<ResponseBody>() {
