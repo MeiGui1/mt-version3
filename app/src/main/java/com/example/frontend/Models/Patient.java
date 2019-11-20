@@ -10,6 +10,20 @@ public class Patient implements Serializable {
 
     private String gender;
 
+    public Patient()  {
+
+    }
+
+    public Patient(String shortname, String gender) {
+        this.shortname= shortname;
+        this.gender = gender;
+    }
+    public Patient(int userId, String shortname, String gender) {
+        this.id = userId;
+        this.shortname= shortname;
+        this.gender = gender;
+    }
+
     public int getId() {
         return id;
     }

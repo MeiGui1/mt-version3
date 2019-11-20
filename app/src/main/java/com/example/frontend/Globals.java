@@ -3,6 +3,7 @@ package com.example.frontend;
 import android.graphics.Bitmap;
 
 import com.example.frontend.Models.Patient;
+import com.example.frontend.Models.User;
 
 import java.util.Locale;
 
@@ -13,10 +14,19 @@ public class Globals {
     private int fragmentWidth = 200;
     private int fragmentHeight = 200;
     Patient patient = new Patient();
+    User user = new User();
     String language = Locale.getDefault().getLanguage();;
 
     // Restrict the constructor from being instantiated
     private Globals(){}
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public int getFragmentWidth() {
         return fragmentWidth;
