@@ -8,22 +8,35 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.frontend.Models.User;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
+import com.facebook.stetho.Stetho;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
+    DatabaseHelper db;
     private EditText etUsername;
     private EditText etPassword;
     private TextView tvAttemptsInfo;
+    private TextView tvTest;
     private Button btnLogin;
     private int counter = 3;
+    private List<User> userList;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //this.deleteDatabase("Pacons_DB");
+        //To view database on Chrome: chrome://inspect/#devices -> inspect
+        Stetho.initializeWithDefaults(this);
 
+        db = new DatabaseHelper(this);
+        db.createDefaultUsersIfNeed();
+        userList =  db.getAllUsers();
 
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
@@ -45,17 +58,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void validate(String username, String password) {
-        if (username.equals("Admin") && password.equals("123")) {
-            Intent intent = new Intent(MainActivity.this, PatientSelectionActivity.class);
-            intent.putExtra("usernameKey", etUsername.getText().toString());
-            startActivity(intent);
-        } else {
+        boolean userFound = false;
+        for(User user: userList){
+            if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
+                Intent intent = new Intent(MainActivity.this, PatientSelectionActivity.class);
+                intent.putExtra("usernameKey", etUsername.getText().toString());
+                startActivity(intent);
+            }else{
+                userFound = false;
+            }
+        }
+        if (!userFound){
             counter--;
-            tvAttemptsInfo.setText("Anzahl Versuche übrig: " + String.valueOf(counter));
+            tvAttemptsInfo.setText("Anzahl übriger Versuche: " + String.valueOf(counter));
             if (counter == 0) {
                 btnLogin.setEnabled(false);
             }
         }
-
     }
 }
