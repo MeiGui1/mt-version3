@@ -53,6 +53,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
     private boolean editPatient = false;
 
     /* Only used for Heruoku Database
+
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .writeTimeout(20, TimeUnit.SECONDS)
@@ -135,7 +136,9 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
     public void addNewPatient(final Patient patient) {
         db.addPatient(patient);
         getInsertPatientId(patient);
-        /*
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatient(patient);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -163,7 +166,9 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         for (Patient patient : allPatients) {
             addPatientBtn(patient.getId(), patient);
         }
-        /*
+
+        /*Only used for Heruoku Database
+
         Call<List<Patient>> call = jsonPlaceHolderApi.getAllPatients();
         call.enqueue(new Callback<List<Patient>>() {
             @Override
@@ -222,7 +227,9 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
     public void getInsertPatientId(final Patient patient) {
         lastPatientId = db.selectLastPatientId();
         addPatientBtn(lastPatientId, patient);
-        /*
+
+        /*Only used for Heruoku Database
+
         Call<Integer> call = jsonPlaceHolderApi.getLastPatientId();
         call.enqueue(new Callback<Integer>() {
             @Override
@@ -243,7 +250,6 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.edit_delete_menu, menu);
         lastPatientId = v.getId();
-        Toast.makeText(context,String.valueOf(v.getId()),Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -265,7 +271,9 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
 
     public void setUpPatientDialog(int id) {
         openPatientDialog(db.getPatient(id));
-        /*
+
+        /* Only used for Heruoku Database
+
         Call<Patient> call = jsonPlaceHolderApi.getPatient(id);
         call.enqueue(new Callback<Patient>() {
             @Override
@@ -288,7 +296,9 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         ll2.removeAllViews();
         ll3.removeAllViews();
         addAllPatients();
-        /*
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatient(patientId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -307,7 +317,9 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
 
     public void updatePatient(int patientId, final Patient updatedPatient) {
         db.updatePatient(patientId,updatedPatient);
-        /*
+
+        /* Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.updatePatient(patientId, updatedPatient);
         call.enqueue(new Callback<ResponseBody>() {
             @Override

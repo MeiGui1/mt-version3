@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         db.createDefaultUsersIfNeed();
         userList =  db.getAllUsers();
 
-
 /*
         DroidDataSource dataSource = new DroidDataSource(getPackageName(), "Pacons_DB");
         ContextHolder.setContext(this);
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
         tvAttemptsInfo = (TextView) findViewById(R.id.tvAttempts);
-        tvAttemptsInfo.setText("No of attempts remaining: " + counter);
 
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (!userFound){
             counter--;
-            tvAttemptsInfo.setText("Anzahl übriger Versuche: " + String.valueOf(counter));
+            tvAttemptsInfo.setText("Anzahl übriger Versuche: " + counter);
             if (counter == 0) {
                 btnLogin.setEnabled(false);
             }
