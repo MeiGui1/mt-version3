@@ -11,6 +11,14 @@ public class ExerciseType implements Serializable {
     private String title;
     private String explanation;
 
+    public ExerciseType() {
+    }
+
+    public ExerciseType(String title, String explanation) {
+        this.title = title;
+        this.explanation = explanation;
+    }
+
     public String getTitle() {
         return title;
     }

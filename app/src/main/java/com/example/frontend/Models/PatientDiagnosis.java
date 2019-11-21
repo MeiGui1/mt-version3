@@ -6,11 +6,18 @@ public class PatientDiagnosis {
 
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("diagnosistype_id")
     private int diagnosisId;
-
     private String comment;
+
+    public PatientDiagnosis() {
+    }
+
+    public PatientDiagnosis(int patientId, int diagnosisId, String comment) {
+        this.patientId = patientId;
+        this.diagnosisId = diagnosisId;
+        this.comment = comment;
+    }
 
     public int getPatientId() {
         return patientId;

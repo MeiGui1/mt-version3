@@ -6,9 +6,16 @@ public class PatientImage {
 
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("image_path")
     private String imagePath;
+
+    public PatientImage() {
+    }
+
+    public PatientImage(int patientId, String imagePath) {
+        this.patientId = patientId;
+        this.imagePath = imagePath;
+    }
 
     public int getPatientId() {
         return patientId;

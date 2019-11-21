@@ -6,9 +6,16 @@ public class PatientExercise {
 
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("exercisetype_title")
     private String exerciseTypeTitle;
+
+    public PatientExercise() {
+    }
+
+    public PatientExercise(int patientId, String exerciseTypeTitle) {
+        this.patientId = patientId;
+        this.exerciseTypeTitle = exerciseTypeTitle;
+    }
 
     public int getPatientId() {
         return patientId;

@@ -11,6 +11,18 @@ public class ImprovementReason implements Serializable {
     private boolean other_reason;
     private String other_reason_text;
 
+    public ImprovementReason() {
+    }
+
+    public ImprovementReason(int patient_id, boolean drugs, boolean exercises, boolean awareness, boolean other_reason, String other_reason_text) {
+        this.patient_id = patient_id;
+        this.drugs = drugs;
+        this.exercises = exercises;
+        this.awareness = awareness;
+        this.other_reason = other_reason;
+        this.other_reason_text = other_reason_text;
+    }
+
     public int getPatient_id() {
         return patient_id;
     }

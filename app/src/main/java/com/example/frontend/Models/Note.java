@@ -11,14 +11,27 @@ import android.util.Base64;
 public class Note implements Serializable {
 
     private int id;
-
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("note_bytes")
     private String noteBytesString;
-
     private boolean selected;
+
+    public Note() {
+    }
+
+    public Note(int patientId, String noteBytesString, boolean selected) {
+        this.patientId = patientId;
+        this.noteBytesString = noteBytesString;
+        this.selected = selected;
+    }
+
+    public Note(int id, int patientId, String noteBytesString, boolean selected) {
+        this.id = id;
+        this.patientId = patientId;
+        this.noteBytesString = noteBytesString;
+        this.selected = selected;
+    }
 
     public int getId() {
         return id;

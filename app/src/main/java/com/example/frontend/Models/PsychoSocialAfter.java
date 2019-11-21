@@ -21,6 +21,23 @@ public class PsychoSocialAfter implements Serializable {
     private int event_xpos;
     private int event_ypos;
 
+    public PsychoSocialAfter() {
+    }
+
+    public PsychoSocialAfter(int patient_id, int pain_xpos, int pain_ypos, int family_xpos, int family_ypos, int work_xpos, int work_ypos, int finance_xpos, int finance_ypos, int event_xpos, int event_ypos) {
+        this.patient_id = patient_id;
+        this.pain_xpos = pain_xpos;
+        this.pain_ypos = pain_ypos;
+        this.family_xpos = family_xpos;
+        this.family_ypos = family_ypos;
+        this.work_xpos = work_xpos;
+        this.work_ypos = work_ypos;
+        this.finance_xpos = finance_xpos;
+        this.finance_ypos = finance_ypos;
+        this.event_xpos = event_xpos;
+        this.event_ypos = event_ypos;
+    }
+
     public int getPatient_id() {
         return patient_id;
     }

@@ -385,6 +385,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    //Patient functions
+
     public void addPatient(Patient patient) {
         SQLiteDatabase db = this.getWritableDatabase();
 

@@ -6,9 +6,16 @@ public class PatientVideo {
 
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("video_path")
     private String videoPath;
+
+    public PatientVideo() {
+    }
+
+    public PatientVideo(int patientId, String videoPath) {
+        this.patientId = patientId;
+        this.videoPath = videoPath;
+    }
 
     public int getPatientId() {
         return patientId;

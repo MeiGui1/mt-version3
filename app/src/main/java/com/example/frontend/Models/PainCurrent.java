@@ -20,6 +20,26 @@ public class PainCurrent implements Serializable {
     private boolean tingling;
     private boolean numb;
 
+    public PainCurrent() {
+    }
+
+    public PainCurrent(int patient_id, int intensity, String location_teeth, String location_face_left, String location_face_right, String pain_pattern, boolean dull, boolean pulling, boolean stinging, boolean pulsating, boolean burning, boolean pinsneedles, boolean tingling, boolean numb) {
+        this.patient_id = patient_id;
+        this.intensity = intensity;
+        this.location_teeth = location_teeth;
+        this.location_face_left = location_face_left;
+        this.location_face_right = location_face_right;
+        this.pain_pattern = pain_pattern;
+        this.dull = dull;
+        this.pulling = pulling;
+        this.stinging = stinging;
+        this.pulsating = pulsating;
+        this.burning = burning;
+        this.pinsneedles = pinsneedles;
+        this.tingling = tingling;
+        this.numb = numb;
+    }
+
     public int getPatient_id() {
         return patient_id;
     }

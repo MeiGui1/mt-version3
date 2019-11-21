@@ -6,9 +6,16 @@ public class PatientDocument {
 
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("document_path")
     private String documentPath;
+
+    public PatientDocument() {
+    }
+
+    public PatientDocument(int patientId, String documentPath) {
+        this.patientId = patientId;
+        this.documentPath = documentPath;
+    }
 
     public int getPatientId() {
         return patientId;

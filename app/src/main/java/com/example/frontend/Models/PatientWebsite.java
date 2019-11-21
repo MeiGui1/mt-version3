@@ -6,9 +6,16 @@ public class PatientWebsite {
 
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("website_id")
     private int websiteTypeId;
+
+    public PatientWebsite() {
+    }
+
+    public PatientWebsite(int patientId, int websiteTypeId) {
+        this.patientId = patientId;
+        this.websiteTypeId = websiteTypeId;
+    }
 
     public int getPatientId() {
         return patientId;

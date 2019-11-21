@@ -9,12 +9,24 @@ import java.io.Serializable;
 public class ExercisePhoto implements Serializable {
 
     private int id;
-
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("photo")
     private String photoBytesString;
+
+    public ExercisePhoto() {
+    }
+
+    public ExercisePhoto(int patientId, String photoBytesString) {
+        this.patientId = patientId;
+        this.photoBytesString = photoBytesString;
+    }
+
+    public ExercisePhoto(int id, int patientId, String photoBytesString) {
+        this.id = id;
+        this.patientId = patientId;
+        this.photoBytesString = photoBytesString;
+    }
 
     public int getId() {
         return id;

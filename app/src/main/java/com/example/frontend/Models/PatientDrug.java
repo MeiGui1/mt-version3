@@ -6,9 +6,18 @@ public class PatientDrug {
 
     @SerializedName("patient_id")
     private int patientId;
-
     @SerializedName("drugtype_id")
     private int drugId;
+
+    public PatientDrug() {
+    }
+
+    public PatientDrug(int patientId, int drugId, String amount, String dosis) {
+        this.patientId = patientId;
+        this.drugId = drugId;
+        this.amount = amount;
+        this.dosis = dosis;
+    }
 
     private String amount;
 

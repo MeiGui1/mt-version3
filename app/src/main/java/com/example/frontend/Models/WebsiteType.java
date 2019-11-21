@@ -3,12 +3,25 @@ package com.example.frontend.Models;
 public class WebsiteType {
 
     private int id;
-
     private String url;
-
     private String name;
-
     private String description;
+
+    public WebsiteType() {
+    }
+
+    public WebsiteType(String url, String name, String description) {
+        this.url = url;
+        this.name = name;
+        this.description = description;
+    }
+
+    public WebsiteType(int id, String url, String name, String description) {
+        this.id = id;
+        this.url = url;
+        this.name = name;
+        this.description = description;
+    }
 
     public int getId() {
         return id;
