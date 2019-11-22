@@ -16,13 +16,16 @@ INSERT INTO DiagnosisType (name, type, description) VALUES ('Chronische Schmerzs
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Ein-/Durchschalfstörung','Psychologisch','');
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Obstruktives Schlafapnoe-Syndrom','Psychologisch','Periodische Atemstörungen während des Schlafs');
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Zahnbehandlungsphobie','Psychologisch','');
-INSERT INTO DiagnosisType (name, type, description) VALUES ('Landkartenzunge','Psychologisch','Entzündliche Veränderung der Zungenoberfläche');
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Orale Lichenoide Reaktion','Psychologisch','Entzündung der äußeren Haut und der Schleimhäute');
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Migräne mit Aura','Kopfschmerz','');
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Migräne ohne Aura','Kopfschmerz','');
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Chronische Spannungstypkopfschmerzen','Kopfschmerz','');
+INSERT INTO DiagnosisType (name, type, description) VALUES ('Episodischer Spannungstypkopfschmerzen','Kopfschmerz','');
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Cluster-Kopfschmerz','Kopfschmerz','Attackenförmige Schmerzen im Bereich von Auge und Schläfe');
 INSERT INTO DiagnosisType (name, type, description) VALUES ('Medikamentenübergebrauchs-Kopfschmerz','Kopfschmerz','');
+INSERT INTO DiagnosisType (name, type, description) VALUES ('Zahnbehandlungsphobie','Psychologisch','');
+INSERT INTO DiagnosisType (name, type, description) VALUES ('Prominente Interkalarlinie','Schleimhaut',null);
+INSERT INTO DiagnosisType (name, type, description) VALUES ('Landkartenzunge','Schleimhaut','Entzündliche Veränderung der Zungenoberfläche');
 INSERT INTO PatientDiagnosis (patient_id, diagnosistype_id, comment) VALUES ('1', '2', 'beidseits');
 INSERT INTO PatientDiagnosis (patient_id, diagnosistype_id, comment) VALUES ('1', '4', 'rechts');
 INSERT INTO PatientDiagnosis (patient_id, diagnosistype_id, comment) VALUES ('1', '13', 'mit Dysgeusie');

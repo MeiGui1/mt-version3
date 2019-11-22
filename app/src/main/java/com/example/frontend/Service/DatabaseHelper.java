@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.Patient;
+import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.Models.User;
 
 import org.flywaydb.core.Flyway;
@@ -279,8 +281,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ")");
     }
 
-    // If User table has no data
-    // default, Insert 2 records.
+    public void insertFromFile(String fileName, SQLiteDatabase db) throws IOException {
+        // Open the resource
+        InputStream insertsStream = c.getAssets().open(fileName);
+        BufferedReader insertReader = new BufferedReader(new InputStreamReader(insertsStream));
+
+        // Iterate through lines (assuming each insert has its own line and theres no other stuff)
+        while (insertReader.ready()) {
+            String insertStmt = insertReader.readLine();
+            db.execSQL(insertStmt);
+        }
+        insertReader.close();
+    }
+
+
+    //User table related functions
+
     public void createDefaultUsersIfNeed()  {
         int count = this.getUsersCount();
         if(count ==0 ) {
@@ -385,7 +401,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    //Patient functions
+    //Patient table related functions
 
     public void addPatient(Patient patient) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -419,7 +435,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Patient> getAllPatients() {
         List<Patient> patientList = new ArrayList<Patient>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM Patient";
+        String selectQuery = "SELECT  * FROM Patient ORDER BY shortname";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -468,18 +484,193 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lastId;
     }
 
-    public void insertFromFile(String fileName, SQLiteDatabase db) throws IOException {
-        // Open the resource
-        InputStream insertsStream = c.getAssets().open(fileName);
-        BufferedReader insertReader = new BufferedReader(new InputStreamReader(insertsStream));
 
-        // Iterate through lines (assuming each insert has its own line and theres no other stuff)
-        while (insertReader.ready()) {
-            String insertStmt = insertReader.readLine();
-            db.execSQL(insertStmt);
-        }
-        insertReader.close();
+    //DrugType table related functions
+
+    public void addDrugType(DrugType drugType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("name", drugType.getName());
+        values.put("description", drugType.getDescription());
+
+        // Inserting Row
+        db.insert("DrugType", null, values);
+
+        // Closing database connection
+        db.close();
     }
 
+    public DrugType getDrugType(int drugTypeId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("DrugType", new String[] { "id",
+                        "name", "description" }, "id = ?",
+                new String[] { String.valueOf(drugTypeId) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        DrugType drugType = new DrugType(Integer.parseInt(cursor.getString(0)),
+                cursor.getString(1), cursor.getString(2));
+        // return drugType
+        return drugType;
+    }
+
+    public List<DrugType> getAllDrugTypes() {
+        List<DrugType> drugTypeList = new ArrayList<DrugType>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM DrugType ORDER BY name";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                DrugType drugType = new DrugType();
+                drugType.setId(Integer.parseInt(cursor.getString(0)));
+                drugType.setName(cursor.getString(1));
+                drugType.setDescription(cursor.getString(2));
+                // Adding drugType to list
+                drugTypeList.add(drugType);
+            } while (cursor.moveToNext());
+        }
+
+        // return drugType list
+        return drugTypeList;
+    }
+
+    public int updateDrugType(int drugTypeId, DrugType drugType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("name", drugType.getName());
+        values.put("description", drugType.getDescription());
+
+        // updating row
+        return db.update("DrugType", values, "id = ?",
+                new String[]{String.valueOf(drugTypeId)});
+    }
+
+    public void deleteDrugType(int drugTypeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("DrugType", "id = ?",
+                new String[] { String.valueOf(drugTypeId) });
+        db.close();
+    }
+
+    public int selectLastDrugTypeId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("DrugType", new String[] {"id",
+                "name", "description" },null, null, null, null, null);
+        cursor.moveToLast();
+        int lastId = Integer.parseInt(cursor.getString(0));
+        return lastId;
+    }
+
+
+    //PatientDrug table related functions
+
+    public void addPatientDrug(PatientDrug patientDrug) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientDrug.getPatientId());
+        values.put("drugtype_id", patientDrug.getDrugTypeId());
+        values.put("amount", patientDrug.getAmount());
+        values.put("dosis", patientDrug.getDosis());
+
+        // Inserting Row
+        db.insert("PatientDrug", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public PatientDrug getPatientDrug(int patientId, int drugTypeId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("PatientDrug", new String[] { "patient_id", "drugtype_id",
+                        "amount", "dosis" }, "patient_id = ? AND drugtype_id = ?",
+                new String[] {String.valueOf(patientId), String.valueOf(drugTypeId)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        PatientDrug patientDrug = new PatientDrug(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),
+                cursor.getString(2), cursor.getString(3));
+        // return patientDrug
+        return patientDrug;
+    }
+
+    public List<PatientDrug> getAllPatientDrugs() {
+        List<PatientDrug> patientDrugList = new ArrayList<PatientDrug>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientDrug ORDER BY name";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientDrug patientDrug = new PatientDrug();
+                patientDrug.setPatientId(Integer.parseInt(cursor.getString(0)));
+                patientDrug.setDrugId(Integer.parseInt(cursor.getString(1)));
+                patientDrug.setAmount(cursor.getString(2));
+                patientDrug.setDosis(cursor.getString(3));
+                // Adding patientDrug to list
+                patientDrugList.add(patientDrug);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientDrug list
+        return patientDrugList;
+    }
+
+    public List<PatientDrug> getAllDrugsOfPatient(int patientId){
+        List<PatientDrug> drugsOfPatientList = new ArrayList<PatientDrug>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientDrug WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientDrug patientDrug = new PatientDrug();
+                patientDrug.setPatientId(patientId);
+                patientDrug.setDrugId(Integer.parseInt(cursor.getString(1)));
+                patientDrug.setAmount(cursor.getString(2));
+                patientDrug.setDosis(cursor.getString(3));
+                // Adding patientDrug to list
+                drugsOfPatientList.add(patientDrug);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientDrug list
+        return drugsOfPatientList;
+    }
+
+    public int updatePatientDrug(int patientId, int drugTypeId, PatientDrug patientDrug) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientDrug.getPatientId());
+        values.put("drugtype_id", patientDrug.getDrugTypeId());
+        values.put("amount", patientDrug.getAmount());
+        values.put("dosis", patientDrug.getDosis());
+
+        // updating row
+        return db.update("PatientDrug", values, "patient_id = ? AND drugtype_id= ?",
+                new String[]{String.valueOf(patientId),String.valueOf(drugTypeId)});
+    }
+
+    public void deletePatientDrug(int patientId, int drugTypeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PatientDrug", "patient_id = ? AND drugtype_id = ?",
+                new String[] {String.valueOf(patientId),String.valueOf(drugTypeId)});
+        db.close();
+    }
 
 }

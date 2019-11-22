@@ -16,18 +16,6 @@ import com.example.frontend.R;
 import com.example.frontend.Service.DatabaseHelper;
 import com.facebook.stetho.Stetho;
 
-
-import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.android.ContextHolder;
-import org.sqldroid.DroidDataSource;
-
-import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,12 +40,6 @@ public class MainActivity extends AppCompatActivity {
         db = new DatabaseHelper(this);
         db.createDefaultUsersIfNeed();
         userList =  db.getAllUsers();
-
-/*
-        DroidDataSource dataSource = new DroidDataSource(getPackageName(), "Pacons_DB");
-        ContextHolder.setContext(this);
-        Flyway flyway = Flyway.configure().dataSource(dataSource).load();
-        flyway.migrate();*/
 
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);

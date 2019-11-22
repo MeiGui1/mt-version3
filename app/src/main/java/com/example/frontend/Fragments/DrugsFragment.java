@@ -26,6 +26,7 @@ import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogListener, DrugTypeDialog.DrugTypeDialogListener {
     private View cView;
+    DatabaseHelper db;
     private List<DrugType> allDrugTypes = new ArrayList<>();
     private List<PatientDrug> allDrugsOfPatient = new ArrayList<>();
     private List<Integer> allDrugIdsOfPatient = new ArrayList<>();
@@ -56,11 +58,12 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     private int lastDrugTypeId;
     private ImageView btnAddNewDrug;
 
+    /*
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,6 +77,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         cView = view;
+        db = new DatabaseHelper(getContext());
         ll1 = (LinearLayout) cView.findViewById(R.id.llFirstColumn);
         ll2 = (LinearLayout) cView.findViewById(R.id.llSecondColumn);
         ll3 = (LinearLayout) cView.findViewById(R.id.llThirdColumn);
@@ -90,6 +94,14 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
 
     public void addAllDrugsTypes() {
         columnCounter = 1;
+
+        allDrugTypes = db.getAllDrugTypes();
+        for (DrugType drugType : allDrugTypes) {
+            addDrugTypeBtn(drugType.getId(), drugType);
+        }
+
+         /*Only used for Heruoku Database
+
         Call<List<DrugType>> call = jsonPlaceHolderApi.getAllDrugTypes();
         call.enqueue(new Callback<List<DrugType>>() {
             @Override
@@ -108,7 +120,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             @Override
             public void onFailure(Call<List<DrugType>> call, Throwable t) {
             }
-        });
+        });*/
     }
 
     public void addDrugTypeBtn(int id, final DrugType drugType) {
@@ -162,6 +174,17 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
 
     public void addDrugButtons(final int patientId) {
         //Get all PatientDrugs of Patient
+        allDrugsOfPatient= db.getAllDrugsOfPatient(patientId);
+
+        for (PatientDrug patientDrug : allDrugsOfPatient) {
+            allDrugIdsOfPatient.add(patientDrug.getDrugTypeId());
+        }
+
+        //Add all Buttons
+        addAllDrugsTypes();
+
+        /*Only used for Heruoku Database
+
         Call<List<PatientDrug>> call = jsonPlaceHolderApi.getAllDrugsOfPatient(patientId);
         call.enqueue(new Callback<List<PatientDrug>>() {
             @Override
@@ -173,7 +196,6 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
                     allDrugsOfPatient = response.body();
 
                     for (PatientDrug patientDrug : allDrugsOfPatient) {
-                        int id = patientDrug.getDrugTypeId();
                         allDrugIdsOfPatient.add(patientDrug.getDrugTypeId());
                     }
                     //Add all Buttons
@@ -186,10 +208,15 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
                 // tvPatientlist.setText(t.getMessage());
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     public void addNewPatientDrug(PatientDrug patientDrug) {
+        //add selected drug for patient in database
+        db.addPatientDrug(patientDrug);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatientDrug(patientDrug);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -199,10 +226,13 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
-        });
+        }); */
     }
 
     public void deletePatientDrug(int patientId, int drugtypeId) {
+        db.deletePatientDrug(patientId, drugtypeId);
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientDrug(patientId, drugtypeId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -212,7 +242,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
-        });
+        });*/
     }
 
     public void openDrugDialog() {
@@ -266,6 +296,11 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     }
 
     public void addNewDrugType(final DrugType drugType) {
+        db.addDrugType(drugType);
+        getInsertDrugTypeId(drugType);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createDrugType(drugType);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -277,10 +312,15 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "createDrugType NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     public void getInsertDrugTypeId(final DrugType drugType) {
+        lastDrugTypeId = db.selectLastDrugTypeId();
+        addDrugTypeBtn(lastDrugTypeId,drugType);
+
+        /*Only used for Heruoku Database
+
         Call<Integer> call = jsonPlaceHolderApi.getLastDrugTypeId();
         call.enqueue(new Callback<Integer>() {
             @Override
@@ -293,10 +333,14 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             public void onFailure(Call<Integer> call, Throwable t) {
                 Toast.makeText(getActivity(), "getId NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     public void updateDrugType(int drugTypeId, final DrugType updatedDrugType) {
+        db.updateDrugType(drugTypeId,updatedDrugType);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.updateDrugType(drugTypeId, updatedDrugType);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -307,7 +351,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "create drugType NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     @Override
@@ -327,7 +371,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
                 return true;
             case R.id.deleteOption:
                 deleteDrugType(lastDrugTypeId);
-                ((ViewManager)selectedBtn.getParent()).removeView(selectedBtn);
+                //((ViewManager)selectedBtn.getParent()).removeView(selectedBtn);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -335,6 +379,10 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     }
 
     public void setUpDrugTypeDialog(int id) {
+        openDrugTypeDialog(db.getDrugType(id));
+
+        /*Only used for Heruoku Database
+
         Call<DrugType> call = jsonPlaceHolderApi.getDrugType(id);
         call.enqueue(new Callback<DrugType>() {
             @Override
@@ -347,10 +395,18 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             public void onFailure(Call<DrugType> call, Throwable t) {
                 Toast.makeText(getActivity(), "get drugType Id NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     public void deleteDrugType(int drugTypeId) {
+        db.deleteDrugType(drugTypeId);
+        ll1.removeAllViews();
+        ll2.removeAllViews();
+        ll3.removeAllViews();
+        addDrugButtons(patientId);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deleteDrugType(drugTypeId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -364,7 +420,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
-        });
+        });*/
     }
 
 }
