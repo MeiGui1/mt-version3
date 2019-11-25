@@ -26,6 +26,7 @@ import com.example.frontend.Fragments.Dialogs.DiagnosisTypeDialog;
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
 
     private int patientId;
     private View cView;
+    DatabaseHelper db;
     private List<String> diagnosisClasses = new ArrayList<>();
     private List<DiagnosisType> allDiagnosisTypesOfClass = new ArrayList<>();
     private List<Integer> allPatientDiagnosisIdsOfClass = new ArrayList<>();
@@ -59,11 +61,13 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
     private String lastInsertedClass = null;
     private String deletedDiagnosisTypeClass = null;
 
+    /*Only used for Heruoku Database
+
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class); */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,6 +81,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         cView = view;
+        db = new DatabaseHelper(getContext());
         ll1 = (LinearLayout) cView.findViewById(R.id.llFirstColumn);
         ll2 = (LinearLayout) cView.findViewById(R.id.llSecondColumn);
         ll3 = (LinearLayout) cView.findViewById(R.id.llThirdColumn);
@@ -94,6 +99,11 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
     }
 
     public void addClassButtons() {
+        diagnosisClasses = db.getAllDiagnosisTypeClasses();
+        createClassRadioButtons(diagnosisClasses);
+
+        /*Only used for Heruoku Database
+
         Call<List<String>> call = jsonPlaceHolderApi.getDiagnosisClasses();
         call.enqueue(new Callback<List<String>>() {
             @Override
@@ -111,7 +121,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             public void onFailure(Call<List<String>> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     private void createClassRadioButtons(List<String> allDiagnosisClasses) {
@@ -159,7 +169,21 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
 
     public void addDiagnosisButtons(final String selectedClass) {
         columnCounter = 1;
+
+        removeAllDiagnosisBtns();
+
         //Get all PatientDiagnoses of Patient
+        allPatientDiagnosisOfClass = db.getPatientDiagnosisOfClass(patientId, selectedClass);
+
+        for (PatientDiagnosis patientDiagnosis : allPatientDiagnosisOfClass) {
+            allPatientDiagnosisIdsOfClass.add(patientDiagnosis.getDiagnosisId());
+        }
+
+        //Add all Buttons
+        addAllDiagnosisTypes(selectedClass);
+
+        /*Only used for Heruoku Database
+
         Call<List<PatientDiagnosis>> call = jsonPlaceHolderApi.getPatientDiagnosesOfClass(patientId, selectedClass);
         call.enqueue(new Callback<List<PatientDiagnosis>>() {
             @Override
@@ -183,10 +207,17 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             public void onFailure(Call<List<PatientDiagnosis>> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     public void addAllDiagnosisTypes(String selectedClass) {
+        allDiagnosisTypesOfClass = db.getDiagnosisTypesByClass(selectedClass);
+        for (DiagnosisType diagnosisType : allDiagnosisTypesOfClass) {
+            addDiagnosisTypeBtn(diagnosisType.getId(), diagnosisType);
+        }
+
+        /*Only used for Heruoku Database
+
         Call<List<DiagnosisType>> call = jsonPlaceHolderApi.getAllDiagnosisTypesOfClass(selectedClass);
         call.enqueue(new Callback<List<DiagnosisType>>() {
             @Override
@@ -204,7 +235,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             @Override
             public void onFailure(Call<List<DiagnosisType>> call, Throwable t) {
             }
-        });
+        });*/
     }
 
     public void addDiagnosisTypeBtn(int id, final DiagnosisType diagnosisType) {
@@ -259,6 +290,10 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
     }
 
     public void addNewPatientDiagnosis(final PatientDiagnosis patientDiagnosis) {
+        db.addPatientDiagnosis(patientDiagnosis);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatientDiagnosis(patientDiagnosis);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -269,10 +304,14 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "createPatientDiagnosis NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void deletePatientDiagnosis(int patientId, int diagnosistypeId) {
+        db.deletePatientDiagnosis(patientId,diagnosistypeId);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientDiagnosis(patientId, diagnosistypeId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -282,11 +321,10 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
-        });
+        }); */
     }
 
     public void removeAllDiagnosisBtns() {
-
         if (ll1.getChildCount() > 0)
             ll1.removeAllViews();
         if (ll2.getChildCount() > 0)
@@ -349,6 +387,11 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
     }
 
     public void addNewDiagnosisType(final DiagnosisType diagnosisType) {
+        db.addDiagnosisType(diagnosisType);
+        getInsertDiagnosisTypeId(diagnosisType);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createDiagnosisType(diagnosisType);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -360,10 +403,17 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "createDiagnosisType NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });  */
     }
 
     public void getInsertDiagnosisTypeId(final DiagnosisType diagnosisType) {
+        lastDiagnosisTypeId = db.selectLastDiagnosisTypeId();
+        radioGroup.removeAllViews();
+        removeAllDiagnosisBtns();
+        addClassButtons();
+
+        /*Only used for Heruoku Database
+
         Call<Integer> call = jsonPlaceHolderApi.getLastDiagnosisTypeId();
         call.enqueue(new Callback<Integer>() {
             @Override
@@ -379,10 +429,14 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             public void onFailure(Call<Integer> call, Throwable t) {
                 Toast.makeText(getActivity(), "getId NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     public void updateDiagnosisType(int diagnosisTypeId, final DiagnosisType updatedDiagnosisType) {
+        db.updateDiagnosisType(diagnosisTypeId, updatedDiagnosisType);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.updateDiagnosisType(diagnosisTypeId, updatedDiagnosisType);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -393,7 +447,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "create diagnosisType NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     @Override
@@ -422,6 +476,11 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
     }
 
     public void setUpDiagnosisTypeDialog(int id) {
+        DiagnosisType diagnosisType = db.getDiagnosisType(id);
+        openDiagnosisTypeDialog(diagnosisType);
+
+        /*Only used for Heruoku Database
+
         Call<DiagnosisType> call = jsonPlaceHolderApi.getDiagnosisType(id);
         call.enqueue(new Callback<DiagnosisType>() {
             @Override
@@ -434,10 +493,17 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             public void onFailure(Call<DiagnosisType> call, Throwable t) {
                 Toast.makeText(getActivity(), "get diagnosisType Id NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void deleteDiagnosisType(int diagnosisTypeId) {
+        db.deleteDiagnosisType(diagnosisTypeId);
+        radioGroup.removeAllViews();
+        removeAllDiagnosisBtns();
+        addClassButtons();
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deleteDiagnosisType(diagnosisTypeId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -450,7 +516,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
-        });
+        }); */
     }
 
 

@@ -58,6 +58,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys=ON");
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -88,6 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void createTables(SQLiteDatabase db){
+
         //User Table
         db.execSQL("CREATE TABLE User (" +
                 "id INTEGER PRIMARY KEY, " +
@@ -697,7 +703,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query("DiagnosisType", new String[] { "id",
-                        "name", "description" }, "id = ?",
+                        "name","type", "description" }, "id = ?",
                 new String[] { String.valueOf(diagnosisTypeId) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
@@ -890,7 +896,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return diagnosesOfPatientList;
     }
 
-    public List<PatientDiagnosis> getDiagnosesOfPatientByClass(int patientId, String type){
+    public List<PatientDiagnosis> getPatientDiagnosisOfClass(int patientId, String type){
         List<PatientDiagnosis> selectedPatientDiagnoses = new ArrayList<PatientDiagnosis>();
         // Select All Query
         String selectQuery = "SELECT patient_id, diagnosistype_id, type, comment FROM PatientDiagnosis " +
