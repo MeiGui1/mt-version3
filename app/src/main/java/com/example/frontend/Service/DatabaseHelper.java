@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.Patient;
+import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.Models.User;
 
@@ -670,6 +672,269 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PatientDrug", "patient_id = ? AND drugtype_id = ?",
                 new String[] {String.valueOf(patientId),String.valueOf(drugTypeId)});
+        db.close();
+    }
+
+
+    //DiagnosisType table related functions
+
+    public void addDiagnosisType(DiagnosisType diagnosisType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("name", diagnosisType.getName());
+        values.put("type", diagnosisType.getType());
+        values.put("description", diagnosisType.getDescription());
+
+        // Inserting Row
+        db.insert("DiagnosisType", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public DiagnosisType getDiagnosisType(int diagnosisTypeId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("DiagnosisType", new String[] { "id",
+                        "name", "description" }, "id = ?",
+                new String[] { String.valueOf(diagnosisTypeId) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        DiagnosisType diagnosisType = new DiagnosisType(
+                Integer.parseInt(cursor.getString(0)), //id
+                cursor.getString(1), //name
+                cursor.getString(2), //type
+                cursor.getString(3)); //description
+        // return diagnosisType
+        return diagnosisType;
+    }
+
+    public List<DiagnosisType> getAllDiagnosisTypes() {
+        List<DiagnosisType> diagnosisTypeList = new ArrayList<DiagnosisType>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM DiagnosisType ORDER BY name";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                DiagnosisType diagnosisType = new DiagnosisType();
+                diagnosisType.setId(Integer.parseInt(cursor.getString(0)));
+                diagnosisType.setName(cursor.getString(1));
+                diagnosisType.setType(cursor.getString(2));
+                diagnosisType.setDescription(cursor.getString(3));
+                // Adding diagnosisType to list
+                diagnosisTypeList.add(diagnosisType);
+            } while (cursor.moveToNext());
+        }
+
+        // return diagnosisType list
+        return diagnosisTypeList;
+    }
+
+    public List<DiagnosisType> getDiagnosisTypesByClass(String type){
+        List<DiagnosisType> diagnosisTypesOfClass = new ArrayList<DiagnosisType>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM DiagnosisType WHERE type = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{type});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                DiagnosisType diagnosisType = new DiagnosisType();
+                diagnosisType.setId(Integer.parseInt(cursor.getString(0)));
+                diagnosisType.setName(cursor.getString(1));
+                diagnosisType.setType(type);
+                diagnosisType.setDescription(cursor.getString(3));
+                // Adding patientDrug to list
+                diagnosisTypesOfClass.add(diagnosisType);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientDrug list
+        return diagnosisTypesOfClass;
+    }
+
+    public List<String> getAllDiagnosisTypeClasses(){
+        List<String> allDiagnosisTypeClasses = new ArrayList<String>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT type FROM DiagnosisType ORDER BY type";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding class to list
+                allDiagnosisTypeClasses.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        // return class list
+        return allDiagnosisTypeClasses;
+    }
+
+    public int updateDiagnosisType(int diagnosisTypeId, DiagnosisType diagnosisType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("name", diagnosisType.getName());
+        values.put("type", diagnosisType.getType());
+        values.put("description", diagnosisType.getDescription());
+
+        // updating row
+        return db.update("DiagnosisType", values, "id = ?",
+                new String[]{String.valueOf(diagnosisTypeId)});
+    }
+
+    public void deleteDiagnosisType(int diagnosisTypeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("DiagnosisType", "id = ?",
+                new String[] { String.valueOf(diagnosisTypeId) });
+        db.close();
+    }
+
+    public int selectLastDiagnosisTypeId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("DiagnosisType", new String[] {"id",
+                "name", "type", "description" },null, null, null, null, null);
+        cursor.moveToLast();
+        int lastId = Integer.parseInt(cursor.getString(0));
+        return lastId;
+    }
+
+
+    //PatientDiagnosis table related functions
+
+    public void addPatientDiagnosis(PatientDiagnosis patientDiagnosis) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientDiagnosis.getPatientId());
+        values.put("diagnosistype_id", patientDiagnosis.getDiagnosisId());
+        values.put("comment", patientDiagnosis.getComment());
+
+        // Inserting Row
+        db.insert("PatientDiagnosis", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public PatientDiagnosis getPatientDiagnosis(int patientId, int diagnosisTypeId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("PatientDiagnosis", new String[] { "patient_id", "diagnosistype_id",
+                        "comment" }, "patient_id = ? AND diagnosistype_id = ?",
+                new String[] {String.valueOf(patientId), String.valueOf(diagnosisTypeId)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        PatientDiagnosis patientDiagnosis = new PatientDiagnosis(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),
+                cursor.getString(2));
+        // return patientDiagnosis
+        return patientDiagnosis;
+    }
+
+    public List<PatientDiagnosis> getAllPatientDiagnoses() {
+        List<PatientDiagnosis> patientDiagnosisList = new ArrayList<PatientDiagnosis>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientDiagnosis ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientDiagnosis patientDiagnosis = new PatientDiagnosis();
+                patientDiagnosis.setPatientId(Integer.parseInt(cursor.getString(0)));
+                patientDiagnosis.setDiagnosisId(Integer.parseInt(cursor.getString(1)));
+                patientDiagnosis.setComment(cursor.getString(2));
+                // Adding patientDiagnosis to list
+                patientDiagnosisList.add(patientDiagnosis);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientDiagnosis list
+        return patientDiagnosisList;
+    }
+
+    public List<PatientDiagnosis> getAllDiagnosesOfPatient(int patientId){
+        List<PatientDiagnosis> diagnosesOfPatientList = new ArrayList<PatientDiagnosis>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientDiagnosis WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientDiagnosis patientDiagnosis = new PatientDiagnosis();
+                patientDiagnosis.setPatientId(patientId);
+                patientDiagnosis.setDiagnosisId(Integer.parseInt(cursor.getString(1)));
+                patientDiagnosis.setComment(cursor.getString(2));
+                // Adding patientDiagnosis to list
+                diagnosesOfPatientList.add(patientDiagnosis);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientDiagnosis list
+        return diagnosesOfPatientList;
+    }
+
+    public List<PatientDiagnosis> getDiagnosesOfPatientByClass(int patientId, String type){
+        List<PatientDiagnosis> selectedPatientDiagnoses = new ArrayList<PatientDiagnosis>();
+        // Select All Query
+        String selectQuery = "SELECT patient_id, diagnosistype_id, type, comment FROM PatientDiagnosis " +
+                "INNER JOIN DiagnosisType " +
+                "ON PatientDiagnosis.diagnosistype_id =  DiagnosisType.id " +
+                "WHERE PatientDiagnosis.patient_id = ? AND DiagnosisType.type = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId), type});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientDiagnosis patientDiagnosis = new PatientDiagnosis();
+                patientDiagnosis.setPatientId(patientId);
+                patientDiagnosis.setDiagnosisId(Integer.parseInt(cursor.getString(1)));
+                patientDiagnosis.setComment(cursor.getString(2));
+
+                // Adding patientDiagnosis to list
+                selectedPatientDiagnoses.add(patientDiagnosis);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientDiagnosisList
+        return selectedPatientDiagnoses;
+    }
+
+    public int updatePatientDiagnosis(int patientId, int diagnosisTypeId, PatientDiagnosis patientDiagnosis) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientId);
+        values.put("diagnosistype_id", diagnosisTypeId);
+        values.put("comment", patientDiagnosis.getComment());
+
+        // updating row
+        return db.update("PatientDiagnosis", values, "patient_id = ? AND diagnosistype_id= ?",
+                new String[]{String.valueOf(patientId),String.valueOf(diagnosisTypeId)});
+    }
+
+    public void deletePatientDiagnosis(int patientId, int diagnosisTypeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PatientDiagnosis", "patient_id = ? AND diagnosistype_id = ?",
+                new String[] {String.valueOf(patientId),String.valueOf(diagnosisTypeId)});
         db.close();
     }
 
