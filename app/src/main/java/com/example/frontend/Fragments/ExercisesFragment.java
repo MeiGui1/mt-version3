@@ -31,6 +31,7 @@ import com.example.frontend.Models.ExercisePhoto;
 import com.example.frontend.Models.Note;
 import com.example.frontend.Models.PatientExercise;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 import com.github.chrisbanes.photoview.PhotoView;
 
@@ -48,6 +49,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ExercisesFragment extends Fragment {
 
     private int patientId;
+    DatabaseHelper db;
     private List<PatientExercise> patientExercisesOfPatient = new ArrayList<>();
     private List<ExercisePhoto> allExercisesPhotosOfPatient = new ArrayList<>();
 
@@ -66,12 +68,14 @@ public class ExercisesFragment extends Fragment {
 
     private View.OnClickListener onClickListener;
 
+    /*Only used for Heruoku Database
+
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
     JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-
+    */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,7 +88,8 @@ public class ExercisesFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
-        showInitialSelection();
+        db = new DatabaseHelper(getContext());
+
         myDialog = new Dialog(getActivity());
         onClickListener = new View.OnClickListener() {
             @Override
@@ -146,9 +151,19 @@ public class ExercisesFragment extends Fragment {
             }
         });
         addExercisePhotosToView();
+        showInitialSelection();
     }
 
     public void addExercisePhotosToView() {
+        allExercisesPhotosOfPatient = db.getAllExercisePhotosOfPatient(patientId);
+        for (ExercisePhoto photo : allExercisesPhotosOfPatient) {
+            byte[] photoBytes = photo.getPhotoBytes();
+            final Bitmap bmp = BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length);
+            addBitmapToView(bmp, photo.getId());
+        }
+
+        /*Only used for Heruoku Database
+
         Call<List<ExercisePhoto>> call = jsonPlaceHolderApi.getExercisePhotosOfPatient(patientId);
         call.enqueue(new Callback<List<ExercisePhoto>>() {
             @Override
@@ -171,7 +186,7 @@ public class ExercisesFragment extends Fragment {
                 Toast.makeText(getActivity(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 
             }
-        });
+        }); */
     }
 
     @Override
@@ -189,6 +204,34 @@ public class ExercisesFragment extends Fragment {
     }
 
     public void showInitialSelection() {
+        patientExercisesOfPatient = db.getAllExercisesOfPatient(patientId);
+        for (PatientExercise patientExercise : patientExercisesOfPatient) {
+            switch (patientExercise.getExerciseTypeTitle()) {
+                case "Selbstbeobachtung":
+                    ivObservation.setSelected(true);
+                    ivObservation.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                    break;
+                case "Muskeldehnung":
+                    ivElongation.setSelected(true);
+                    ivElongation.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                    break;
+                case "Medikamentenpflaster":
+                    ivPatch.setSelected(true);
+                    ivPatch.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                    break;
+                case "MassageWange":
+                    ivCheek.setSelected(true);
+                    ivCheek.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                    break;
+                case "MassageSchlaefe":
+                    ivTemple.setSelected(true);
+                    ivTemple.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                    break;
+            }
+        }
+
+        /*Only used for Heruoku Database
+
         Call<List<PatientExercise>> call = jsonPlaceHolderApi.getSelectedPatientExercises(patientId);
         call.enqueue(new Callback<List<PatientExercise>>() {
             @Override
@@ -230,10 +273,14 @@ public class ExercisesFragment extends Fragment {
                 Toast.makeText(getActivity(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 
             }
-        });
+        }); */
     }
 
     public void addPatientExercise(PatientExercise patientExercise) {
+        db.addPatientExercise(patientExercise);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatientExercise(patientExercise);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -244,10 +291,14 @@ public class ExercisesFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "createPatientExercise NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void removePatientExercise(int patientId, String exerciseTitle) {
+        db.deletePatientExercise(patientId, exerciseTitle);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientExercise(patientId, exerciseTitle);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -257,7 +308,7 @@ public class ExercisesFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
-        });
+        }); */
     }
 
     public void addBitmapToView(final Bitmap photo, final int exercisePhotoId) {
@@ -303,6 +354,11 @@ public class ExercisesFragment extends Fragment {
         newPhoto.setPatientId(patientId);
         newPhoto.setPhotoBytes(bitmapToByte(photoBitmap));
 
+        db.addExercisePhoto(newPhoto);
+        getInsertPhotoId(photoBitmap);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createExercisePhoto(newPhoto);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -314,10 +370,15 @@ public class ExercisesFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "createNote NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void getInsertPhotoId(final Bitmap photoBitmap) {
+        lastPhotoId = db.selectLastPhotoId();
+        addBitmapToView(photoBitmap, lastPhotoId);
+
+        /*Only used for Heruoku Database
+
         Call<Integer> call = jsonPlaceHolderApi.getLastPhotoId();
         call.enqueue(new Callback<Integer>() {
             @Override
@@ -330,10 +391,14 @@ public class ExercisesFragment extends Fragment {
             public void onFailure(Call<Integer> call, Throwable t) {
                 Toast.makeText(getActivity(), "getId NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void deleteExercisePhoto(int photoId) {
+        db.deleteExercisePhoto(photoId);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deleteExercisePhoto(photoId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -343,7 +408,7 @@ public class ExercisesFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
-        });
+        }); */
     }
 
     private void showPopup(Bitmap image) {
