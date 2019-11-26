@@ -9,9 +9,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
+import com.example.frontend.Models.ExercisePhoto;
+import com.example.frontend.Models.ExerciseType;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDrug;
+import com.example.frontend.Models.PatientExercise;
 import com.example.frontend.Models.User;
 
 import org.flywaydb.core.Flyway;
@@ -944,4 +947,248 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+
+    //ExerciseType table related functions
+
+    public void addExerciseType(ExerciseType exerciseType){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("title", exerciseType.getTitle());
+        values.put("explanation", exerciseType.getExplanation());
+
+        // Inserting Row
+        db.insert("ExerciseType", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public List<ExerciseType> getAllExerciseTypes(){
+        List<ExerciseType> exerciseTypeList = new ArrayList<ExerciseType>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM ExerciseType ORDER BY title";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ExerciseType exerciseType = new ExerciseType();
+                exerciseType.setTitle(cursor.getString(0));
+                exerciseType.setExplanation(cursor.getString(1));
+                // Adding exerciseType to list
+                exerciseTypeList.add(exerciseType);
+            } while (cursor.moveToNext());
+        }
+
+        // return exerciseType list
+        return exerciseTypeList;
+    }
+
+    public ExerciseType getExerciseType(String title) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("ExerciseType", new String[] { "title",
+                        "explanation"}, "title = ?",
+                new String[] { title }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        ExerciseType exerciseType = new ExerciseType(
+                title, //title
+                cursor.getString(1)); //explanation
+        // return exerciseType
+        return exerciseType;
+    }
+
+    public List<String> getAllExerciseTypeTitles(){
+        List<String> allExerciseTypeTitles = new ArrayList<String>();
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT title FROM ExerciseType ORDER BY title";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding title to list
+                allExerciseTypeTitles.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        // return title list
+        return allExerciseTypeTitles;
+    }
+
+    public int updateExerciseType(String title, ExerciseType exerciseType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("title", title);
+        values.put("explanation", exerciseType.getExplanation());
+
+        // updating row
+        return db.update("ExerciseType", values, "title = ?",
+                new String[]{String.valueOf(title)});
+    }
+
+    public void deleteExerciseType(String title) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("ExerciseType", "title = ?",
+                new String[] { String.valueOf(title) });
+        db.close();
+    }
+
+
+    //PatientExercise table related functions
+
+    public void addPatientExercise(PatientExercise patientExercise) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientExercise.getPatientId());
+        values.put("exercisetype_title", patientExercise.getExerciseTypeTitle());
+
+        // Inserting Row
+        db.insert("PatientExercise", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public List<PatientExercise> getAllPatientExercises() {
+        List<PatientExercise> patientExerciseList = new ArrayList<PatientExercise>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientExercise ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientExercise patientExercise = new PatientExercise();
+                patientExercise.setPatientId(Integer.parseInt(cursor.getString(0)));
+                patientExercise.setExerciseTypeTitle(cursor.getString(1));
+                // Adding patientExercise to list
+                patientExerciseList.add(patientExercise);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientExercise list
+        return patientExerciseList;
+    }
+
+    public List<PatientExercise> getAllExercisesOfPatient(int patientId){
+        List<PatientExercise> exercisesOfPatientList = new ArrayList<PatientExercise>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientExercise WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientExercise patientExercise = new PatientExercise();
+                patientExercise.setPatientId(patientId);
+                patientExercise.setExerciseTypeTitle(cursor.getString(1));
+                // Adding patientExercise to list
+                exercisesOfPatientList.add(patientExercise);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientExercise list
+        return exercisesOfPatientList;
+    }
+
+    public void deletePatientExercise(int patientId, String exercisetypeTitle) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PatientExercise", "patient_id = ? AND exercisetype_title = ?",
+                new String[] {String.valueOf(patientId),exercisetypeTitle});
+        db.close();
+    }
+
+
+    //ExercisePhoto table related functions
+
+    public void addExercisePhoto(ExercisePhoto patientExercise) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientExercise.getPatientId());
+        values.put("photo", patientExercise.getPhotoBytes());
+
+        // Inserting Row
+        db.insert("ExercisePhoto", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public List<ExercisePhoto> getAllExercisePhotos() {
+        List<ExercisePhoto> patientExerciseList = new ArrayList<ExercisePhoto>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM ExercisePhoto ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ExercisePhoto patientExercise = new ExercisePhoto();
+                patientExercise.setId(Integer.parseInt(cursor.getString(0)));
+                patientExercise.setPatientId(Integer.parseInt(cursor.getString(1)));
+                patientExercise.setPhotoBytes(cursor.getBlob(2));
+                // Adding patientExercise to list
+                patientExerciseList.add(patientExercise);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientExercise list
+        return patientExerciseList;
+    }
+
+    public List<ExercisePhoto> getAllExercisePhotosOfPatient(int patientId){
+        List<ExercisePhoto> exercisesOfPatientList = new ArrayList<ExercisePhoto>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM ExercisePhoto WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ExercisePhoto patientExercise = new ExercisePhoto();
+                patientExercise.setId(Integer.parseInt(cursor.getString(0)));
+                patientExercise.setPatientId(patientId);
+                patientExercise.setPhotoBytes(cursor.getBlob(2));
+                // Adding patientExercise to list
+                exercisesOfPatientList.add(patientExercise);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientExercise list
+        return exercisesOfPatientList;
+    }
+
+    public void deleteExercisePhoto(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("ExercisePhoto", "id = ?",
+                new String[] {String.valueOf(id)});
+        db.close();
+    }
+
+    public int selectLastPhotoId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("ExercisePhoto", new String[] {"id",
+                "patient_id", "photo"},null, null, null, null, null);
+        cursor.moveToLast();
+        int lastId = Integer.parseInt(cursor.getString(0));
+        return lastId;
+    }
 }
