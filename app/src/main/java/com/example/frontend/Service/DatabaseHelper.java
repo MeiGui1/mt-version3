@@ -12,6 +12,8 @@ import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.ExercisePhoto;
 import com.example.frontend.Models.ExerciseType;
 import com.example.frontend.Models.Note;
+import com.example.frontend.Models.PainBeginning;
+import com.example.frontend.Models.PainCurrent;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDocument;
@@ -267,7 +269,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    location_teeth BLOB, " +
                 "    location_face_left BLOB, " +
                 "    location_face_right BLOB, " +
-                "    pain_quality text, " +
                 "    pain_pattern text, " +
                 "    dull boolean, " +
                 "    pulling boolean, " +
@@ -286,7 +287,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    location_teeth BLOB, " +
                 "    location_face_left BLOB, " +
                 "    location_face_right BLOB, " +
-                "    pain_quality text, " +
                 "    pain_pattern text, " +
                 "    dull boolean, " +
                 "    pulling boolean, " +
@@ -1690,6 +1690,271 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.moveToLast();
         int lastId = Integer.parseInt(cursor.getString(0));
         return lastId;
+    }
+
+
+    //PainBeginning table related functions
+
+    public void addPainBeginning(PainBeginning painBeginning) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", painBeginning.getPatient_id());
+        values.put("intensity", painBeginning.getIntensity());
+        values.put("location_teeth", painBeginning.getLocation_teeth());
+        values.put("location_face_left", painBeginning.getLocation_face_left());
+        values.put("location_face_right", painBeginning.getLocation_face_right());
+        values.put("pain_pattern", painBeginning.getPain_pattern());
+        values.put("dull", painBeginning.isDull());
+        values.put("pulling", painBeginning.isPulling());
+        values.put("stinging", painBeginning.isStinging());
+        values.put("pulsating", painBeginning.isPulsating());
+        values.put("burning", painBeginning.isBurning());
+        values.put("pinsneedles", painBeginning.isPinsneedles());
+        values.put("tingling", painBeginning.isTingling());
+        values.put("numb", painBeginning.isNumb());
+
+        // Inserting Row
+        db.insert("PainBeginning", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public PainBeginning getPainBeginningOfPatient(int patient_id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("PainBeginning", null, "patient_id = ?",
+                new String[] { String.valueOf(patient_id) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        PainBeginning painBeginning = new PainBeginning();
+        painBeginning.setPatient_id(Integer.parseInt(cursor.getString(0)));
+        painBeginning.setIntensity(Integer.parseInt(cursor.getString(1)));
+        painBeginning.setLocation_teeth(cursor.getBlob(2));
+        painBeginning.setLocation_face_left(cursor.getBlob(3));
+        painBeginning.setLocation_face_right(cursor.getBlob(4));
+        painBeginning.setPain_pattern(cursor.getString(5));
+        painBeginning.setDull(cursor.getInt(6) > 0);
+        painBeginning.setPulling(cursor.getInt(7) > 0);
+        painBeginning.setStinging(cursor.getInt(8) > 0);
+        painBeginning.setPulsating(cursor.getInt(9) > 0);
+        painBeginning.setBurning(cursor.getInt(10) > 0);
+        painBeginning.setPinsneedles(cursor.getInt(11) > 0);
+        painBeginning.setTingling(cursor.getInt(12) > 0);
+        painBeginning.setNumb(cursor.getInt(13) > 0);
+        // return painBeginning
+        return painBeginning;
+    }
+
+    public List<PainBeginning> getAllPainBeginnings() {
+        List<PainBeginning> painBeginningList = new ArrayList<PainBeginning>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PainBeginning ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PainBeginning painBeginning = new PainBeginning();
+                painBeginning.setPatient_id(Integer.parseInt(cursor.getString(0)));
+                painBeginning.setIntensity(Integer.parseInt(cursor.getString(1)));
+                painBeginning.setLocation_teeth(cursor.getBlob(2));
+                painBeginning.setLocation_face_left(cursor.getBlob(3));
+                painBeginning.setLocation_face_right(cursor.getBlob(4));
+                painBeginning.setPain_pattern(cursor.getString(5));
+                painBeginning.setDull(cursor.getInt(6) > 0);
+                painBeginning.setPulling(cursor.getInt(7) > 0);
+                painBeginning.setStinging(cursor.getInt(8) > 0);
+                painBeginning.setPulsating(cursor.getInt(9) > 0);
+                painBeginning.setBurning(cursor.getInt(10) > 0);
+                painBeginning.setPinsneedles(cursor.getInt(11) > 0);
+                painBeginning.setTingling(cursor.getInt(12) > 0);
+                painBeginning.setNumb(cursor.getInt(13) > 0);
+                // Adding painBeginning to list
+                painBeginningList.add(painBeginning);
+            } while (cursor.moveToNext());
+        }
+
+        // return painBeginning list
+        return painBeginningList;
+    }
+
+    public int updatePainBeginning(int patient_id, PainBeginning painBeginning) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("intensity", painBeginning.getIntensity());
+        values.put("location_teeth", painBeginning.getLocation_teeth());
+        values.put("location_face_left", painBeginning.getLocation_face_left());
+        values.put("location_face_right", painBeginning.getLocation_face_right());
+        values.put("pain_pattern", painBeginning.getPain_pattern());
+        values.put("dull", painBeginning.isDull());
+        values.put("pulling", painBeginning.isPulling());
+        values.put("stinging", painBeginning.isStinging());
+        values.put("pulsating", painBeginning.isPulsating());
+        values.put("burning", painBeginning.isBurning());
+        values.put("pinsneedles", painBeginning.isPinsneedles());
+        values.put("tingling", painBeginning.isTingling());
+        values.put("numb", painBeginning.isNumb());
+
+        // updating row
+        return db.update("PainBeginning", values, "patient_id = ?",
+                new String[]{String.valueOf(patient_id)});
+    }
+
+    public void deletePainBeginningOfPatient(int patient_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PainBeginning", "patient_id = ?",
+                new String[] {String.valueOf(patient_id)});
+        db.close();
+    }
+
+    boolean existsPainBeginning(int patientId){
+        String selectQuery = "SELECT COUNT(*) FROM PainBeginning WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        cursor.moveToFirst();
+        Integer count = Integer.parseInt(cursor.getString(0));
+
+        return  count != null && count > 0;
+    }
+
+    //PainCurrent table related functions
+
+    public void addPainCurrent(PainCurrent painCurrent) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", painCurrent.getPatient_id());
+        values.put("intensity", painCurrent.getIntensity());
+        values.put("location_teeth", painCurrent.getLocation_teeth());
+        values.put("location_face_left", painCurrent.getLocation_face_left());
+        values.put("location_face_right", painCurrent.getLocation_face_right());
+        values.put("pain_pattern", painCurrent.getPain_pattern());
+        values.put("dull", painCurrent.isDull());
+        values.put("pulling", painCurrent.isPulling());
+        values.put("stinging", painCurrent.isStinging());
+        values.put("pulsating", painCurrent.isPulsating());
+        values.put("burning", painCurrent.isBurning());
+        values.put("pinsneedles", painCurrent.isPinsneedles());
+        values.put("tingling", painCurrent.isTingling());
+        values.put("numb", painCurrent.isNumb());
+
+        // Inserting Row
+        db.insert("PainCurrent", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public PainCurrent getPainCurrentOfPatient(int patient_id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("PainCurrent", null, "patient_id = ?",
+                new String[] { String.valueOf(patient_id) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        PainCurrent painCurrent = new PainCurrent();
+        painCurrent.setPatient_id(Integer.parseInt(cursor.getString(0)));
+        painCurrent.setIntensity(Integer.parseInt(cursor.getString(1)));
+        painCurrent.setLocation_teeth(cursor.getBlob(2));
+        painCurrent.setLocation_face_left(cursor.getBlob(3));
+        painCurrent.setLocation_face_right(cursor.getBlob(4));
+        painCurrent.setPain_pattern(cursor.getString(5));
+        painCurrent.setDull(cursor.getInt(6) > 0);
+        painCurrent.setPulling(cursor.getInt(7) > 0);
+        painCurrent.setStinging(cursor.getInt(8) > 0);
+        painCurrent.setPulsating(cursor.getInt(9) > 0);
+        painCurrent.setBurning(cursor.getInt(10) > 0);
+        painCurrent.setPinsneedles(cursor.getInt(11) > 0);
+        painCurrent.setTingling(cursor.getInt(12) > 0);
+        painCurrent.setNumb(cursor.getInt(13) > 0);
+        // return painCurrent
+        return painCurrent;
+    }
+
+    public List<PainCurrent> getAllPainCurrents() {
+        List<PainCurrent> painCurrentList = new ArrayList<PainCurrent>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PainCurrent ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PainCurrent painCurrent = new PainCurrent();
+                painCurrent.setPatient_id(Integer.parseInt(cursor.getString(0)));
+                painCurrent.setIntensity(Integer.parseInt(cursor.getString(1)));
+                painCurrent.setLocation_teeth(cursor.getBlob(2));
+                painCurrent.setLocation_face_left(cursor.getBlob(3));
+                painCurrent.setLocation_face_right(cursor.getBlob(4));
+                painCurrent.setPain_pattern(cursor.getString(5));
+                painCurrent.setDull(cursor.getInt(6) > 0);
+                painCurrent.setPulling(cursor.getInt(7) > 0);
+                painCurrent.setStinging(cursor.getInt(8) > 0);
+                painCurrent.setPulsating(cursor.getInt(9) > 0);
+                painCurrent.setBurning(cursor.getInt(10) > 0);
+                painCurrent.setPinsneedles(cursor.getInt(11) > 0);
+                painCurrent.setTingling(cursor.getInt(12) > 0);
+                painCurrent.setNumb(cursor.getInt(13) > 0);
+                // Adding painCurrent to list
+                painCurrentList.add(painCurrent);
+            } while (cursor.moveToNext());
+        }
+
+        // return painCurrent list
+        return painCurrentList;
+    }
+
+    public int updatePainCurrent(int patient_id, PainCurrent painCurrent) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("intensity", painCurrent.getIntensity());
+        values.put("location_teeth", painCurrent.getLocation_teeth());
+        values.put("location_face_left", painCurrent.getLocation_face_left());
+        values.put("location_face_right", painCurrent.getLocation_face_right());
+        values.put("pain_pattern", painCurrent.getPain_pattern());
+        values.put("dull", painCurrent.isDull());
+        values.put("pulling", painCurrent.isPulling());
+        values.put("stinging", painCurrent.isStinging());
+        values.put("pulsating", painCurrent.isPulsating());
+        values.put("burning", painCurrent.isBurning());
+        values.put("pinsneedles", painCurrent.isPinsneedles());
+        values.put("tingling", painCurrent.isTingling());
+        values.put("numb", painCurrent.isNumb());
+
+        // updating row
+        return db.update("PainCurrent", values, "patient_id = ?",
+                new String[]{String.valueOf(patient_id)});
+    }
+
+    public void deletePainCurrentOfPatient(int patient_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PainCurrent", "patient_id = ?",
+                new String[] {String.valueOf(patient_id)});
+        db.close();
+    }
+
+    boolean existsPainCurrent(int patientId){
+        String selectQuery = "SELECT COUNT(*) FROM PainCurrent WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        cursor.moveToFirst();
+        Integer count = Integer.parseInt(cursor.getString(0));
+
+        return  count != null && count > 0;
     }
 
 }
