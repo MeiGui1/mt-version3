@@ -42,6 +42,7 @@ import com.example.frontend.Models.PatientImage;
 import com.example.frontend.Models.PatientWebsite;
 import com.example.frontend.Models.WebsiteType;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -65,7 +66,7 @@ import static com.example.frontend.Fragments.CollectionsFragment.Media.WEBSITES;
 public class CollectionsFragment extends Fragment implements WebsiteDialog.WebsiteDialogListener {
 
     private int patientId;
-
+    DatabaseHelper db;
     private RadioGroup rgMedia;
     private RadioButton rbGallery;
     private RadioButton rbVideos;
@@ -94,12 +95,13 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     ColorStateList defaultTextColor;
     ImageView btnAddWebsite;
 
-
+    /*Only used for Heruoku Database
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
     JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+    */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -113,6 +115,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         cview = view;
+        db = new DatabaseHelper(getContext());
         btnAddWebsite = view.findViewById(R.id.btnAddWebsite);
         btnAddWebsite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -593,6 +596,13 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     private void addWebsiteButtons(List<Integer> selectedWebsitesOfPatient) {
         selectedWebsites = selectedWebsitesOfPatient;
         //Get all WebsiteTypes of Patient
+        List<WebsiteType> websiteTypes = db.getAllWebsiteTypes();
+        for (final WebsiteType wt : websiteTypes) {
+            addWebsiteButton(wt.getId(), wt);
+        }
+
+        /*Only used for Heruoku Database
+
         Call<List<WebsiteType>> call = jsonPlaceHolderApi.getAllWebsiteTypes();
         call.enqueue(new Callback<List<WebsiteType>>() {
             @Override
@@ -612,7 +622,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<List<WebsiteType>> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     private void addWebsiteButton(final int websiteId, final WebsiteType wt) {
@@ -676,6 +686,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     }
 
     public void addNewPatientImage(final PatientImage patientImage) {
+        db.addPatientImage(patientImage);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatientImage(patientImage);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -686,10 +700,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getContext(), "create PatientImage NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     public void deletePatientImage(final PatientImage patientImage) {
+        db.deletePatientImage(patientImage);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientImage(patientImage);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -700,10 +718,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getContext(), "delete PatientImage NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void selectAllSelectedImages() {
+        setUpGallery(db.getAllImagePathsOfPatient(patientId));
+
+         /*Only used for Heruoku Database
+
         Call<List<String>> call = jsonPlaceHolderApi.getAllImagePathsOfPatient(patientId);
         call.enqueue(new Callback<List<String>>() {
             @Override
@@ -718,10 +740,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
             }
-        });
+        }); */
     }
 
     public void addNewPatientDocument(final PatientDocument patientDocument) {
+         db.addPatientDocument(patientDocument);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatientDocument(patientDocument);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -732,10 +758,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getContext(), "create PatientDocument NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void deletePatientDocument(final PatientDocument patientDocument) {
+        db.deletePatientDocument(patientDocument);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientDocument(patientDocument);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -746,10 +776,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getContext(), "delete PatientDocument NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void selectAllSelectedDocuments() {
+        setUpDocuments(db.getAllDocumentPathsOfPatient(patientId));
+
+        /*Only used for Heruoku Database
+
         Call<List<String>> call = jsonPlaceHolderApi.getAllDocumentPathsOfPatient(patientId);
         call.enqueue(new Callback<List<String>>() {
             @Override
@@ -764,10 +798,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
             }
-        });
+        }); */
     }
 
     public void addNewPatientWebsite(final PatientWebsite patientWebsite) {
+         db.addPatientWebsite(patientWebsite);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPatientWebsite(patientWebsite);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -779,10 +817,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getContext(), "create PatientWebsite NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void deletePatientWebsite(final PatientWebsite patientWebsite) {
+        db.deletePatientWebsite(patientWebsite);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deletePatientWebsite(patientWebsite);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -793,10 +835,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getContext(), "delete PatientWebsite NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void selectAllSelectedWebsites() {
+        setUpWebsites(db.getAllWebsiteIdsOfPatient(patientId));
+
+         /*Only used for Heruoku Database
+
         Call<List<Integer>> call = jsonPlaceHolderApi.getAllWebsiteIdsOfPatient(patientId);
         call.enqueue(new Callback<List<Integer>>() {
             @Override
@@ -811,11 +857,16 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             @Override
             public void onFailure(Call<List<Integer>> call, Throwable t) {
             }
-        });
+        }); */
     }
 
 
     public void addNewWebsiteType(final WebsiteType websiteType) {
+        db.addWebsiteType(websiteType);
+        getInsertWebsiteTypeId(websiteType);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createWebsiteType(websiteType);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -827,10 +878,15 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getContext(), "create WebsiteType NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void getInsertWebsiteTypeId(final WebsiteType websiteType) {
+        lastWebsitTypeId = db.selectLastWebsiteId();
+        addWebsiteButton(lastWebsitTypeId, websiteType);
+
+         /*Only used for Heruoku Database
+
         Call<Integer> call = jsonPlaceHolderApi.getLastWebsiteTypeId();
         call.enqueue(new Callback<Integer>() {
             @Override
@@ -843,7 +899,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
             public void onFailure(Call<Integer> call, Throwable t) {
                 Toast.makeText(getContext(), "get lastWebsiteTypeId NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
 

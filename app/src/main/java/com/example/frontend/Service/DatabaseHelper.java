@@ -13,9 +13,14 @@ import com.example.frontend.Models.ExercisePhoto;
 import com.example.frontend.Models.ExerciseType;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
+import com.example.frontend.Models.PatientDocument;
 import com.example.frontend.Models.PatientDrug;
 import com.example.frontend.Models.PatientExercise;
+import com.example.frontend.Models.PatientImage;
+import com.example.frontend.Models.PatientVideo;
+import com.example.frontend.Models.PatientWebsite;
 import com.example.frontend.Models.User;
+import com.example.frontend.Models.WebsiteType;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.android.ContextHolder;
@@ -52,10 +57,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createTables(db);
 
         try {
+            //Insert default data into database tables
             insertFromFile("V1__PatientTable.sql",db);
             insertFromFile("V2__DrugTables.sql",db);
             insertFromFile("V3__DiagnosisTables.sql",db);
             insertFromFile("V4__ExerciseTables.sql",db);
+            insertFromFile("V5__WebsiteTable.sql",db);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1190,5 +1197,360 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.moveToLast();
         int lastId = Integer.parseInt(cursor.getString(0));
         return lastId;
+    }
+
+
+    //PatientImage table related functions
+
+    public void addPatientImage(PatientImage patientImage) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientImage.getPatientId());
+        values.put("image_path", patientImage.getImagePath());
+
+        // Inserting Row
+        db.insert("PatientImage", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public List<PatientImage> getAllPatientImages() {
+        List<PatientImage> patientImageList = new ArrayList<PatientImage>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientImage ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientImage patientImage = new PatientImage();
+                patientImage.setPatientId(Integer.parseInt(cursor.getString(0)));
+                patientImage.setImagePath(cursor.getString(1));
+                // Adding patientImage to list
+                patientImageList.add(patientImage);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientImage list
+        return patientImageList;
+    }
+
+    public List<String> getAllImagePathsOfPatient(int patientId){
+        List<String> allImagePathsOfPatient = new ArrayList<String>();
+        // Select All Query
+        String selectQuery = "SELECT image_path FROM PatientImage WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding patientImage to list
+                allImagePathsOfPatient.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+
+        // return patientImage list
+        return allImagePathsOfPatient;
+    }
+
+    public void deletePatientImage(PatientImage patientImage) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PatientImage", "patient_id = ? AND image_path = ?",
+                new String[] {String.valueOf(patientImage.getPatientId()),patientImage.getImagePath()});
+        db.close();
+    }
+
+
+    //PatientVideo table related functions
+
+    public void addPatientVideo(PatientVideo patientVideo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientVideo.getPatientId());
+        values.put("video_path", patientVideo.getVideoPath());
+
+        // Inserting Row
+        db.insert("PatientVideo", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public List<PatientVideo> getAllPatientVideos() {
+        List<PatientVideo> patientVideoList = new ArrayList<PatientVideo>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientVideo ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientVideo patientVideo = new PatientVideo();
+                patientVideo.setPatientId(Integer.parseInt(cursor.getString(0)));
+                patientVideo.setVideoPath(cursor.getString(1));
+                // Adding patientVideo to list
+                patientVideoList.add(patientVideo);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientVideo list
+        return patientVideoList;
+    }
+
+    public List<String> getAllVideoPathsOfPatient(int patientId){
+        List<String> allVideoPathsOfPatient = new ArrayList<String>();
+        // Select All Query
+        String selectQuery = "SELECT video_path FROM PatientVideo WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding patientVideo to list
+                allVideoPathsOfPatient.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+
+        // return patientVideo list
+        return allVideoPathsOfPatient;
+    }
+
+    public void deletePatientVideo(PatientVideo patientVideo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PatientVideo", "patient_id = ? AND video_path = ?",
+                new String[] {String.valueOf(patientVideo.getPatientId()),patientVideo.getVideoPath()});
+        db.close();
+    }
+
+
+    //PatientDocument table related functions
+
+    public void addPatientDocument(PatientDocument patientDocument) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientDocument.getPatientId());
+        values.put("document_path", patientDocument.getDocumentPath());
+
+        // Inserting Row
+        db.insert("PatientDocument", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public List<PatientDocument> getAllPatientDocuments() {
+        List<PatientDocument> patientDocumentList = new ArrayList<PatientDocument>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientDocument ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientDocument patientDocument = new PatientDocument();
+                patientDocument.setPatientId(Integer.parseInt(cursor.getString(0)));
+                patientDocument.setDocumentPath(cursor.getString(1));
+                // Adding patientDocument to list
+                patientDocumentList.add(patientDocument);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientDocument list
+        return patientDocumentList;
+    }
+
+    public List<String> getAllDocumentPathsOfPatient(int patientId){
+        List<String> allDocumentPathsOfPatient = new ArrayList<String>();
+        // Select All Query
+        String selectQuery = "SELECT document_path FROM PatientDocument WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding patientDocument to list
+                allDocumentPathsOfPatient.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+
+        // return patientDocument list
+        return allDocumentPathsOfPatient;
+    }
+
+    public void deletePatientDocument(PatientDocument patientDocument) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PatientDocument", "patient_id = ? AND document_path = ?",
+                new String[] {String.valueOf(patientDocument.getPatientId()),patientDocument.getDocumentPath()});
+        db.close();
+    }
+
+
+    //WebsiteType table related functions
+
+    public void addWebsiteType(WebsiteType websiteType){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("name", websiteType.getName());
+        values.put("url", websiteType.getUrl());
+        values.put("description", websiteType.getDescription());
+        // Inserting Row
+        db.insert("WebsiteType", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public List<WebsiteType> getAllWebsiteTypes(){
+        List<WebsiteType> websiteTypeList = new ArrayList<WebsiteType>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM WebsiteType ORDER BY name";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                WebsiteType websiteType = new WebsiteType();
+                websiteType.setId(Integer.parseInt(cursor.getString(0)));
+                websiteType.setName(cursor.getString(1));
+                websiteType.setUrl(cursor.getString(2));
+                websiteType.setDescription(cursor.getString(3));
+                // Adding websiteType to list
+                websiteTypeList.add(websiteType);
+            } while (cursor.moveToNext());
+        }
+
+        // return websiteType list
+        return websiteTypeList;
+    }
+
+    public WebsiteType getWebsiteType(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("WebsiteType", new String[] { "name",
+                        "url", "description"}, "id = ?",
+                new String[] {String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        WebsiteType websiteType = new WebsiteType(
+                id,
+                cursor.getString(0), cursor.getString(1), cursor.getString(2)); //name, url, description
+        // return websiteType
+        return websiteType;
+    }
+
+    public int updateWebsiteType(int id, WebsiteType websiteType) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("name", websiteType.getName());
+        values.put("url", websiteType.getUrl());
+        values.put("description", websiteType.getDescription());
+
+        // updating row
+        return db.update("WebsiteType", values, "id = ?",
+                new String[]{String.valueOf(id)});
+    }
+
+    public void deleteWebsiteType(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("WebsiteType", "id = ?",
+                new String[] { String.valueOf(id) });
+        db.close();
+    }
+
+    public int selectLastWebsiteId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("WebsiteType", new String[] {"id"},null, null, null, null, null);
+        cursor.moveToLast();
+        int lastId = Integer.parseInt(cursor.getString(0));
+        return lastId;
+    }
+
+
+    //PatientWebsite table related functions
+
+    public void addPatientWebsite(PatientWebsite patientWebsite) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", patientWebsite.getPatientId());
+        values.put("website_id", patientWebsite.getWebsiteTypeId());
+
+        // Inserting Row
+        db.insert("PatientWebsite", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public List<PatientWebsite> getAllPatientWebsites() {
+        List<PatientWebsite> patientWebsiteList = new ArrayList<PatientWebsite>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PatientWebsite ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PatientWebsite patientWebsite = new PatientWebsite();
+                patientWebsite.setPatientId(Integer.parseInt(cursor.getString(0)));
+                patientWebsite.setWebsiteTypeId(Integer.parseInt(cursor.getString(1)));
+                // Adding patientWebsite to list
+                patientWebsiteList.add(patientWebsite);
+            } while (cursor.moveToNext());
+        }
+
+        // return patientWebsite list
+        return patientWebsiteList;
+    }
+
+    public List<Integer> getAllWebsiteIdsOfPatient(int patientId){
+        List<Integer> allWebsiteIdsOfPatient = new ArrayList<Integer>();
+        // Select All Query
+        String selectQuery = "SELECT website_id FROM PatientWebsite WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding patientWebsite to list
+                allWebsiteIdsOfPatient.add(Integer.parseInt(cursor.getString(0)));
+            } while (cursor.moveToNext());
+        }
+
+        // return patientWebsite list
+        return allWebsiteIdsOfPatient;
+    }
+
+    public void deletePatientWebsite(PatientWebsite patientWebsite) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PatientWebsite", "patient_id = ? AND website_id = ?",
+                new String[] {String.valueOf(patientWebsite.getPatientId()), String.valueOf(patientWebsite.getWebsiteTypeId())});
+        db.close();
     }
 }
