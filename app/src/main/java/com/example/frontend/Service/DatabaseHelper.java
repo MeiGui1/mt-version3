@@ -11,6 +11,7 @@ import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.ExercisePhoto;
 import com.example.frontend.Models.ExerciseType;
+import com.example.frontend.Models.Note;
 import com.example.frontend.Models.Patient;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.Models.PatientDocument;
@@ -1553,4 +1554,142 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[] {String.valueOf(patientWebsite.getPatientId()), String.valueOf(patientWebsite.getWebsiteTypeId())});
         db.close();
     }
+
+
+    //Note table related functions
+
+    public void addNote(Note note) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", note.getPatientId());
+        values.put("note_bytes", note.getNoteBytes());
+        values.put("selected", note.isSelected());
+
+        // Inserting Row
+        db.insert("Note", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public Note getNote(int noteId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("Note", new String[] { "id",
+                        "patient_id", "note_bytes", "selected" }, "id = ?",
+                new String[] { String.valueOf(noteId) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Note note = new Note();
+        note.setId(Integer.parseInt(cursor.getString(0)));
+        note.setPatientId(Integer.parseInt(cursor.getString(1)));
+        note.setNoteBytes(cursor.getBlob(2));
+        note.setSelected(cursor.getInt(3) > 0);
+        // return note
+        return note;
+    }
+
+    public List<Note> getAllNotes() {
+        List<Note> noteList = new ArrayList<Note>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM Note ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Note note = new Note();
+                note.setId(Integer.parseInt(cursor.getString(0)));
+                note.setPatientId(Integer.parseInt(cursor.getString(1)));
+                note.setNoteBytes(cursor.getBlob(2));
+                note.setSelected(cursor.getInt(3) > 0);
+                // Adding note to list
+                noteList.add(note);
+            } while (cursor.moveToNext());
+        }
+
+        // return note list
+        return noteList;
+    }
+
+    public List<Note> getAllNotesOfPatient(int patientId){
+        List<Note> notesOfPatient = new ArrayList<Note>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM Note WHERE patient_id = ? ORDER BY id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Note note = new Note();
+                note.setId(Integer.parseInt(cursor.getString(0)));
+                note.setPatientId(Integer.parseInt(cursor.getString(1)));
+                note.setNoteBytes(cursor.getBlob(2));
+                note.setSelected(cursor.getInt(3) > 0);
+                // Adding note to list
+                notesOfPatient.add(note);
+            } while (cursor.moveToNext());
+        }
+
+        // return note list
+        return notesOfPatient;
+    }
+
+    public List<Note> getSelectedNotesOfPatient(int patientId){
+        List<Note> notesOfPatient = new ArrayList<Note>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM Note WHERE selected AND patient_id = ? ORDER BY id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Note note = new Note();
+                note.setId(Integer.parseInt(cursor.getString(0)));
+                note.setPatientId(Integer.parseInt(cursor.getString(1)));
+                note.setNoteBytes(cursor.getBlob(2));
+                note.setSelected(cursor.getInt(3) > 0);
+                // Adding note to list
+                notesOfPatient.add(note);
+            } while (cursor.moveToNext());
+        }
+
+        // return note list
+        return notesOfPatient;
+    }
+
+    public int updateNote(int noteId, Note note) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("selected", note.isSelected());
+
+        // updating row
+        return db.update("Note", values, "id = ?",
+                new String[]{String.valueOf(noteId)});
+    }
+
+    public void deleteNote(int noteId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("Note", "id = ?",
+                new String[] {String.valueOf(noteId)});
+        db.close();
+    }
+
+    public int selectLastNoteId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("Note", new String[] {"id"},null, null, null, null, null);
+        cursor.moveToLast();
+        int lastId = Integer.parseInt(cursor.getString(0));
+        return lastId;
+    }
+
 }

@@ -38,6 +38,7 @@ import com.example.frontend.Fragments.Notes.PaintView;
 import com.example.frontend.Globals;
 import com.example.frontend.Models.Note;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
 import java.io.ByteArrayOutputStream;
@@ -57,6 +58,7 @@ import static android.app.Activity.RESULT_OK;
 public class NotesFragment extends Fragment {
 
     private PaintView paintView;
+    DatabaseHelper db;
     private View cView;
     private int patientId;
     private LinearLayout linearLayout;
@@ -79,14 +81,13 @@ public class NotesFragment extends Fragment {
     int lastNoteId;
     Context context;
 
+     /*Only used for Heruoku Database
+
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
-    /*Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:8080/api/v1/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();*/
 
-    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class); */
 
 
     @Nullable
@@ -99,25 +100,36 @@ public class NotesFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
-
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 view.post(new Runnable() {
                     public void run() {
-                        cView = view;
-                        context = view.getContext();
-                        linearLayout = (LinearLayout) cView.findViewById(R.id.llPictures);
-                        chosenImageView = (ImageView) view.findViewById(R.id.ChoosenImageView);
-                        setUpCanvas();
+
                     }
                 });
             }
         });
+        cView = view;
+        context = view.getContext();
+        linearLayout = (LinearLayout) cView.findViewById(R.id.llPictures);
+        chosenImageView = (ImageView) view.findViewById(R.id.ChoosenImageView);
+        setUpCanvas();
+        db = new DatabaseHelper(getContext());
         addPatientNotesToView();
     }
 
     public void addPatientNotesToView() {
+        allNotesOfPatient = db.getAllNotesOfPatient(patientId);
+        for (Note note : allNotesOfPatient) {
+            if (note != null) {
+                addByteArrayToView(note.getId(), note.getNoteBytes(), note.isSelected());
+            }
+        }
+        linearLayout.invalidate();
+
+         /*Only used for Heruoku Database
+
         Call<List<Note>> call = jsonPlaceHolderApi.getAllNotesOfPatient(patientId);
         call.enqueue(new Callback<List<Note>>() {
             @Override
@@ -141,7 +153,7 @@ public class NotesFragment extends Fragment {
                 Toast.makeText(getActivity(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 
             }
-        });
+        }); */
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -317,6 +329,11 @@ public class NotesFragment extends Fragment {
     }
 
     public void addNewNote(final Note note) {
+        db.addNote(note);
+        getInsertNoteId(note.getNoteBytes());
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createNote(note);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -328,10 +345,14 @@ public class NotesFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "createNote NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void updateNote(int noteId, final Note updatedNote) {
+        db.updateNote(noteId,updatedNote);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.updateNote(noteId, updatedNote);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -342,7 +363,7 @@ public class NotesFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "createNote NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void saveAsTemplate(Bitmap bitmap) {
@@ -453,6 +474,11 @@ public class NotesFragment extends Fragment {
     }
 
     public void getInsertNoteId(final byte[] noteByte) {
+        lastNoteId = db.selectLastNoteId();
+        addByteArrayToView(lastNoteId, noteByte, false);
+
+         /*Only used for Heruoku Database
+
         Call<Integer> call = jsonPlaceHolderApi.getLastNoteId();
         call.enqueue(new Callback<Integer>() {
             @Override
@@ -465,10 +491,14 @@ public class NotesFragment extends Fragment {
             public void onFailure(Call<Integer> call, Throwable t) {
                 Toast.makeText(getActivity(), "getId NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 
     public void deleteNote(int noteId) {
+        db.deleteNote(noteId);
+
+         /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.deleteNote(noteId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -478,7 +508,7 @@ public class NotesFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
             }
-        });
+        });*/
     }
 
     @Override
