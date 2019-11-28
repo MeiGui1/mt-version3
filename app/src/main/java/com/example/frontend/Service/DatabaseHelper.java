@@ -1813,7 +1813,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    boolean existsPainBeginning(int patientId){
+    public boolean existsPainBeginning(int patientId){
         String selectQuery = "SELECT COUNT(*) FROM PainBeginning WHERE patient_id = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1824,6 +1824,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return  count != null && count > 0;
     }
+
 
     //PainCurrent table related functions
 
@@ -1945,7 +1946,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    boolean existsPainCurrent(int patientId){
+    public boolean existsPainCurrent(int patientId){
         String selectQuery = "SELECT COUNT(*) FROM PainCurrent WHERE patient_id = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();

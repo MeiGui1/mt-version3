@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.example.frontend.Models.PainBeginning;
 import com.example.frontend.Models.PainCurrent;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
 import java.io.ByteArrayOutputStream;
@@ -41,6 +42,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class PainFragment extends Fragment {
 
     private int patientId;
+    DatabaseHelper db;
     private ImageView ivLocationTeeth;
     private ImageView ivLocationFaceLeft;
     private ImageView ivLocationFaceRight;
@@ -107,6 +109,61 @@ public class PainFragment extends Fragment {
         @Override
         public void onClick(View view) {
             selectDeselectView(view);
+            if (rgBeginningCurrent.getCheckedRadioButtonId() == R.id.rbBeginning) {
+                switch (view.getId()) {
+                    case R.id.btnDull:
+                        painOfPatientBeginning.setDull(!painOfPatientBeginning.isDull());
+                        break;
+                    case R.id.btnPulling:
+                        painOfPatientBeginning.setPulling(!painOfPatientBeginning.isPulling());
+                        break;
+                    case R.id.btnPulsating:
+                        painOfPatientBeginning.setPulsating(!painOfPatientBeginning.isPulsating());
+                        break;
+                    case R.id.btnStinging:
+                        painOfPatientBeginning.setStinging(!painOfPatientBeginning.isStinging());
+                        break;
+                    case R.id.btnBurning:
+                        painOfPatientBeginning.setBurning(!painOfPatientBeginning.isBurning());
+                        break;
+                    case R.id.btnTingling:
+                        painOfPatientBeginning.setTingling(!painOfPatientBeginning.isTingling());
+                        break;
+                    case R.id.btnPinsandneedles:
+                        painOfPatientBeginning.setPinsneedles(!painOfPatientBeginning.isPinsneedles());
+                        break;
+                    case R.id.btnNumb:
+                        painOfPatientBeginning.setNumb(!painOfPatientBeginning.isNumb());
+                        break;
+                }
+            } else if (rgBeginningCurrent.getCheckedRadioButtonId() == R.id.rbCurrent){
+                switch (view.getId()) {
+                    case R.id.btnDull:
+                        painOfPatientCurrent.setDull(!painOfPatientCurrent.isDull());
+                        break;
+                    case R.id.btnPulling:
+                        painOfPatientCurrent.setPulling(!painOfPatientCurrent.isPulling());
+                        break;
+                    case R.id.btnPulsating:
+                        painOfPatientCurrent.setPulsating(!painOfPatientCurrent.isPulsating());
+                        break;
+                    case R.id.btnStinging:
+                        painOfPatientCurrent.setStinging(!painOfPatientCurrent.isStinging());
+                        break;
+                    case R.id.btnBurning:
+                        painOfPatientCurrent.setBurning(!painOfPatientCurrent.isBurning());
+                        break;
+                    case R.id.btnTingling:
+                        painOfPatientCurrent.setTingling(!painOfPatientCurrent.isTingling());
+                        break;
+                    case R.id.btnPinsandneedles:
+                        painOfPatientCurrent.setPinsneedles(!painOfPatientCurrent.isPinsneedles());
+                        break;
+                    case R.id.btnNumb:
+                        painOfPatientCurrent.setNumb(!painOfPatientCurrent.isNumb());
+                        break;
+                }
+            }
         }
     };
 
@@ -116,11 +173,13 @@ public class PainFragment extends Fragment {
             selectPattern(view);
         }
     };
+
+    /*Only used for Heruoku Database
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class); */
 
     @Override
     public void onDestroyView() {
@@ -142,6 +201,7 @@ public class PainFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        db = new DatabaseHelper(getContext());
         btnDull = view.findViewById(R.id.btnDull);
         btnPulling = view.findViewById(R.id.btnPulling);
         btnPulsating = view.findViewById(R.id.btnPulsating);
@@ -182,24 +242,6 @@ public class PainFragment extends Fragment {
         rbBeginning = view.findViewById(R.id.rbBeginning);
         rbCurrent = view.findViewById(R.id.rbCurrent);
 
-        rgBeginningCurrent = view.findViewById(R.id.rgBeginningCurrent);
-        rgBeginningCurrent.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                setUpSelectedViews();
-                if (!firstTimeOpen) {
-                    if (checkedId == R.id.rbCurrent) {
-                        savePainBeginning();
-                    }
-                    if (checkedId == R.id.rbBeginning) {
-                        savePainCurrent();
-                    }
-                }
-            }
-        });
-        rbBeginning.setChecked(true);
-        firstTimeOpen = false;
-
         seekBar = (SeekBar) view.findViewById(R.id.sbIntensity);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -224,6 +266,25 @@ public class PainFragment extends Fragment {
 
             }
         });
+
+        rgBeginningCurrent = view.findViewById(R.id.rgBeginningCurrent);
+        rgBeginningCurrent.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                setUpSelectedViews();
+                if (!firstTimeOpen) {
+                    if (checkedId == R.id.rbCurrent) {
+                        savePainBeginning();
+                    }
+                    if (checkedId == R.id.rbBeginning) {
+                        savePainCurrent();
+                    }
+                }
+            }
+        });
+        rbBeginning.setChecked(true);
+        firstTimeOpen = false;
+
         initializePainsOfPatient();
         setUpSelectedViews();
 
@@ -239,6 +300,20 @@ public class PainFragment extends Fragment {
     }
 
     private void setBeginnViewsIfExist() {
+        boolean PainBeginningExists = db.existsPainBeginning(patientId);
+        if (PainBeginningExists) {
+            setUpAllViewsBeginning();
+        } else {
+            deselectAllQualityButtons();
+            deselectPattern();
+            seekBar.setProgress(0);
+            ivLocationTeeth.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.teeth));
+            ivLocationFaceLeft.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_left));
+            ivLocationFaceRight.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_right));
+        }
+
+        /*Only used for Heruoku Database
+
         Call<Boolean> call = jsonPlaceHolderApi.existsPainBeginning(patientId);
         call.enqueue(new Callback<Boolean>() {
             @Override
@@ -264,10 +339,24 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<Boolean> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     private void setCurrentViewsIfExist() {
+        boolean PainBeginningExists = db.existsPainCurrent(patientId);
+        if (PainBeginningExists) {
+            setUpAllViewsCurrent();
+        } else {
+            deselectAllQualityButtons();
+            deselectPattern();
+            seekBar.setProgress(0);
+            ivLocationTeeth.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.teeth));
+            ivLocationFaceLeft.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_left));
+            ivLocationFaceRight.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.face_right));
+        }
+
+        /*Only used for Heruoku Database
+
         Call<Boolean> call = jsonPlaceHolderApi.existsPainCurrent(patientId);
         call.enqueue(new Callback<Boolean>() {
             @Override
@@ -293,7 +382,7 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<Boolean> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     private void initializePainsOfPatient() {
@@ -503,6 +592,10 @@ public class PainFragment extends Fragment {
 
 
     public void addNewPainBeginning(PainBeginning painBeginning) {
+        db.addPainBeginning(painBeginning);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPainBeginning(painBeginning);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -513,10 +606,14 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "create PainBeginning NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void updatePainBeginning(final PainBeginning updatedPainBeginning) {
+        db.updatePainBeginning(patientId, updatedPainBeginning);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.updatePainBeginning(patientId, updatedPainBeginning);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -527,10 +624,19 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "update PainBeginning NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void savePainBeginning() {
+        boolean painBeginningExists = db.existsPainBeginning(patientId);
+        if (painBeginningExists) {
+            updatePainBeginning(painOfPatientBeginning);
+        } else {
+            addNewPainBeginning(painOfPatientBeginning);
+        }
+
+        /*Only used for Heruoku Database
+
         Call<Boolean> call = jsonPlaceHolderApi.existsPainBeginning(patientId);
         call.enqueue(new Callback<Boolean>() {
             @Override
@@ -551,10 +657,14 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<Boolean> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void addNewPainCurrent(PainCurrent painCurrent) {
+        db.addPainCurrent(painCurrent);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.createPainCurrent(painCurrent);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -565,10 +675,14 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "create PainCurrent NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void updatePainCurrent(final PainCurrent updatedPainCurrent) {
+        db.updatePainCurrent(patientId, updatedPainCurrent);
+
+        /*Only used for Heruoku Database
+
         Call<ResponseBody> call = jsonPlaceHolderApi.updatePainCurrent(patientId, updatedPainCurrent);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -579,10 +693,19 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(), "update PainBCurrent NOT successful", Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void savePainCurrent() {
+        boolean painCurrentExists = db.existsPainCurrent(patientId);
+        if (painCurrentExists) {
+            updatePainCurrent(painOfPatientCurrent);
+        } else {
+            addNewPainCurrent(painOfPatientCurrent);
+        }
+
+        /*Only used for Heruoku Database
+
         Call<Boolean> call = jsonPlaceHolderApi.existsPainCurrent(patientId);
         call.enqueue(new Callback<Boolean>() {
             @Override
@@ -590,8 +713,8 @@ public class PainFragment extends Fragment {
                 if (!response.isSuccessful()) {
                     return;
                 } else {
-                    boolean PainBeginningExists = response.body();
-                    if (PainBeginningExists) {
+                    boolean PainCurrentExists = response.body();
+                    if (PainCurrentExists) {
                         updatePainCurrent(painOfPatientCurrent);
                     } else {
                         addNewPainCurrent(painOfPatientCurrent);
@@ -603,10 +726,64 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<Boolean> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     private void setUpAllViewsBeginning() {
+        painOfPatientBeginning = db.getPainBeginningOfPatient(patientId);
+        Bitmap bmTeeth = BitmapFactory.decodeByteArray(painOfPatientBeginning.getLocation_teeth(), 0, painOfPatientBeginning.getLocation_teeth().length);
+        Bitmap bmFaceLeft = BitmapFactory.decodeByteArray(painOfPatientBeginning.getLocation_face_left(), 0, painOfPatientBeginning.getLocation_face_left().length);
+        Bitmap bmFaceRight = BitmapFactory.decodeByteArray(painOfPatientBeginning.getLocation_face_right(), 0, painOfPatientBeginning.getLocation_face_right().length);
+        ivLocationTeeth.setImageBitmap(bmTeeth);
+        ivLocationFaceLeft.setImageBitmap(bmFaceLeft);
+        ivLocationFaceRight.setImageBitmap(bmFaceRight);
+        seekBar.setProgress(painOfPatientBeginning.getIntensity());
+
+        deselectPattern();
+        if (painOfPatientBeginning.getPain_pattern() != null && !painOfPatientBeginning.getPain_pattern().isEmpty()) {
+            switch (painOfPatientBeginning.getPain_pattern()) {
+                case "PermSlightFluc":
+                    selectPattern(ivPermSlightFluc);
+                    break;
+                case "PermStrongFluc":
+                    selectPattern(ivPermStrongFluc);
+                    break;
+                case "AttFreeInt":
+                    selectPattern(ivAttFreeInt);
+                    break;
+                case "AttNoFreeInt":
+                    selectPattern(ivAttNoFreeInt);
+                    break;
+            }
+        }
+
+        deselectAllQualityButtons();
+        if (painOfPatientBeginning.isDull()) {
+            selectDeselectView(btnDull);
+        }
+        if (painOfPatientBeginning.isPulling()) {
+            selectDeselectView(btnPulling);
+        }
+        if (painOfPatientBeginning.isPulsating()) {
+            selectDeselectView(btnPulsating);
+        }
+        if (painOfPatientBeginning.isPinsneedles()) {
+            selectDeselectView(btnPinsandneedles);
+        }
+        if (painOfPatientBeginning.isTingling()) {
+            selectDeselectView(btnTingling);
+        }
+        if (painOfPatientBeginning.isBurning()) {
+            selectDeselectView(btnBurning);
+        }
+        if (painOfPatientBeginning.isStinging()) {
+            selectDeselectView(btnStinging);
+        }
+        if (painOfPatientBeginning.isNumb()) {
+            selectDeselectView(btnNumb);
+        }
+        /*Only used for Heruoku Database
+
         Call<PainBeginning> call = jsonPlaceHolderApi.getPainBeginning(patientId);
         call.enqueue(new Callback<PainBeginning>() {
             @Override
@@ -647,7 +824,7 @@ public class PainFragment extends Fragment {
                         selectDeselectView(btnDull);
                     }
                     if (painOfPatientBeginning.isPulling()) {
-                        selectDeselectView(btnDull);
+                        selectDeselectView(btnPulling);
                     }
                     if (painOfPatientBeginning.isPulsating()) {
                         selectDeselectView(btnPulsating);
@@ -674,10 +851,65 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<PainBeginning> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     private void setUpAllViewsCurrent() {
+        painOfPatientCurrent = db.getPainCurrentOfPatient(patientId);
+        Bitmap bmTeeth = BitmapFactory.decodeByteArray(painOfPatientCurrent.getLocation_teeth(), 0, painOfPatientCurrent.getLocation_teeth().length);
+        Bitmap bmFaceLeft = BitmapFactory.decodeByteArray(painOfPatientCurrent.getLocation_face_left(), 0, painOfPatientCurrent.getLocation_face_left().length);
+        Bitmap bmFaceRight = BitmapFactory.decodeByteArray(painOfPatientCurrent.getLocation_face_right(), 0, painOfPatientCurrent.getLocation_face_right().length);
+        ivLocationTeeth.setImageBitmap(bmTeeth);
+        ivLocationFaceLeft.setImageBitmap(bmFaceLeft);
+        ivLocationFaceRight.setImageBitmap(bmFaceRight);
+        seekBar.setProgress(painOfPatientCurrent.getIntensity());
+
+        deselectPattern();
+        if (painOfPatientCurrent.getPain_pattern() != null && !painOfPatientCurrent.getPain_pattern().isEmpty()) {
+            switch (painOfPatientCurrent.getPain_pattern()) {
+                case "PermSlightFluc":
+                    selectPattern(ivPermSlightFluc);
+                    break;
+                case "PermStrongFluc":
+                    selectPattern(ivPermStrongFluc);
+                    break;
+                case "AttFreeInt":
+                    selectPattern(ivAttFreeInt);
+                    break;
+                case "AttNoFreeInt":
+                    selectPattern(ivAttNoFreeInt);
+                    break;
+            }
+        }
+
+        deselectAllQualityButtons();
+        if (painOfPatientCurrent.isDull()) {
+            selectDeselectView(btnDull);
+        }
+        if (painOfPatientCurrent.isPulling()) {
+            selectDeselectView(btnPulling);
+        }
+        if (painOfPatientCurrent.isPulsating()) {
+            selectDeselectView(btnPulsating);
+        }
+        if (painOfPatientCurrent.isPinsneedles()) {
+            selectDeselectView(btnPinsandneedles);
+        }
+        if (painOfPatientCurrent.isTingling()) {
+            selectDeselectView(btnTingling);
+        }
+        if (painOfPatientCurrent.isBurning()) {
+            selectDeselectView(btnBurning);
+        }
+        if (painOfPatientCurrent.isStinging()) {
+            selectDeselectView(btnStinging);
+        }
+        if (painOfPatientCurrent.isNumb()) {
+            selectDeselectView(btnNumb);
+        }
+        initialSetUpBeginningDone = true;
+        /*Only used for Heruoku Database
+
         Call<PainCurrent> call = jsonPlaceHolderApi.getPainCurrent(patientId);
         call.enqueue(new Callback<PainCurrent>() {
             @Override
@@ -695,7 +927,7 @@ public class PainFragment extends Fragment {
                     seekBar.setProgress(painOfPatientCurrent.getIntensity());
 
                     deselectPattern();
-                    if (painOfPatientBeginning.getPain_pattern() != null && !painOfPatientBeginning.getPain_pattern().isEmpty()) {
+                    if (painOfPatientCurrent.getPain_pattern() != null && !painOfPatientCurrent.getPain_pattern().isEmpty()) {
                         switch (painOfPatientCurrent.getPain_pattern()) {
                             case "PermSlightFluc":
                                 selectPattern(ivPermSlightFluc);
@@ -717,7 +949,7 @@ public class PainFragment extends Fragment {
                         selectDeselectView(btnDull);
                     }
                     if (painOfPatientCurrent.isPulling()) {
-                        selectDeselectView(btnDull);
+                        selectDeselectView(btnPulling);
                     }
                     if (painOfPatientCurrent.isPulsating()) {
                         selectDeselectView(btnPulsating);
@@ -744,7 +976,7 @@ public class PainFragment extends Fragment {
             public void onFailure(Call<PainCurrent> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     private void deselectAllQualityButtons() {
@@ -777,62 +1009,6 @@ public class PainFragment extends Fragment {
             view.setSelected(true);
             selectedBtn.setTextColor(Color.WHITE);
         }
-        if (rgBeginningCurrent.getCheckedRadioButtonId() == R.id.rbBeginning) {
-            switch (view.getId()) {
-                case R.id.btnDull:
-                    painOfPatientBeginning.setDull(!painOfPatientBeginning.isDull());
-                    break;
-                case R.id.btnPulling:
-                    painOfPatientBeginning.setPulling(!painOfPatientBeginning.isPulling());
-                    break;
-                case R.id.btnPulsating:
-                    painOfPatientBeginning.setPulsating(!painOfPatientBeginning.isPulsating());
-                    break;
-                case R.id.btnStinging:
-                    painOfPatientBeginning.setStinging(!painOfPatientBeginning.isStinging());
-                    break;
-                case R.id.btnBurning:
-                    painOfPatientBeginning.setBurning(!painOfPatientBeginning.isBurning());
-                    break;
-                case R.id.btnTingling:
-                    painOfPatientBeginning.setTingling(!painOfPatientBeginning.isTingling());
-                    break;
-                case R.id.btnPinsandneedles:
-                    painOfPatientBeginning.setPinsneedles(!painOfPatientBeginning.isPinsneedles());
-                    break;
-                case R.id.btnNumb:
-                    painOfPatientBeginning.setNumb(!painOfPatientBeginning.isNumb());
-                    break;
-            }
-        } else {
-            switch (view.getId()) {
-                case R.id.btnDull:
-                    painOfPatientCurrent.setDull(!painOfPatientCurrent.isDull());
-                    break;
-                case R.id.btnPulling:
-                    painOfPatientCurrent.setPulling(!painOfPatientCurrent.isPulling());
-                    break;
-                case R.id.btnPulsating:
-                    painOfPatientCurrent.setPulsating(!painOfPatientCurrent.isPulsating());
-                    break;
-                case R.id.btnStinging:
-                    painOfPatientCurrent.setStinging(!painOfPatientCurrent.isStinging());
-                    break;
-                case R.id.btnBurning:
-                    painOfPatientCurrent.setBurning(!painOfPatientCurrent.isBurning());
-                    break;
-                case R.id.btnTingling:
-                    painOfPatientCurrent.setTingling(!painOfPatientCurrent.isTingling());
-                    break;
-                case R.id.btnPinsandneedles:
-                    painOfPatientCurrent.setPinsneedles(!painOfPatientCurrent.isPinsneedles());
-                    break;
-                case R.id.btnNumb:
-                    painOfPatientCurrent.setNumb(!painOfPatientCurrent.isNumb());
-                    break;
-            }
-        }
-
     }
 
     private void deselectPattern() {
