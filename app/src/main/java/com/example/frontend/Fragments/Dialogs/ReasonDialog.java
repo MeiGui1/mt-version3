@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.frontend.Models.ImprovementReason;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
 import retrofit2.Call;
@@ -31,12 +32,15 @@ public class ReasonDialog extends AppCompatDialogFragment {
     private CheckBox cbAwareness;
     private CheckBox cbOthers;
     private EditText etOthers;
+    DatabaseHelper db;
 
+    /* Only used for Heruoku Database
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
     JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+    */
 
     public interface ReasonDialogListener {
         void applyTexts(boolean drugsReason, boolean exercisesReason, boolean awarenessReason, boolean otherReasons, String otherReasonsText);
@@ -47,6 +51,7 @@ public class ReasonDialog extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         patientId = getArguments().getInt("patient_id");
+        db = new DatabaseHelper(getContext());
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.layout_reason_dialog, null);
@@ -105,6 +110,15 @@ public class ReasonDialog extends AppCompatDialogFragment {
     }
 
     public void getImprovementReason() {
+        ImprovementReason improvementReasonOfPatient = db.getImprovementReason(patientId);
+        cbDrugs.setChecked(improvementReasonOfPatient.isDrugs());
+        cbExercises.setChecked(improvementReasonOfPatient.isExercises());
+        cbAwareness.setChecked(improvementReasonOfPatient.isAwareness());
+        cbOthers.setChecked(improvementReasonOfPatient.isOther_reason());
+        etOthers.setText(improvementReasonOfPatient.getOther_reason_text());
+
+        /* Only used for Heruoku Database
+
         Call<ImprovementReason> call = jsonPlaceHolderApi.getImprovementReason(patientId);
         call.enqueue(new Callback<ImprovementReason>() {
             @Override
@@ -126,11 +140,17 @@ public class ReasonDialog extends AppCompatDialogFragment {
             public void onFailure(Call<ImprovementReason> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
 
     public void setImprovementReason() {
+        boolean improvementReasonExists = db.existsImprovementReason(patientId);
+        if (improvementReasonExists) {
+            getImprovementReason();
+
+        /* Only used for Heruoku Database
+
         Call<Boolean> call = jsonPlaceHolderApi.existsImprovementReason(patientId);
         call.enqueue(new Callback<Boolean>() {
             @Override
@@ -149,7 +169,7 @@ public class ReasonDialog extends AppCompatDialogFragment {
             public void onFailure(Call<Boolean> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
+        }
     }
-
 }

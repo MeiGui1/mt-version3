@@ -31,13 +31,6 @@ public class WebsiteDialog extends AppCompatDialogFragment {
 
     public WebsiteDialogListener listener ;
 
-
-    Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-    JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         TextWatcher onTextChangeListener = new TextWatcher() {

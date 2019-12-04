@@ -11,6 +11,7 @@ import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.DrugType;
 import com.example.frontend.Models.ExercisePhoto;
 import com.example.frontend.Models.ExerciseType;
+import com.example.frontend.Models.ImprovementReason;
 import com.example.frontend.Models.Note;
 import com.example.frontend.Models.PainBeginning;
 import com.example.frontend.Models.PainCurrent;
@@ -22,6 +23,8 @@ import com.example.frontend.Models.PatientExercise;
 import com.example.frontend.Models.PatientImage;
 import com.example.frontend.Models.PatientVideo;
 import com.example.frontend.Models.PatientWebsite;
+import com.example.frontend.Models.PsychoSocialAfter;
+import com.example.frontend.Models.PsychoSocialBefore;
 import com.example.frontend.Models.User;
 import com.example.frontend.Models.WebsiteType;
 
@@ -48,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private Context c;
 
-    public DatabaseHelper(Context context)  {
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         c = context;
     }
@@ -61,11 +64,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try {
             //Insert default data into database tables
-            insertFromFile("V1__PatientTable.sql",db);
-            insertFromFile("V2__DrugTables.sql",db);
-            insertFromFile("V3__DiagnosisTables.sql",db);
-            insertFromFile("V4__ExerciseTables.sql",db);
-            insertFromFile("V5__WebsiteTable.sql",db);
+            insertFromFile("V1__PatientTable.sql", db);
+            insertFromFile("V2__DrugTables.sql", db);
+            insertFromFile("V3__DiagnosisTables.sql", db);
+            insertFromFile("V4__ExerciseTables.sql", db);
+            insertFromFile("V5__WebsiteTable.sql", db);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -105,7 +108,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void createTables(SQLiteDatabase db){
+    public void createTables(SQLiteDatabase db) {
 
         //User Table
         db.execSQL("CREATE TABLE User (" +
@@ -316,9 +319,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //User table related functions
 
-    public void createDefaultUsersIfNeed()  {
+    public void createDefaultUsersIfNeed() {
         int count = this.getUsersCount();
-        if(count ==0 ) {
+        if (count == 0) {
             User user1 = new User("admin",
                     "zzm");
             User user2 = new User("de",
@@ -342,7 +345,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("password", user.getPassword());
 
         // Inserting Row
-        db.insert( "User", null, values);
+        db.insert("User", null, values);
 
         // Closing database connection
         db.close();
@@ -351,9 +354,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public User getUser(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query( "User", new String[] { "id",
-                        "username", "password" }, "id = ?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+        Cursor cursor = db.query("User", new String[]{"id",
+                        "username", "password"}, "id = ?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -408,14 +411,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("password", user.getPassword());
 
         // updating row
-        return db.update( "User", values, "id = ?",
+        return db.update("User", values, "id = ?",
                 new String[]{String.valueOf(user.getId())});
     }
 
     public void deleteUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete( "User", "id = ?",
-                new String[] { String.valueOf(user.getId()) });
+        db.delete("User", "id = ?",
+                new String[]{String.valueOf(user.getId())});
         db.close();
     }
 
@@ -439,9 +442,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Patient getPatient(int patientId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("Patient", new String[] { "id",
-                        "shortname", "gender" }, "id = ?",
-                new String[] { String.valueOf(patientId) }, null, null, null, null);
+        Cursor cursor = db.query("Patient", new String[]{"id",
+                        "shortname", "gender"}, "id = ?",
+                new String[]{String.valueOf(patientId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -490,14 +493,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePatient(int patientId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("Patient", "id = ?",
-                new String[] { String.valueOf(patientId) });
+                new String[]{String.valueOf(patientId)});
         db.close();
     }
 
-    public int selectLastPatientId(){
+    public int selectLastPatientId() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("Patient", new String[] {"id",
-                "shortname", "gender" },null, null, null, null, null);
+        Cursor cursor = db.query("Patient", new String[]{"id",
+                "shortname", "gender"}, null, null, null, null, null);
         cursor.moveToLast();
         int lastId = Integer.parseInt(cursor.getString(0));
         return lastId;
@@ -523,9 +526,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DrugType getDrugType(int drugTypeId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("DrugType", new String[] { "id",
-                        "name", "description" }, "id = ?",
-                new String[] { String.valueOf(drugTypeId) }, null, null, null, null);
+        Cursor cursor = db.query("DrugType", new String[]{"id",
+                        "name", "description"}, "id = ?",
+                new String[]{String.valueOf(drugTypeId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -574,14 +577,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteDrugType(int drugTypeId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("DrugType", "id = ?",
-                new String[] { String.valueOf(drugTypeId) });
+                new String[]{String.valueOf(drugTypeId)});
         db.close();
     }
 
-    public int selectLastDrugTypeId(){
+    public int selectLastDrugTypeId() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("DrugType", new String[] {"id",
-                "name", "description" },null, null, null, null, null);
+        Cursor cursor = db.query("DrugType", new String[]{"id",
+                "name", "description"}, null, null, null, null, null);
         cursor.moveToLast();
         int lastId = Integer.parseInt(cursor.getString(0));
         return lastId;
@@ -609,13 +612,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public PatientDrug getPatientDrug(int patientId, int drugTypeId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("PatientDrug", new String[] { "patient_id", "drugtype_id",
-                        "amount", "dosis" }, "patient_id = ? AND drugtype_id = ?",
-                new String[] {String.valueOf(patientId), String.valueOf(drugTypeId)}, null, null, null, null);
+        Cursor cursor = db.query("PatientDrug", new String[]{"patient_id", "drugtype_id",
+                        "amount", "dosis"}, "patient_id = ? AND drugtype_id = ?",
+                new String[]{String.valueOf(patientId), String.valueOf(drugTypeId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        PatientDrug patientDrug = new PatientDrug(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),
+        PatientDrug patientDrug = new PatientDrug(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),
                 cursor.getString(2), cursor.getString(3));
         // return patientDrug
         return patientDrug;
@@ -646,7 +649,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return patientDrugList;
     }
 
-    public List<PatientDrug> getAllDrugsOfPatient(int patientId){
+    public List<PatientDrug> getAllDrugsOfPatient(int patientId) {
         List<PatientDrug> drugsOfPatientList = new ArrayList<PatientDrug>();
         // Select All Query
         String selectQuery = "SELECT * FROM PatientDrug WHERE patient_id = ?";
@@ -682,13 +685,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         return db.update("PatientDrug", values, "patient_id = ? AND drugtype_id= ?",
-                new String[]{String.valueOf(patientId),String.valueOf(drugTypeId)});
+                new String[]{String.valueOf(patientId), String.valueOf(drugTypeId)});
     }
 
     public void deletePatientDrug(int patientId, int drugTypeId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PatientDrug", "patient_id = ? AND drugtype_id = ?",
-                new String[] {String.valueOf(patientId),String.valueOf(drugTypeId)});
+                new String[]{String.valueOf(patientId), String.valueOf(drugTypeId)});
         db.close();
     }
 
@@ -713,9 +716,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DiagnosisType getDiagnosisType(int diagnosisTypeId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("DiagnosisType", new String[] { "id",
-                        "name","type", "description" }, "id = ?",
-                new String[] { String.valueOf(diagnosisTypeId) }, null, null, null, null);
+        Cursor cursor = db.query("DiagnosisType", new String[]{"id",
+                        "name", "type", "description"}, "id = ?",
+                new String[]{String.valueOf(diagnosisTypeId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -753,7 +756,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return diagnosisTypeList;
     }
 
-    public List<DiagnosisType> getDiagnosisTypesByClass(String type){
+    public List<DiagnosisType> getDiagnosisTypesByClass(String type) {
         List<DiagnosisType> diagnosisTypesOfClass = new ArrayList<DiagnosisType>();
         // Select All Query
         String selectQuery = "SELECT * FROM DiagnosisType WHERE type = ?";
@@ -778,7 +781,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return diagnosisTypesOfClass;
     }
 
-    public List<String> getAllDiagnosisTypeClasses(){
+    public List<String> getAllDiagnosisTypeClasses() {
         List<String> allDiagnosisTypeClasses = new ArrayList<String>();
         // Select All Query
         String selectQuery = "SELECT DISTINCT type FROM DiagnosisType ORDER BY type";
@@ -813,14 +816,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteDiagnosisType(int diagnosisTypeId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("DiagnosisType", "id = ?",
-                new String[] { String.valueOf(diagnosisTypeId) });
+                new String[]{String.valueOf(diagnosisTypeId)});
         db.close();
     }
 
-    public int selectLastDiagnosisTypeId(){
+    public int selectLastDiagnosisTypeId() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("DiagnosisType", new String[] {"id",
-                "name", "type", "description" },null, null, null, null, null);
+        Cursor cursor = db.query("DiagnosisType", new String[]{"id",
+                "name", "type", "description"}, null, null, null, null, null);
         cursor.moveToLast();
         int lastId = Integer.parseInt(cursor.getString(0));
         return lastId;
@@ -847,13 +850,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public PatientDiagnosis getPatientDiagnosis(int patientId, int diagnosisTypeId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("PatientDiagnosis", new String[] { "patient_id", "diagnosistype_id",
-                        "comment" }, "patient_id = ? AND diagnosistype_id = ?",
-                new String[] {String.valueOf(patientId), String.valueOf(diagnosisTypeId)}, null, null, null, null);
+        Cursor cursor = db.query("PatientDiagnosis", new String[]{"patient_id", "diagnosistype_id",
+                        "comment"}, "patient_id = ? AND diagnosistype_id = ?",
+                new String[]{String.valueOf(patientId), String.valueOf(diagnosisTypeId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        PatientDiagnosis patientDiagnosis = new PatientDiagnosis(Integer.parseInt(cursor.getString(0)),Integer.parseInt(cursor.getString(1)),
+        PatientDiagnosis patientDiagnosis = new PatientDiagnosis(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),
                 cursor.getString(2));
         // return patientDiagnosis
         return patientDiagnosis;
@@ -883,7 +886,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return patientDiagnosisList;
     }
 
-    public List<PatientDiagnosis> getAllDiagnosesOfPatient(int patientId){
+    public List<PatientDiagnosis> getAllDiagnosesOfPatient(int patientId) {
         List<PatientDiagnosis> diagnosesOfPatientList = new ArrayList<PatientDiagnosis>();
         // Select All Query
         String selectQuery = "SELECT * FROM PatientDiagnosis WHERE patient_id = ?";
@@ -907,7 +910,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return diagnosesOfPatientList;
     }
 
-    public List<PatientDiagnosis> getPatientDiagnosisOfClass(int patientId, String type){
+    public List<PatientDiagnosis> getPatientDiagnosisOfClass(int patientId, String type) {
         List<PatientDiagnosis> selectedPatientDiagnoses = new ArrayList<PatientDiagnosis>();
         // Select All Query
         String selectQuery = "SELECT patient_id, diagnosistype_id, type, comment FROM PatientDiagnosis " +
@@ -945,20 +948,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         return db.update("PatientDiagnosis", values, "patient_id = ? AND diagnosistype_id= ?",
-                new String[]{String.valueOf(patientId),String.valueOf(diagnosisTypeId)});
+                new String[]{String.valueOf(patientId), String.valueOf(diagnosisTypeId)});
     }
 
     public void deletePatientDiagnosis(int patientId, int diagnosisTypeId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PatientDiagnosis", "patient_id = ? AND diagnosistype_id = ?",
-                new String[] {String.valueOf(patientId),String.valueOf(diagnosisTypeId)});
+                new String[]{String.valueOf(patientId), String.valueOf(diagnosisTypeId)});
         db.close();
     }
 
 
     //ExerciseType table related functions
 
-    public void addExerciseType(ExerciseType exerciseType){
+    public void addExerciseType(ExerciseType exerciseType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -972,7 +975,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<ExerciseType> getAllExerciseTypes(){
+    public List<ExerciseType> getAllExerciseTypes() {
         List<ExerciseType> exerciseTypeList = new ArrayList<ExerciseType>();
         // Select All Query
         String selectQuery = "SELECT * FROM ExerciseType ORDER BY title";
@@ -998,9 +1001,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public ExerciseType getExerciseType(String title) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("ExerciseType", new String[] { "title",
+        Cursor cursor = db.query("ExerciseType", new String[]{"title",
                         "explanation"}, "title = ?",
-                new String[] { title }, null, null, null, null);
+                new String[]{title}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -1011,7 +1014,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exerciseType;
     }
 
-    public List<String> getAllExerciseTypeTitles(){
+    public List<String> getAllExerciseTypeTitles() {
         List<String> allExerciseTypeTitles = new ArrayList<String>();
         // Select All Query
         String selectQuery = "SELECT DISTINCT title FROM ExerciseType ORDER BY title";
@@ -1045,7 +1048,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteExerciseType(String title) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("ExerciseType", "title = ?",
-                new String[] { String.valueOf(title) });
+                new String[]{String.valueOf(title)});
         db.close();
     }
 
@@ -1089,7 +1092,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return patientExerciseList;
     }
 
-    public List<PatientExercise> getAllExercisesOfPatient(int patientId){
+    public List<PatientExercise> getAllExercisesOfPatient(int patientId) {
         List<PatientExercise> exercisesOfPatientList = new ArrayList<PatientExercise>();
         // Select All Query
         String selectQuery = "SELECT * FROM PatientExercise WHERE patient_id = ?";
@@ -1115,7 +1118,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePatientExercise(int patientId, String exercisetypeTitle) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PatientExercise", "patient_id = ? AND exercisetype_title = ?",
-                new String[] {String.valueOf(patientId),exercisetypeTitle});
+                new String[]{String.valueOf(patientId), exercisetypeTitle});
         db.close();
     }
 
@@ -1160,7 +1163,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return patientExerciseList;
     }
 
-    public List<ExercisePhoto> getAllExercisePhotosOfPatient(int patientId){
+    public List<ExercisePhoto> getAllExercisePhotosOfPatient(int patientId) {
         List<ExercisePhoto> exercisesOfPatientList = new ArrayList<ExercisePhoto>();
         // Select All Query
         String selectQuery = "SELECT * FROM ExercisePhoto WHERE patient_id = ?";
@@ -1187,14 +1190,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteExercisePhoto(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("ExercisePhoto", "id = ?",
-                new String[] {String.valueOf(id)});
+                new String[]{String.valueOf(id)});
         db.close();
     }
 
-    public int selectLastPhotoId(){
+    public int selectLastPhotoId() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("ExercisePhoto", new String[] {"id",
-                "patient_id", "photo"},null, null, null, null, null);
+        Cursor cursor = db.query("ExercisePhoto", new String[]{"id",
+                "patient_id", "photo"}, null, null, null, null, null);
         cursor.moveToLast();
         int lastId = Integer.parseInt(cursor.getString(0));
         return lastId;
@@ -1240,7 +1243,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return patientImageList;
     }
 
-    public List<String> getAllImagePathsOfPatient(int patientId){
+    public List<String> getAllImagePathsOfPatient(int patientId) {
         List<String> allImagePathsOfPatient = new ArrayList<String>();
         // Select All Query
         String selectQuery = "SELECT image_path FROM PatientImage WHERE patient_id = ?";
@@ -1263,7 +1266,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePatientImage(PatientImage patientImage) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PatientImage", "patient_id = ? AND image_path = ?",
-                new String[] {String.valueOf(patientImage.getPatientId()),patientImage.getImagePath()});
+                new String[]{String.valueOf(patientImage.getPatientId()), patientImage.getImagePath()});
         db.close();
     }
 
@@ -1307,7 +1310,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return patientVideoList;
     }
 
-    public List<String> getAllVideoPathsOfPatient(int patientId){
+    public List<String> getAllVideoPathsOfPatient(int patientId) {
         List<String> allVideoPathsOfPatient = new ArrayList<String>();
         // Select All Query
         String selectQuery = "SELECT video_path FROM PatientVideo WHERE patient_id = ?";
@@ -1330,7 +1333,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePatientVideo(PatientVideo patientVideo) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PatientVideo", "patient_id = ? AND video_path = ?",
-                new String[] {String.valueOf(patientVideo.getPatientId()),patientVideo.getVideoPath()});
+                new String[]{String.valueOf(patientVideo.getPatientId()), patientVideo.getVideoPath()});
         db.close();
     }
 
@@ -1374,7 +1377,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return patientDocumentList;
     }
 
-    public List<String> getAllDocumentPathsOfPatient(int patientId){
+    public List<String> getAllDocumentPathsOfPatient(int patientId) {
         List<String> allDocumentPathsOfPatient = new ArrayList<String>();
         // Select All Query
         String selectQuery = "SELECT document_path FROM PatientDocument WHERE patient_id = ?";
@@ -1397,14 +1400,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePatientDocument(PatientDocument patientDocument) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PatientDocument", "patient_id = ? AND document_path = ?",
-                new String[] {String.valueOf(patientDocument.getPatientId()),patientDocument.getDocumentPath()});
+                new String[]{String.valueOf(patientDocument.getPatientId()), patientDocument.getDocumentPath()});
         db.close();
     }
 
 
     //WebsiteType table related functions
 
-    public void addWebsiteType(WebsiteType websiteType){
+    public void addWebsiteType(WebsiteType websiteType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -1418,7 +1421,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<WebsiteType> getAllWebsiteTypes(){
+    public List<WebsiteType> getAllWebsiteTypes() {
         List<WebsiteType> websiteTypeList = new ArrayList<WebsiteType>();
         // Select All Query
         String selectQuery = "SELECT * FROM WebsiteType ORDER BY name";
@@ -1446,9 +1449,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public WebsiteType getWebsiteType(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("WebsiteType", new String[] { "name",
+        Cursor cursor = db.query("WebsiteType", new String[]{"name",
                         "url", "description"}, "id = ?",
-                new String[] {String.valueOf(id)}, null, null, null, null);
+                new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -1476,13 +1479,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteWebsiteType(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("WebsiteType", "id = ?",
-                new String[] { String.valueOf(id) });
+                new String[]{String.valueOf(id)});
         db.close();
     }
 
-    public int selectLastWebsiteId(){
+    public int selectLastWebsiteId() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("WebsiteType", new String[] {"id"},null, null, null, null, null);
+        Cursor cursor = db.query("WebsiteType", new String[]{"id"}, null, null, null, null, null);
         cursor.moveToLast();
         int lastId = Integer.parseInt(cursor.getString(0));
         return lastId;
@@ -1528,7 +1531,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return patientWebsiteList;
     }
 
-    public List<Integer> getAllWebsiteIdsOfPatient(int patientId){
+    public List<Integer> getAllWebsiteIdsOfPatient(int patientId) {
         List<Integer> allWebsiteIdsOfPatient = new ArrayList<Integer>();
         // Select All Query
         String selectQuery = "SELECT website_id FROM PatientWebsite WHERE patient_id = ?";
@@ -1551,7 +1554,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePatientWebsite(PatientWebsite patientWebsite) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PatientWebsite", "patient_id = ? AND website_id = ?",
-                new String[] {String.valueOf(patientWebsite.getPatientId()), String.valueOf(patientWebsite.getWebsiteTypeId())});
+                new String[]{String.valueOf(patientWebsite.getPatientId()), String.valueOf(patientWebsite.getWebsiteTypeId())});
         db.close();
     }
 
@@ -1576,9 +1579,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Note getNote(int noteId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("Note", new String[] { "id",
-                        "patient_id", "note_bytes", "selected" }, "id = ?",
-                new String[] { String.valueOf(noteId) }, null, null, null, null);
+        Cursor cursor = db.query("Note", new String[]{"id",
+                        "patient_id", "note_bytes", "selected"}, "id = ?",
+                new String[]{String.valueOf(noteId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -1616,7 +1619,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return noteList;
     }
 
-    public List<Note> getAllNotesOfPatient(int patientId){
+    public List<Note> getAllNotesOfPatient(int patientId) {
         List<Note> notesOfPatient = new ArrayList<Note>();
         // Select All Query
         String selectQuery = "SELECT * FROM Note WHERE patient_id = ? ORDER BY id";
@@ -1641,7 +1644,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return notesOfPatient;
     }
 
-    public List<Note> getSelectedNotesOfPatient(int patientId){
+    public List<Note> getSelectedNotesOfPatient(int patientId) {
         List<Note> notesOfPatient = new ArrayList<Note>();
         // Select All Query
         String selectQuery = "SELECT * FROM Note WHERE selected AND patient_id = ? ORDER BY id";
@@ -1680,13 +1683,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteNote(int noteId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("Note", "id = ?",
-                new String[] {String.valueOf(noteId)});
+                new String[]{String.valueOf(noteId)});
         db.close();
     }
 
-    public int selectLastNoteId(){
+    public int selectLastNoteId() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("Note", new String[] {"id"},null, null, null, null, null);
+        Cursor cursor = db.query("Note", new String[]{"id"}, null, null, null, null, null);
         cursor.moveToLast();
         int lastId = Integer.parseInt(cursor.getString(0));
         return lastId;
@@ -1725,7 +1728,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query("PainBeginning", null, "patient_id = ?",
-                new String[] { String.valueOf(patient_id) }, null, null, null, null);
+                new String[]{String.valueOf(patient_id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -1809,11 +1812,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePainBeginningOfPatient(int patient_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PainBeginning", "patient_id = ?",
-                new String[] {String.valueOf(patient_id)});
+                new String[]{String.valueOf(patient_id)});
         db.close();
     }
 
-    public boolean existsPainBeginning(int patientId){
+    public boolean existsPainBeginning(int patientId) {
         String selectQuery = "SELECT COUNT(*) FROM PainBeginning WHERE patient_id = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1822,7 +1825,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         Integer count = Integer.parseInt(cursor.getString(0));
 
-        return  count != null && count > 0;
+        return count != null && count > 0;
     }
 
 
@@ -1858,7 +1861,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query("PainCurrent", null, "patient_id = ?",
-                new String[] { String.valueOf(patient_id) }, null, null, null, null);
+                new String[]{String.valueOf(patient_id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -1942,11 +1945,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deletePainCurrentOfPatient(int patient_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("PainCurrent", "patient_id = ?",
-                new String[] {String.valueOf(patient_id)});
+                new String[]{String.valueOf(patient_id)});
         db.close();
     }
 
-    public boolean existsPainCurrent(int patientId){
+    public boolean existsPainCurrent(int patientId) {
         String selectQuery = "SELECT COUNT(*) FROM PainCurrent WHERE patient_id = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1955,7 +1958,357 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         Integer count = Integer.parseInt(cursor.getString(0));
 
-        return  count != null && count > 0;
+        return count != null && count > 0;
+    }
+
+
+    //PsychoSocialBefore table related functions
+
+    public void addPsychoSocialBefore(PsychoSocialBefore psychoSocialBefore) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", psychoSocialBefore.getPatient_id());
+        values.put("pain_xpos", psychoSocialBefore.getPain_xpos());
+        values.put("pain_ypos", psychoSocialBefore.getPain_ypos());
+        values.put("familiy_xpos", psychoSocialBefore.getFamily_xpos());
+        values.put("familiy_ypos", psychoSocialBefore.getFamily_ypos());
+        values.put("work_xpos", psychoSocialBefore.getWork_xpos());
+        values.put("work_ypos", psychoSocialBefore.getWork_ypos());
+        values.put("finance_xpos", psychoSocialBefore.getFinance_xpos());
+        values.put("finance_ypos", psychoSocialBefore.getFinance_ypos());
+        values.put("event_xpos", psychoSocialBefore.getEvent_xpos());
+        values.put("event_ypos", psychoSocialBefore.getEvent_ypos());
+
+        // Inserting Row
+        db.insert("PsychoSocialBefore", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public PsychoSocialBefore getPsychoSocialBefore(int patient_id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("PsychoSocialBefore", null, "patient_id = ?",
+                new String[]{String.valueOf(patient_id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        PsychoSocialBefore psychoSocialBefore = new PsychoSocialBefore();
+        psychoSocialBefore.setPatient_id(Integer.parseInt(cursor.getString(0)));
+        psychoSocialBefore.setPain_xpos(Integer.parseInt(cursor.getString(1)));
+        psychoSocialBefore.setPain_ypos(Integer.parseInt(cursor.getString(2)));
+        psychoSocialBefore.setFamily_xpos(Integer.parseInt(cursor.getString(3)));
+        psychoSocialBefore.setFamily_ypos(Integer.parseInt(cursor.getString(4)));
+        psychoSocialBefore.setWork_xpos(Integer.parseInt(cursor.getString(5)));
+        psychoSocialBefore.setWork_ypos(Integer.parseInt(cursor.getString(6)));
+        psychoSocialBefore.setFinance_xpos(Integer.parseInt(cursor.getString(7)));
+        psychoSocialBefore.setFinance_ypos(Integer.parseInt(cursor.getString(8)));
+        psychoSocialBefore.setEvent_xpos(Integer.parseInt(cursor.getString(9)));
+        psychoSocialBefore.setEvent_ypos(Integer.parseInt(cursor.getString(10)));
+
+        // return psychoSocialBefore
+        return psychoSocialBefore;
+    }
+
+    public List<PsychoSocialBefore> getAllPsychoSocialBefores() {
+        List<PsychoSocialBefore> psychoSocialBeforeList = new ArrayList<PsychoSocialBefore>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PsychoSocialBefore ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PsychoSocialBefore psychoSocialBefore = new PsychoSocialBefore();
+                psychoSocialBefore.setPatient_id(Integer.parseInt(cursor.getString(0)));
+                psychoSocialBefore.setPain_xpos(Integer.parseInt(cursor.getString(1)));
+                psychoSocialBefore.setPain_ypos(Integer.parseInt(cursor.getString(2)));
+                psychoSocialBefore.setFamily_xpos(Integer.parseInt(cursor.getString(3)));
+                psychoSocialBefore.setFamily_ypos(Integer.parseInt(cursor.getString(4)));
+                psychoSocialBefore.setWork_xpos(Integer.parseInt(cursor.getString(5)));
+                psychoSocialBefore.setWork_ypos(Integer.parseInt(cursor.getString(6)));
+                psychoSocialBefore.setFinance_xpos(Integer.parseInt(cursor.getString(7)));
+                psychoSocialBefore.setFinance_ypos(Integer.parseInt(cursor.getString(8)));
+                psychoSocialBefore.setEvent_xpos(Integer.parseInt(cursor.getString(9)));
+                psychoSocialBefore.setEvent_ypos(Integer.parseInt(cursor.getString(10)));
+                // Adding psychoSocialBefore to list
+                psychoSocialBeforeList.add(psychoSocialBefore);
+            } while (cursor.moveToNext());
+        }
+
+        // return psychoSocialBefore list
+        return psychoSocialBeforeList;
+    }
+
+    public int updatePsychoSocialBefore(int patientId, PsychoSocialBefore psychoSocialBefore) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", psychoSocialBefore.getPatient_id());
+        values.put("pain_xpos", psychoSocialBefore.getPain_xpos());
+        values.put("pain_ypos", psychoSocialBefore.getPain_ypos());
+        values.put("familiy_xpos", psychoSocialBefore.getFamily_xpos());
+        values.put("familiy_ypos", psychoSocialBefore.getFamily_ypos());
+        values.put("work_xpos", psychoSocialBefore.getWork_xpos());
+        values.put("work_ypos", psychoSocialBefore.getWork_ypos());
+        values.put("finance_xpos", psychoSocialBefore.getFinance_xpos());
+        values.put("finance_ypos", psychoSocialBefore.getFinance_ypos());
+        values.put("event_xpos", psychoSocialBefore.getEvent_xpos());
+        values.put("event_ypos", psychoSocialBefore.getEvent_ypos());
+
+        // updating row
+        return db.update("PsychoSocialBefore", values, "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+    }
+
+    public void deletePsychoSocialBefore(int patientId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PsychoSocialBefore", "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+        db.close();
+    }
+
+    public boolean existsPsychoSocialBefore(int patientId) {
+        String selectQuery = "SELECT COUNT(*) FROM PsychoSocialBefore WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        cursor.moveToFirst();
+        Integer count = Integer.parseInt(cursor.getString(0));
+
+        return count != null && count > 0;
+    }
+
+
+    /*PsychoSocialAfter table related functions*/
+
+    public void addPsychoSocialAfter(PsychoSocialAfter psychoSocialAfter) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", psychoSocialAfter.getPatient_id());
+        values.put("pain_xpos", psychoSocialAfter.getPain_xpos());
+        values.put("pain_ypos", psychoSocialAfter.getPain_ypos());
+        values.put("familiy_xpos", psychoSocialAfter.getFamily_xpos());
+        values.put("familiy_ypos", psychoSocialAfter.getFamily_ypos());
+        values.put("work_xpos", psychoSocialAfter.getWork_xpos());
+        values.put("work_ypos", psychoSocialAfter.getWork_ypos());
+        values.put("finance_xpos", psychoSocialAfter.getFinance_xpos());
+        values.put("finance_ypos", psychoSocialAfter.getFinance_ypos());
+        values.put("event_xpos", psychoSocialAfter.getEvent_xpos());
+        values.put("event_ypos", psychoSocialAfter.getEvent_ypos());
+
+        // Inserting Row
+        db.insert("PsychoSocialAfter", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public PsychoSocialAfter getPsychoSocialAfter(int patient_id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("PsychoSocialAfter", null, "patient_id = ?",
+                new String[]{String.valueOf(patient_id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        PsychoSocialAfter psychoSocialAfter = new PsychoSocialAfter();
+        psychoSocialAfter.setPatient_id(Integer.parseInt(cursor.getString(0)));
+        psychoSocialAfter.setPain_xpos(Integer.parseInt(cursor.getString(1)));
+        psychoSocialAfter.setPain_ypos(Integer.parseInt(cursor.getString(2)));
+        psychoSocialAfter.setFamily_xpos(Integer.parseInt(cursor.getString(3)));
+        psychoSocialAfter.setFamily_ypos(Integer.parseInt(cursor.getString(4)));
+        psychoSocialAfter.setWork_xpos(Integer.parseInt(cursor.getString(5)));
+        psychoSocialAfter.setWork_ypos(Integer.parseInt(cursor.getString(6)));
+        psychoSocialAfter.setFinance_xpos(Integer.parseInt(cursor.getString(7)));
+        psychoSocialAfter.setFinance_ypos(Integer.parseInt(cursor.getString(8)));
+        psychoSocialAfter.setEvent_xpos(Integer.parseInt(cursor.getString(9)));
+        psychoSocialAfter.setEvent_ypos(Integer.parseInt(cursor.getString(10)));
+
+        // return psychoSocialAfter
+        return psychoSocialAfter;
+    }
+
+    public List<PsychoSocialAfter> getAllPsychoSocialAfters() {
+        List<PsychoSocialAfter> psychoSocialAfterList = new ArrayList<PsychoSocialAfter>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM PsychoSocialAfter ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PsychoSocialAfter psychoSocialAfter = new PsychoSocialAfter();
+                psychoSocialAfter.setPatient_id(Integer.parseInt(cursor.getString(0)));
+                psychoSocialAfter.setPain_xpos(Integer.parseInt(cursor.getString(1)));
+                psychoSocialAfter.setPain_ypos(Integer.parseInt(cursor.getString(2)));
+                psychoSocialAfter.setFamily_xpos(Integer.parseInt(cursor.getString(3)));
+                psychoSocialAfter.setFamily_ypos(Integer.parseInt(cursor.getString(4)));
+                psychoSocialAfter.setWork_xpos(Integer.parseInt(cursor.getString(5)));
+                psychoSocialAfter.setWork_ypos(Integer.parseInt(cursor.getString(6)));
+                psychoSocialAfter.setFinance_xpos(Integer.parseInt(cursor.getString(7)));
+                psychoSocialAfter.setFinance_ypos(Integer.parseInt(cursor.getString(8)));
+                psychoSocialAfter.setEvent_xpos(Integer.parseInt(cursor.getString(9)));
+                psychoSocialAfter.setEvent_ypos(Integer.parseInt(cursor.getString(10)));
+                // Adding psychoSocialAfter to list
+                psychoSocialAfterList.add(psychoSocialAfter);
+            } while (cursor.moveToNext());
+        }
+
+        // return psychoSocialAfter list
+        return psychoSocialAfterList;
+    }
+
+    public int updatePsychoSocialAfter(int patientId, PsychoSocialAfter psychoSocialAfter) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", psychoSocialAfter.getPatient_id());
+        values.put("pain_xpos", psychoSocialAfter.getPain_xpos());
+        values.put("pain_ypos", psychoSocialAfter.getPain_ypos());
+        values.put("familiy_xpos", psychoSocialAfter.getFamily_xpos());
+        values.put("familiy_ypos", psychoSocialAfter.getFamily_ypos());
+        values.put("work_xpos", psychoSocialAfter.getWork_xpos());
+        values.put("work_ypos", psychoSocialAfter.getWork_ypos());
+        values.put("finance_xpos", psychoSocialAfter.getFinance_xpos());
+        values.put("finance_ypos", psychoSocialAfter.getFinance_ypos());
+        values.put("event_xpos", psychoSocialAfter.getEvent_xpos());
+        values.put("event_ypos", psychoSocialAfter.getEvent_ypos());
+
+        // updating row
+        return db.update("PsychoSocialAfter", values, "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+    }
+
+    public void deletePsychoSocialAfter(int patientId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("PsychoSocialAfter", "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+        db.close();
+    }
+
+    public boolean existsPsychoSocialAfter(int patientId) {
+        String selectQuery = "SELECT COUNT(*) FROM PsychoSocialAfter WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        cursor.moveToFirst();
+        Integer count = Integer.parseInt(cursor.getString(0));
+
+        return count != null && count > 0;
+    }
+
+
+    //ImprovementReason table related functions
+
+    public void addImprovementReason(ImprovementReason improvementReason) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", improvementReason.getPatient_id());
+        values.put("drugs", improvementReason.isDrugs());
+        values.put("exercises", improvementReason.isExercises());
+        values.put("awareness", improvementReason.isAwareness());
+        values.put("other_reason", improvementReason.isOther_reason());
+        values.put("other_reason_text", improvementReason.getOther_reason_text());
+
+        // Inserting Row
+        db.insert("ImprovementReason", null, values);
+
+        // Closing database connection
+        db.close();
+    }
+
+    public ImprovementReason getImprovementReason(int patient_id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("ImprovementReason", null, "patient_id = ?",
+                new String[]{String.valueOf(patient_id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        ImprovementReason improvementReason = new ImprovementReason();
+        improvementReason.setPatient_id(Integer.parseInt(cursor.getString(0)));
+        improvementReason.setDrugs(cursor.getInt(1) > 0);
+        improvementReason.setExercises(cursor.getInt(2) > 0);
+        improvementReason.setAwareness(cursor.getInt(3) > 0);
+        improvementReason.setOther_reason(cursor.getInt(4) > 0);
+        improvementReason.setOther_reason_text(cursor.getString(5));
+
+        // return improvementReason
+        return improvementReason;
+    }
+
+    public List<ImprovementReason> getAllImprovementReasons() {
+        List<ImprovementReason> improvementReasonList = new ArrayList<ImprovementReason>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM ImprovementReason ORDER BY patient_id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                ImprovementReason improvementReason = new ImprovementReason();
+                improvementReason.setPatient_id(Integer.parseInt(cursor.getString(0)));
+                improvementReason.setDrugs(cursor.getInt(1) > 0);
+                improvementReason.setExercises(cursor.getInt(2) > 0);
+                improvementReason.setAwareness(cursor.getInt(3) > 0);
+                improvementReason.setOther_reason(cursor.getInt(4) > 0);
+                improvementReason.setOther_reason_text(cursor.getString(5));
+
+                // Adding improvementReason to list
+                improvementReasonList.add(improvementReason);
+            } while (cursor.moveToNext());
+        }
+
+        // return improvementReason list
+        return improvementReasonList;
+    }
+
+    public int updateImprovementReason(int patientId, ImprovementReason improvementReason) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("patient_id", improvementReason.getPatient_id());
+        values.put("drugs", improvementReason.isDrugs());
+        values.put("exercises", improvementReason.isExercises());
+        values.put("awareness", improvementReason.isAwareness());
+        values.put("other_reason", improvementReason.isOther_reason());
+        values.put("other_reason_text", improvementReason.getOther_reason_text());
+
+        // updating row
+        return db.update("ImprovementReason", values, "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+    }
+
+    public void deleteImprovementReason(int patientId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("ImprovementReason", "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+        db.close();
+    }
+
+    public boolean existsImprovementReason(int patientId) {
+        String selectQuery = "SELECT COUNT(*) FROM ImprovementReason WHERE patient_id = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
+
+        cursor.moveToFirst();
+        Integer count = Integer.parseInt(cursor.getString(0));
+
+        return count != null && count > 0;
     }
 
 }
