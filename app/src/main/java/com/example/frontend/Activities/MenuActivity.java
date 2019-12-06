@@ -49,6 +49,7 @@ import com.example.frontend.Models.PatientImage;
 import com.example.frontend.Models.PatientWebsite;
 import com.example.frontend.Models.WebsiteType;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
@@ -98,6 +99,7 @@ import static com.itextpdf.text.html.HtmlTags.FONT;
 
 public class MenuActivity extends AppCompatActivity {
     private static final int STORAGE_CODE = 1000;
+    DatabaseHelper db;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -118,12 +120,13 @@ public class MenuActivity extends AppCompatActivity {
     private List<WebsiteType> allWebsiteTypes = new ArrayList<>();
     private Chunk newLineChunk = new Chunk("\n");
 
+    /* Only used for Heroku Database
     Retrofit retrofit = new Retrofit.Builder().baseUrl("https://consapp.herokuapp.com/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
     JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,6 +142,7 @@ public class MenuActivity extends AppCompatActivity {
             bundlePatientId.putInt("patientId", patient.getId());
         }
 
+        db = new DatabaseHelper(this);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -729,6 +733,11 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void getPatientNotes() {
+        allNotesOfPatient = db.getSelectedNotesOfPatient(patient.getId());
+        getExercisePhotos();
+
+        /*Only used for Heruoku Database
+
         Call<List<Note>> call = jsonPlaceHolderApi.getSelectedNotesOfPatient(patient.getId());
         call.enqueue(new Callback<List<Note>>() {
             @Override
@@ -747,11 +756,16 @@ public class MenuActivity extends AppCompatActivity {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 
             }
-        });
+        }); */
     }
 
     public void getPatientDiagnoses() {
         //Get all PatientDiagnoses of Patient
+        allPatientDiagnoses = db.getAllDiagnosesOfPatient(patient.getId());
+        getAllDiagnosisTypes();
+
+        /*Only used for Heruoku Database
+
         Call<List<PatientDiagnosis>> call = jsonPlaceHolderApi.getPatientDiagnoses(patient.getId());
         call.enqueue(new Callback<List<PatientDiagnosis>>() {
             @Override
@@ -769,11 +783,15 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<PatientDiagnosis>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void getAllDiagnosisTypes() {
         //Get all DiagnosisTypes of Patient
+        allDiagnosisTypes = db.getAllDiagnosisTypes();
+        getPatientNotes();
+
+        /*Only used for Heruoku Database
         Call<List<DiagnosisType>> call = jsonPlaceHolderApi.getAllDiagnosisTypes();
         call.enqueue(new Callback<List<DiagnosisType>>() {
             @Override
@@ -791,11 +809,15 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<DiagnosisType>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void getPatientDrugs() {
+        allPatientDrugs = db.getAllDrugsOfPatient(patient.getId());
+
         //Get all PatientDrugs of Patient
+
+        /*Only used for Heruoku Database
         Call<List<PatientDrug>> call = jsonPlaceHolderApi.getAllDrugsOfPatient(patient.getId());
         call.enqueue(new Callback<List<PatientDrug>>() {
             @Override
@@ -813,11 +835,14 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<PatientDrug>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void getAllDrugTypes() {
         //Get all DrugTypes of Patient
+        allDrugTypes = db.getAllDrugTypes();
+
+        /*Only used for Heruoku Database
         Call<List<DrugType>> call = jsonPlaceHolderApi.getAllDrugTypes();
         call.enqueue(new Callback<List<DrugType>>() {
             @Override
@@ -834,11 +859,16 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<DrugType>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
 
     public void getExercisePhotos() {
+        allExercisPhotos = db.getAllExercisePhotosOfPatient(patient.getId());
+        savePdf();
+
+        /*Only used for Heruoku Database
+
         Call<List<ExercisePhoto>> call = jsonPlaceHolderApi.getExercisePhotosOfPatient(patient.getId());
         call.enqueue(new Callback<List<ExercisePhoto>>() {
             @Override
@@ -855,10 +885,14 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<ExercisePhoto>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        }); */
     }
 
     public void getPatientExercises() {
+        allPatientExercises = db.getAllExercisesOfPatient(patient.getId());
+
+        /*Only used for Heruoku Database
+
         Call<List<PatientExercise>> call = jsonPlaceHolderApi.getSelectedPatientExercises(patient.getId());
         call.enqueue(new Callback<List<PatientExercise>>() {
             @Override
@@ -875,11 +909,15 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<PatientExercise>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        }); */
     }
 
     public void getAllExerciseTypes() {
         //Get all ExerciseTypes of Patient
+        allExerciseTypes = db.getAllExerciseTypes();
+
+        /*Only used for Heruoku Database
+
         Call<List<ExerciseType>> call = jsonPlaceHolderApi.getAllExerciseTypes();
         call.enqueue(new Callback<List<ExerciseType>>() {
             @Override
@@ -896,11 +934,15 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<ExerciseType>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void getAllWebsiteTypes() {
         //Get all WebsiteTypes of Patient
+        allWebsiteTypes = db.getAllWebsiteTypes();
+
+        /*Only used for Heruoku Database
+
         Call<List<WebsiteType>> call = jsonPlaceHolderApi.getAllWebsiteTypes();
         call.enqueue(new Callback<List<WebsiteType>>() {
             @Override
@@ -917,10 +959,14 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<WebsiteType>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }); */
     }
 
     public void getPatientWebsites() {
+        allPatientWebsites = db.getAllWebsiteIdsOfPatient(patient.getId());
+
+        /*Only used for Heruoku Database
+
         Call<List<Integer>> call = jsonPlaceHolderApi.getAllWebsiteIdsOfPatient(patient.getId());
         call.enqueue(new Callback<List<Integer>>() {
             @Override
@@ -937,10 +983,14 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<Integer>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        }); */
     }
 
     public void getPatientImages() {
+        allPatientImagesPath = db.getAllImagePathsOfPatient(patient.getId());
+
+        /*Only used for Heruoku Database
+
         Call<List<String>> call = jsonPlaceHolderApi.getAllImagePathsOfPatient(patient.getId());
         call.enqueue(new Callback<List<String>>() {
             @Override
@@ -957,10 +1007,14 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<String>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        }); */
     }
 
     public void getPatientDocuments() {
+        allPatientDocumentsPath = db.getAllDocumentPathsOfPatient(patient.getId());
+
+        /*Only used for Heruoku Database
+
         Call<List<String>> call = jsonPlaceHolderApi.getAllDocumentPathsOfPatient(patient.getId());
         call.enqueue(new Callback<List<String>>() {
             @Override
@@ -977,7 +1031,7 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<List<String>> call, Throwable t) {
                 Toast.makeText(MenuActivity.this, t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        }); */
     }
 
 

@@ -42,7 +42,7 @@ public class PatientDrug {
     public String getDosisInText() {
         String dosisInText = "";
         if (dosis != null && !dosis.isEmpty()) {
-            if (dosis.charAt(0) == 'i') {
+            if (dosis.charAt(0) == '1') {
                 dosisInText = "morgens";
             }
             if (dosis.charAt(1) == '1') {
