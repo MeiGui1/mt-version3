@@ -206,10 +206,27 @@ public class MenuActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, notesFrag).commit();
                         break;
                     case R.id.nav_collections:
-                        setTitle(getString(R.string.collections));
-                        CollectionsFragment collectionsFrag = new CollectionsFragment();
-                        collectionsFrag.setArguments(bundlePatientId);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, collectionsFrag).commit();
+                        if (ContextCompat.checkSelfPermission(MenuActivity.this,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+
+                            // Permission is not granted
+                            // No explanation needed; request the permission
+                            ActivityCompat.requestPermissions(MenuActivity.this,
+                                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    READ_STORAGE_CODE);
+
+                            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                            // app-defined int constant. The callback method gets the
+                            // result of the request.
+
+                        } else {
+                            setTitle(getString(R.string.collections));
+                            CollectionsFragment collectionsFrag = new CollectionsFragment();
+                            collectionsFrag.setArguments(bundlePatientId);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, collectionsFrag).commit();
+                            navigationView.setCheckedItem(R.id.nav_collections);
+                        }
                         break;
                     case R.id.nav_psychosocial:
                         setTitle(getString(R.string.psychosocial));
