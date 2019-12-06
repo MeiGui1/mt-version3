@@ -7,10 +7,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -99,6 +102,7 @@ import static com.itextpdf.text.html.HtmlTags.FONT;
 
 public class MenuActivity extends AppCompatActivity {
     private static final int STORAGE_CODE = 1000;
+    private static final int READ_STORAGE_CODE = 2000;
     DatabaseHelper db;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -621,6 +625,18 @@ public class MenuActivity extends AppCompatActivity {
                     //permission was denied from popup, show error message
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
+            case READ_STORAGE_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //permission was granted from popup
+                    setTitle(getString(R.string.collections));
+                    CollectionsFragment collectionsFrag = new CollectionsFragment();
+                    collectionsFrag.setArguments(bundlePatientId);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, collectionsFrag).commit();
+                    navigationView.setCheckedItem(R.id.nav_collections);
+                } else {
+                    //permission was denied from popup, show error message
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
         }
     }
 
@@ -664,11 +680,27 @@ public class MenuActivity extends AppCompatActivity {
                 navigationView.setCheckedItem(R.id.nav_pen);
                 break;
             case R.id.btnCollections:
-                setTitle(getString(R.string.collections));
-                CollectionsFragment collectionsFrag = new CollectionsFragment();
-                collectionsFrag.setArguments(bundlePatientId);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, collectionsFrag).commit();
-                navigationView.setCheckedItem(R.id.nav_collections);
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Permission is not granted
+                    // No explanation needed; request the permission
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            READ_STORAGE_CODE);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+
+                } else {
+                    setTitle(getString(R.string.collections));
+                    CollectionsFragment collectionsFrag = new CollectionsFragment();
+                    collectionsFrag.setArguments(bundlePatientId);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, collectionsFrag).commit();
+                    navigationView.setCheckedItem(R.id.nav_collections);
+                }
                 break;
             case R.id.btnPsychosocial:
                 setTitle(getString(R.string.psychosocial));
@@ -1033,6 +1065,4 @@ public class MenuActivity extends AppCompatActivity {
             }
         }); */
     }
-
-
 }

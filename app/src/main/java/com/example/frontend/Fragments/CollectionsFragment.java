@@ -1,6 +1,8 @@
 package com.example.frontend.Fragments;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,7 +19,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -109,7 +113,6 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_collections, container, false);
-
     }
 
     @Override
