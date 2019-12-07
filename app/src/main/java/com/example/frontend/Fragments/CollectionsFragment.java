@@ -244,10 +244,10 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                         final File file = FileList[i];
                         final LinearLayout llPdf = new LinearLayout(getContext());
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                180);
+                                350);
                         llPdf.setLayoutParams(lp);
                         final TextView newIv = new TextView(getContext());
-                        lp.setMargins(0, 10, 0, 10);
+                        lp.setMargins(0, 20, 0, 20);
                         newIv.setLayoutParams(lp);
                         newIv.setPadding(0, 25, 0, 15);
                         llPdf.setId(allDocumentPaths.indexOf(FileList[i].getPath()));
@@ -260,7 +260,7 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
                         newIv.setCompoundDrawablesWithIntrinsicBounds(null, resizedDrawable, null, null);
                         newIv.setCompoundDrawablePadding(-15);
                         llPdf.addView(newIv);
-                        llPdf.setPadding(7, 0, 7, 7);
+                        llPdf.setPadding(15, 0, 15, 15);
                         llPdf.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -508,14 +508,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         for (final String path : allImagePaths) {
             ImageView newIv = new ImageView(getContext());
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    220);
-            lp.setMargins(0, 10, 0, 10);
+                    510);
+            lp.setMargins(0, 20, 0, 20);
             newIv.setLayoutParams(lp);
             final Bitmap myBitmap = BitmapFactory.decodeFile(path);
-            Bitmap cutBitmap = scaleCenterCrop(myBitmap, 220, 280);
+            Bitmap cutBitmap = scaleCenterCrop(myBitmap, 220, 320);
             newIv.setAdjustViewBounds(true);
             newIv.setImageBitmap(cutBitmap);
-            newIv.setPadding(7, 7, 7, 7);
+            newIv.setPadding(15, 15, 15, 15);
             newIv.setId(allImagePaths.indexOf(path));
             newIv.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -552,14 +552,14 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
         for (final String path : allVideoPaths) {
             ImageView newIv = new ImageView(getContext());
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    220);
-            lp.setMargins(0, 10, 0, 10);
+                    510);
+            lp.setMargins(0, 20, 0, 20);
             newIv.setLayoutParams(lp);
             final Bitmap myBitmap = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
             Bitmap cutBitmap = scaleCenterCrop(myBitmap, 220, 280);
             newIv.setAdjustViewBounds(true);
             newIv.setImageBitmap(cutBitmap);
-            newIv.setPadding(7, 7, 7, 7);
+            newIv.setPadding(15, 15, 15, 15);
             newIv.setId(allVideoPaths.indexOf(path));
             newIv.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -631,30 +631,30 @@ public class CollectionsFragment extends Fragment implements WebsiteDialog.Websi
     private void addWebsiteButton(final int websiteId, final WebsiteType wt) {
         final LinearLayout ll = new LinearLayout(getContext());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                200);
-        lp.setMargins(0,0,0,10);
+                350);
+        lp.setMargins(0,0,0,20);
         // TooltipCompat.setTooltipText(ll, wt.getDescription());
-        ll.setPadding(7, 7, 7, 7);
+        ll.setPadding(15, 15, 15, 15);
         ll.setLayoutParams(lp);
         ll.setOrientation(LinearLayout.VERTICAL);
 
         TextView tvTitle = new TextView(getContext());
         LinearLayout.LayoutParams lpTitle = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                60);
+                120);
         tvTitle.setLayoutParams(lpTitle);
         tvTitle.setText(wt.getName());
         tvTitle.setTextSize(22);
-        tvTitle.setPadding(10, 10, 10, 0);
+        tvTitle.setPadding(20, 20, 20, 0);
         tvTitle.setTextColor(getResources().getColor(R.color.colorDarkBlue));
         tvTitle.setBackgroundColor(getResources().getColor(R.color.white));
 
         TextView tvUrl = new TextView(getContext());
         LinearLayout.LayoutParams lpUrl = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                140);
+                220);
         tvUrl.setLayoutParams(lpUrl);
         tvUrl.setText(wt.getUrl());
         tvTitle.setTextSize(18);
-        tvUrl.setPadding(10, 0, 10, 0);
+        tvUrl.setPadding(20, 0, 20, 0);
         tvUrl.setBackgroundColor(getResources().getColor(R.color.white));
 
         ll.addView(tvTitle);
