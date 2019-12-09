@@ -770,6 +770,22 @@ public class MenuActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, exercisesFrag).commit();
                 navigationView.setCheckedItem(R.id.nav_exercises);
                 break;
+            case R.id.btnSummary:
+                //handle runtime permission for devices with marshmallow and above
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                    //system OS >= Marshmallow (6.0), check if permission is enabled or not
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        //permission was not granted, request it
+                        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(permissions, STORAGE_CODE);
+                    } else {
+                        //permission already granted
+                        createPdf();
+                    }
+                } else {
+                    //system OS < Marshmallow no required to check runtime permission
+                }
+                break;
         }
 
     }

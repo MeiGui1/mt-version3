@@ -27,9 +27,9 @@
 
                 <Button
                     android:id="@+id/btnModel"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_style_tools"
                     android:drawableTop="@drawable/ic_model"
@@ -40,9 +40,9 @@
 
                 <Button
                     android:id="@+id/btnNotes"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_style_tools"
                     android:drawableTop="@drawable/ic_pen"
@@ -53,9 +53,9 @@
 
                 <Button
                     android:id="@+id/btnCollections"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_style_tools"
                     android:drawableTop="@drawable/ic_collections"
@@ -63,18 +63,13 @@
                     android:padding="20dp"
                     android:text="@string/collections"
                     android:textAllCaps="false" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
                 <Button
                     android:id="@+id/btnPsychosocial"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/button_style_tools"
                     android:drawableTop="@drawable/ic_psychosocial"
                     android:onClick="openClickedFragment"
@@ -82,24 +77,40 @@
                     android:text="@string/psychosocial"
                     android:textAllCaps="false" />
 
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center">
                 <Button
                     android:id="@+id/btnTranslator"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_marginHorizontal="20dp"
                     android:background="@drawable/button_style_tools"
                     android:drawableTop="@drawable/ic_translator"
                     android:onClick="openClickedFragment"
                     android:padding="20dp"
                     android:text="@string/translator"
                     android:textAllCaps="false" />
-
+                <Button
+                    android:id="@+id/btnSummary"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:background="@drawable/button_style_tools"
+                    android:drawableTop="@drawable/ic_summary"
+                    android:padding="20dp"
+                    android:text="@string/download_summary"
+                    android:textAllCaps="false"
+                    android:onClick="openClickedFragment"/>
 
             </TableRow>
 
             <TextView
                 android:gravity="center_horizontal"
-                android:paddingTop="20dp"
+                android:paddingTop="30dp"
                 android:text="@string/inputs"
                 android:textColor="@color/colorDarkBlue"
                 android:textSize="24dp" />
@@ -110,9 +121,9 @@
 
                 <Button
                     android:id="@+id/btnPain"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_style"
                     android:drawableTop="@drawable/ic_pain"
@@ -123,9 +134,9 @@
 
                 <Button
                     android:id="@+id/btnDiagnosis"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_style"
                     android:drawableTop="@drawable/ic_diagnosis"
@@ -136,9 +147,9 @@
 
                 <Button
                     android:id="@+id/btnDrugs"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_style"
                     android:drawableTop="@drawable/ic_medication"
@@ -146,22 +157,11 @@
                     android:text="@string/drugs"
                     android:textAllCaps="false"
                     android:onClick="openClickedFragment"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible" />
-
                 <Button
                     android:id="@+id/btnExercises"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_width="230dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_style"
                     android:drawableTop="@drawable/ic_exercises"
@@ -169,13 +169,7 @@
                     android:text="@string/exercises"
                     android:textAllCaps="false"
                     android:onClick="openClickedFragment"/>
-
-                <Button
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible" />
             </TableRow>
-
 
         </TableLayout>
     </LinearLayout>
