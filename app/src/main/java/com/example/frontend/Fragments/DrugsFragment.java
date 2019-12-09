@@ -130,7 +130,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
        // TooltipCompat.setTooltipText(btnDrugType.getRootView(), drugType.getDescription());
         btnDrugType.setId(id);
         btnDrugType.setTextSize(18);
-        btnDrugType.setPadding(0, 30, 0, 30);
+        btnDrugType.setPadding(0, 45, 0, 45);
         btnDrugType.setBackgroundResource(R.drawable.button_selector_effect);
         btnDrugType.setTransformationMethod(null);
         registerForContextMenu(btnDrugType);
@@ -156,7 +156,7 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
         });
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(10, 20, 10, 20);
+        lp.setMargins(20, 30, 20, 30);
         switch (columnCounter) {
             case 1:
                 ll1.addView(btnDrugType, lp);

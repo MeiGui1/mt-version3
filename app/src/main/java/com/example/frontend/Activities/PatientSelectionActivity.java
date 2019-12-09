@@ -196,7 +196,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         patient.setId(id);
         btnPatient.setText(patient.getShortname());
         btnPatient.setTextSize(18);
-        btnPatient.setPadding(0, 30, 0, 30);
+        btnPatient.setPadding(0, 40, 0, 40);
         btnPatient.setBackgroundResource(R.drawable.button_style);
         btnPatient.setTransformationMethod(null);
         btnPatient.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +207,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         });
         registerForContextMenu(btnPatient);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(10, 20, 10, 20);
+        lp.setMargins(15, 25, 15, 25);
         switch (columnCounter) {
             case 1:
                 ll1.addView(btnPatient, lp);

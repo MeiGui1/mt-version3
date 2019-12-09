@@ -163,7 +163,7 @@ public class NotesFragment extends Fragment {
             canvas.drawColor(0xffffffff);
             paint = new Paint();
             paint.setColor(Color.BLUE);
-            paint.setStrokeWidth(3);
+            paint.setStrokeWidth(6);
             paint.setAntiAlias(true);
             paint.setDither(true);
             paint.setStyle(Paint.Style.STROKE);
@@ -267,7 +267,7 @@ public class NotesFragment extends Fragment {
         image.setId(noteId);
         image.setLayoutParams(param);
         image.setAdjustViewBounds(true);
-        image.setPadding(5, 5, 5, 5);
+        image.setPadding(15, 15, 15, 15);
         if (isSelected) {
             image.setSelected(true);
             image.setBackgroundColor(getResources().getColor(R.color.colorBlue));

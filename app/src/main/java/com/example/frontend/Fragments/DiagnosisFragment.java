@@ -144,7 +144,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
             radioBtn.setBackgroundResource(R.drawable.radiobutton_selector);
             radioBtn.setGravity(Gravity.CENTER);
             radioBtn.setButtonDrawable(getResources().getDrawable(android.R.color.transparent));
-            radioBtn.setPadding(0, 10, 0, 10);
+            radioBtn.setPadding(0, 20, 0, 20);
             radioBtn.setTextSize(18);
             radioBtn.setSingleLine(true);
             radioBtn.setLayoutParams(lp);
@@ -245,8 +245,8 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         btnDiagnosisType.setId(id);
         btnDiagnosisType.setTextSize(16);
 //        btnDiagnosisType.setSingleLine(true);
-        btnDiagnosisType.setHeight(140);
-        btnDiagnosisType.setPadding(20, 20, 20, 20);
+        btnDiagnosisType.setHeight(210);
+        btnDiagnosisType.setPadding(45, 45, 45, 45);
         btnDiagnosisType.setBackgroundResource(R.drawable.button_selector_effect);
         btnDiagnosisType.setTransformationMethod(null);
         registerForContextMenu(btnDiagnosisType);
@@ -272,7 +272,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         });
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(10, 20, 10, 20);
+        lp.setMargins(20, 30, 20, 30);
         switch (columnCounter) {
             case 1:
                 ll1.addView(btnDiagnosisType, lp);
