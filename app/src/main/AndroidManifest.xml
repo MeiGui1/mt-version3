@@ -20,7 +20,8 @@
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,8 +29,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.MenuActivity"
+            android:screenOrientation="landscape"
             android:configChanges="locale"></activity>
-        <activity android:name=".Activities.PatientSelectionActivity">
+        <activity android:name=".Activities.PatientSelectionActivity"
+            android:screenOrientation="landscape">
         </activity>
     </application>
 
