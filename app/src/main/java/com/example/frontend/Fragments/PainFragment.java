@@ -74,8 +74,8 @@ public class PainFragment extends Fragment {
 
     SeekBar seekBar;
 
-    Bitmap alteredBitmap = Bitmap.createBitmap(600, 450, Bitmap.Config.ARGB_8888);
-    Bitmap bmp = Bitmap.createBitmap(600, 450, Bitmap.Config.ARGB_8888);
+    Bitmap alteredBitmap = Bitmap.createBitmap(425, 300, Bitmap.Config.ARGB_8888);
+    Bitmap bmp = Bitmap.createBitmap(425, 300, Bitmap.Config.ARGB_8888);
     Canvas canvas;
     Paint paint;
     float downx = 0;
@@ -101,7 +101,7 @@ public class PainFragment extends Fragment {
                     openedLocationImage = R.id.ivLocationFaceRight;
                     break;
             }
-            bmp = resize(bmp, 600, 450);
+            //bmp = resize(bmp, 400, 300);
             showImagePopup();
         }
     };
@@ -452,8 +452,7 @@ public class PainFragment extends Fragment {
             paint.setAlpha(0xff);
             init = false;
         }
-        alteredBitmap = Bitmap.createBitmap(bmp.getWidth(), bmp
-                .getHeight(), bmp.getConfig());
+        alteredBitmap = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), bmp.getConfig());
         canvas = new Canvas(alteredBitmap);
         Matrix matrix = new Matrix();
         canvas.drawBitmap(bmp, matrix, paint);
@@ -516,6 +515,7 @@ public class PainFragment extends Fragment {
 
     private void showImagePopup() {
         myDialog.setContentView(R.layout.popup_image_drawable);
+
         Button btnCancel;
         Button btnSave;
         ImageView btnDelete;
@@ -535,7 +535,7 @@ public class PainFragment extends Fragment {
                         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.face_right);
                         break;
                 }
-                bmp = resize(bmp, 600, 400);
+                //bmp = resize(bmp, 400, 275);
                 setUpCanvas(imageView);
             }
         });
@@ -586,6 +586,7 @@ public class PainFragment extends Fragment {
                 myDialog.dismiss();
             }
         });
+        //bmp = resize(bmp, 400, 300);
         setUpCanvas(imageView);
         myDialog.show();
     }

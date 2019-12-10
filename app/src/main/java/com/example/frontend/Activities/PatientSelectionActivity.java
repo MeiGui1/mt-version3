@@ -196,7 +196,7 @@ public class PatientSelectionActivity extends AppCompatActivity implements Patie
         patient.setId(id);
         btnPatient.setText(patient.getShortname());
         btnPatient.setTextSize(18);
-        btnPatient.setPadding(0, 40, 0, 40);
+        btnPatient.setPadding(0, 45, 0, 45);
         btnPatient.setBackgroundResource(R.drawable.button_style);
         btnPatient.setTransformationMethod(null);
         btnPatient.setOnClickListener(new View.OnClickListener() {

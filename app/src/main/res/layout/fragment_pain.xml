@@ -48,12 +48,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:paddingBottom="30dp">
+        android:paddingBottom="15dp">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
             android:orientation="vertical">
 
             <TextView
@@ -132,7 +132,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingBottom="20dp"
+                    android:paddingBottom="10dp"
                     android:weightSum="4">
 
                     <Button
@@ -244,14 +244,14 @@
                     <SeekBar
                         android:id="@+id/sbIntensity"
                         style="@style/Widget.AppCompat.SeekBar.Discrete"
-                        android:layout_width="350dp"
+                        android:layout_width="390dp"
                         android:layout_height="wrap_content"
                         android:max="10"
                         android:padding="10dp"
                         android:progress="0" />
 
                     <RelativeLayout
-                        android:layout_width="350dp"
+                        android:layout_width="390dp"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
@@ -298,7 +298,7 @@
 
                     <EditText
                         android:id="@+id/tvComment"
-                        android:layout_width="350dp"
+                        android:layout_width="match_parent"
                         android:layout_height="80dp"
                         android:inputType="text|textMultiLine"
                         android:gravity="left"
