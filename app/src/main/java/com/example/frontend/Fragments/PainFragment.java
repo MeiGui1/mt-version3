@@ -12,11 +12,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -64,6 +67,8 @@ public class PainFragment extends Fragment {
     private ImageView ivPermStrongFluc;
     private ImageView ivAttFreeInt;
     private ImageView ivAttNoFreeInt;
+
+    private EditText etComment;
 
     boolean initialSetUpBeginningDone = false;
     boolean initialSetUpCurrentDone = false;
@@ -202,6 +207,27 @@ public class PainFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         db = new DatabaseHelper(getContext());
+        etComment = view.findViewById(R.id.etComment);
+        etComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (rgBeginningCurrent.getCheckedRadioButtonId() == R.id.rbBeginning) {
+                    painOfPatientBeginning.setComment(etComment.getText().toString());
+                } else {
+                    painOfPatientCurrent.setComment(etComment.getText().toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         btnDull = view.findViewById(R.id.btnDull);
         btnPulling = view.findViewById(R.id.btnPulling);
         btnPulsating = view.findViewById(R.id.btnPulsating);
@@ -304,6 +330,7 @@ public class PainFragment extends Fragment {
         if (PainBeginningExists) {
             setUpAllViewsBeginning();
         } else {
+            etComment.setText("");
             deselectAllQualityButtons();
             deselectPattern();
             seekBar.setProgress(0);
@@ -347,6 +374,7 @@ public class PainFragment extends Fragment {
         if (PainBeginningExists) {
             setUpAllViewsCurrent();
         } else {
+            etComment.setText("");
             deselectAllQualityButtons();
             deselectPattern();
             seekBar.setProgress(0);
@@ -407,6 +435,7 @@ public class PainFragment extends Fragment {
         painOfPatientBeginning.setPinsneedles(false);
         painOfPatientBeginning.setTingling(false);
         painOfPatientBeginning.setNumb(false);
+        painOfPatientBeginning.setComment("");
 
         painOfPatientCurrent.setPatient_id(patientId);
 
@@ -429,6 +458,7 @@ public class PainFragment extends Fragment {
         painOfPatientCurrent.setPinsneedles(false);
         painOfPatientCurrent.setTingling(false);
         painOfPatientCurrent.setNumb(false);
+        painOfPatientCurrent.setComment("");
     }
 
     public byte[] bitmapToByte(Bitmap drawing) {
@@ -630,6 +660,7 @@ public class PainFragment extends Fragment {
 
     public void savePainBeginning() {
         boolean painBeginningExists = db.existsPainBeginning(patientId);
+
         if (painBeginningExists) {
             updatePainBeginning(painOfPatientBeginning);
         } else {
@@ -699,6 +730,7 @@ public class PainFragment extends Fragment {
 
     public void savePainCurrent() {
         boolean painCurrentExists = db.existsPainCurrent(patientId);
+
         if (painCurrentExists) {
             updatePainCurrent(painOfPatientCurrent);
         } else {
@@ -739,6 +771,7 @@ public class PainFragment extends Fragment {
         ivLocationFaceLeft.setImageBitmap(bmFaceLeft);
         ivLocationFaceRight.setImageBitmap(bmFaceRight);
         seekBar.setProgress(painOfPatientBeginning.getIntensity());
+        etComment.setText(painOfPatientBeginning.getComment());
 
         deselectPattern();
         if (painOfPatientBeginning.getPain_pattern() != null && !painOfPatientBeginning.getPain_pattern().isEmpty()) {
@@ -864,6 +897,7 @@ public class PainFragment extends Fragment {
         ivLocationFaceLeft.setImageBitmap(bmFaceLeft);
         ivLocationFaceRight.setImageBitmap(bmFaceRight);
         seekBar.setProgress(painOfPatientCurrent.getIntensity());
+        etComment.setText(painOfPatientCurrent.getComment());
 
         deselectPattern();
         if (painOfPatientCurrent.getPain_pattern() != null && !painOfPatientCurrent.getPain_pattern().isEmpty()) {

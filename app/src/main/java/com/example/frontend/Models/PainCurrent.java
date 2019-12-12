@@ -19,11 +19,12 @@ public class PainCurrent implements Serializable {
     private boolean pinsneedles;
     private boolean tingling;
     private boolean numb;
+    private String comment;
 
     public PainCurrent() {
     }
 
-    public PainCurrent(int patient_id, int intensity, String location_teeth, String location_face_left, String location_face_right, String pain_pattern, boolean dull, boolean pulling, boolean stinging, boolean pulsating, boolean burning, boolean pinsneedles, boolean tingling, boolean numb) {
+    public PainCurrent(int patient_id, int intensity, String location_teeth, String location_face_left, String location_face_right, String pain_pattern, boolean dull, boolean pulling, boolean stinging, boolean pulsating, boolean burning, boolean pinsneedles, boolean tingling, boolean numb, String comment) {
         this.patient_id = patient_id;
         this.intensity = intensity;
         this.location_teeth = location_teeth;
@@ -38,6 +39,7 @@ public class PainCurrent implements Serializable {
         this.pinsneedles = pinsneedles;
         this.tingling = tingling;
         this.numb = numb;
+        this.comment = comment;
     }
 
     public int getPatient_id() {
@@ -156,5 +158,13 @@ public class PainCurrent implements Serializable {
 
     public void setNumb(boolean numb) {
         this.numb = numb;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

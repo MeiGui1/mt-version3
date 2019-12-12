@@ -281,6 +281,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    pinsneedles boolean, " +
                 "    tingling boolean, " +
                 "    numb boolean, " +
+                "    comment text," +
                 "    FOREIGN KEY (patient_id) REFERENCES Patient (id) ON DELETE CASCADE " +
                 ")");
         db.execSQL("CREATE TABLE PainCurrent " +
@@ -298,7 +299,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    burning boolean, " +
                 "    pinsneedles boolean, " +
                 "    tingling boolean, " +
-                "    numb boolean, " +
+                "    numb boolean," +
+                "    comment text, " +
                 "    FOREIGN KEY (patient_id) REFERENCES Patient (id) ON DELETE CASCADE " +
                 ")");
     }
@@ -1716,6 +1718,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("pinsneedles", painBeginning.isPinsneedles());
         values.put("tingling", painBeginning.isTingling());
         values.put("numb", painBeginning.isNumb());
+        values.put("comment", painBeginning.getComment());
 
         // Inserting Row
         db.insert("PainBeginning", null, values);
@@ -1747,6 +1750,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         painBeginning.setPinsneedles(cursor.getInt(11) > 0);
         painBeginning.setTingling(cursor.getInt(12) > 0);
         painBeginning.setNumb(cursor.getInt(13) > 0);
+        painBeginning.setComment(cursor.getString(14));
         // return painBeginning
         return painBeginning;
     }
@@ -1777,6 +1781,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 painBeginning.setPinsneedles(cursor.getInt(11) > 0);
                 painBeginning.setTingling(cursor.getInt(12) > 0);
                 painBeginning.setNumb(cursor.getInt(13) > 0);
+                painBeginning.setComment(cursor.getString(14));
                 // Adding painBeginning to list
                 painBeginningList.add(painBeginning);
             } while (cursor.moveToNext());
@@ -1803,6 +1808,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("pinsneedles", painBeginning.isPinsneedles());
         values.put("tingling", painBeginning.isTingling());
         values.put("numb", painBeginning.isNumb());
+        values.put("comment", painBeginning.getComment());
 
         // updating row
         return db.update("PainBeginning", values, "patient_id = ?",
@@ -1849,6 +1855,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("pinsneedles", painCurrent.isPinsneedles());
         values.put("tingling", painCurrent.isTingling());
         values.put("numb", painCurrent.isNumb());
+        values.put("comment", painCurrent.getComment());
 
         // Inserting Row
         db.insert("PainCurrent", null, values);
@@ -1880,6 +1887,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         painCurrent.setPinsneedles(cursor.getInt(11) > 0);
         painCurrent.setTingling(cursor.getInt(12) > 0);
         painCurrent.setNumb(cursor.getInt(13) > 0);
+        painCurrent.setComment(cursor.getString(14));
         // return painCurrent
         return painCurrent;
     }
@@ -1910,6 +1918,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 painCurrent.setPinsneedles(cursor.getInt(11) > 0);
                 painCurrent.setTingling(cursor.getInt(12) > 0);
                 painCurrent.setNumb(cursor.getInt(13) > 0);
+                painCurrent.setComment(cursor.getString(14));
                 // Adding painCurrent to list
                 painCurrentList.add(painCurrent);
             } while (cursor.moveToNext());
@@ -1936,6 +1945,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("pinsneedles", painCurrent.isPinsneedles());
         values.put("tingling", painCurrent.isTingling());
         values.put("numb", painCurrent.isNumb());
+        values.put("comment", painCurrent.getComment());
 
         // updating row
         return db.update("PainCurrent", values, "patient_id = ?",
