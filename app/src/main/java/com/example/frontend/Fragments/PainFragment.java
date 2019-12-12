@@ -1087,6 +1087,6 @@ public class PainFragment extends Fragment {
                     break;
             }
         }
-
     }
+
 }
