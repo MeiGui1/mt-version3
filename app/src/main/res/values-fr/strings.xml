@@ -149,4 +149,9 @@
     <string name="sign_in">Anmelden</string>
     <string name="password">Passwort</string>
     <string name="username">Username</string>
+
+    <string name="morning">matin</string>
+    <string name="lunch">midi</string>
+    <string name="evening">soir</string>
+    <string name="night">nuit</string>
 </resources>

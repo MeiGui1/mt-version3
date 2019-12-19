@@ -253,12 +253,15 @@ public class DrugsFragment extends Fragment implements DrugDialog.DrugDialogList
     }
 
     @Override
-    public void applyTexts(String amount, String dosis) {
+    public void applyTexts(String amount, String dosis, String comment) {
         if (!amount.isEmpty()) {
             selectedPatientDrug.setAmount(amount);
         }
         if (!dosis.isEmpty()) {
             selectedPatientDrug.setDosis(dosis);
+        }
+        if (!dosis.isEmpty()) {
+            selectedPatientDrug.setComment(comment);
         }
         addNewPatientDrug(selectedPatientDrug);
         selectedDrugButton.setSelected(true);

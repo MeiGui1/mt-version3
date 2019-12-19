@@ -134,6 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    drugtype_id int NOT NULL, " +
                 "    amount text, " +
                 "    dosis char(4), " +
+                "    comment text, " +
                 "    FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE, " +
                 "    FOREIGN KEY (drugtype_id) REFERENCES DrugType(id) ON DELETE CASCADE, " +
                 "    UNIQUE (patient_id, drugtype_id) " +
@@ -603,6 +604,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("drugtype_id", patientDrug.getDrugTypeId());
         values.put("amount", patientDrug.getAmount());
         values.put("dosis", patientDrug.getDosis());
+        values.put("comment", patientDrug.getComment());
 
         // Inserting Row
         db.insert("PatientDrug", null, values);
@@ -615,13 +617,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query("PatientDrug", new String[]{"patient_id", "drugtype_id",
-                        "amount", "dosis"}, "patient_id = ? AND drugtype_id = ?",
+                        "amount", "dosis", "comment"}, "patient_id = ? AND drugtype_id = ?",
                 new String[]{String.valueOf(patientId), String.valueOf(drugTypeId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         PatientDrug patientDrug = new PatientDrug(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),
-                cursor.getString(2), cursor.getString(3));
+                cursor.getString(2), cursor.getString(3), cursor.getString(4));
         // return patientDrug
         return patientDrug;
     }
@@ -642,6 +644,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 patientDrug.setDrugId(Integer.parseInt(cursor.getString(1)));
                 patientDrug.setAmount(cursor.getString(2));
                 patientDrug.setDosis(cursor.getString(3));
+                patientDrug.setComment(cursor.getString(4));
                 // Adding patientDrug to list
                 patientDrugList.add(patientDrug);
             } while (cursor.moveToNext());
@@ -667,6 +670,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 patientDrug.setDrugId(Integer.parseInt(cursor.getString(1)));
                 patientDrug.setAmount(cursor.getString(2));
                 patientDrug.setDosis(cursor.getString(3));
+                patientDrug.setComment(cursor.getString(4));
                 // Adding patientDrug to list
                 drugsOfPatientList.add(patientDrug);
             } while (cursor.moveToNext());
@@ -684,6 +688,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("drugtype_id", patientDrug.getDrugTypeId());
         values.put("amount", patientDrug.getAmount());
         values.put("dosis", patientDrug.getDosis());
+        values.put("comment", patientDrug.getComment());
 
         // updating row
         return db.update("PatientDrug", values, "patient_id = ? AND drugtype_id= ?",
@@ -774,7 +779,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 diagnosisType.setName(cursor.getString(1));
                 diagnosisType.setType(type);
                 diagnosisType.setDescription(cursor.getString(3));
-                // Adding patientDrug to list
+                // Adding diagnosisType to list
                 diagnosisTypesOfClass.add(diagnosisType);
             } while (cursor.moveToNext());
         }

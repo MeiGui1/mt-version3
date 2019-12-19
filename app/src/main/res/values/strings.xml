@@ -157,5 +157,9 @@
     <string name="sign_in">Anmelden</string>
     <string name="password">Passwort</string>
     <string name="username">Username</string>
+    <string name="morning">morgens</string>
+    <string name="lunch">mittags</string>
+    <string name="evening">abends</string>
+    <string name="night">nachts</string>
 
 </resources>

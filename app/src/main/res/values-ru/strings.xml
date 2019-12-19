@@ -152,10 +152,16 @@
     <string name="french">Французский</string>
     <string name="russian">русский</string>
     <string name="open_google_translate">открыть Google Translate</string>
+
     <string name="login">Login</string>
     <string name="incorrect_attempts">Anzahl Fehlversuche</string>
     <string name="sign_in">Anmelden</string>
     <string name="password">Passwort</string>
     <string name="username">Username</string>
+
+    <string name="morning">Утро</string>
+    <string name="lunch">полдень</string>
+    <string name="evening">вечер</string>
+    <string name="night">ночь</string>
 
 </resources>

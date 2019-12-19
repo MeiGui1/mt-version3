@@ -12,16 +12,20 @@ public class PatientDrug {
     public PatientDrug() {
     }
 
-    public PatientDrug(int patientId, int drugId, String amount, String dosis) {
+    public PatientDrug(int patientId, int drugId, String amount, String dosis, String comment) {
         this.patientId = patientId;
         this.drugId = drugId;
         this.amount = amount;
         this.dosis = dosis;
+        this.comment = comment;
     }
 
     private String amount;
 
     private String dosis;
+
+
+    private String comment;
 
     public int getPatientId() {
         return patientId;
@@ -84,5 +88,13 @@ public class PatientDrug {
 
     public void setDosis(String dosis) {
         this.dosis = dosis;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
