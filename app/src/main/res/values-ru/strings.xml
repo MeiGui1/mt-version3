@@ -163,5 +163,6 @@
     <string name="lunch">полдень</string>
     <string name="evening">вечер</string>
     <string name="night">ночь</string>
+    <string name="anomalous_medical">Anomalous Medical</string>
 
 </resources>

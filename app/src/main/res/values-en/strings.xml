@@ -158,4 +158,5 @@
     <string name="lunch">lunchtime</string>
     <string name="evening">evening</string>
     <string name="night">night</string>
+    <string name="anomalous_medical">Anomalous Medical</string>
 </resources>

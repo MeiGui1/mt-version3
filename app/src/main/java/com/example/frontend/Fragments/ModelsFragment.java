@@ -1,5 +1,6 @@
 package com.example.frontend.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.frontend.R;
@@ -29,6 +31,7 @@ public class ModelsFragment extends Fragment {
     private ImageView ivSensitiv;
     private ImageView ivErosion;
     private ImageView ivHoehlen;
+    private Button btnAnomalous;
     private int currentModel;
     private boolean firstModelSelected = false;
 
@@ -119,6 +122,17 @@ public class ModelsFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        btnAnomalous = (Button) view.findViewById(R.id.btnAnomalous);
+        btnAnomalous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = getActivity()
+                        .getPackageManager()
+                        .getLaunchIntentForPackage("com.anomalousmedical.android");
+                startActivity(i);
+            }
+        });
+
         ivKauen = view.findViewById(R.id.iv_kauen);
         ivKauen.setOnClickListener(onClickListener);
         ivBruxismus = view.findViewById(R.id.iv_bruxismus);

@@ -161,5 +161,6 @@
     <string name="lunch">mittags</string>
     <string name="evening">abends</string>
     <string name="night">nachts</string>
+    <string name="anomalous_medical">Anomalous Medical</string>
 
 </resources>
