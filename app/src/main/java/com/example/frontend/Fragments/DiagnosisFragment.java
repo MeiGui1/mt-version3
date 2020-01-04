@@ -22,6 +22,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.frontend.Fragments.Dialogs.DiagnosisDialog;
+import com.example.frontend.Fragments.Dialogs.DiagnosisPriorityDialog;
 import com.example.frontend.Fragments.Dialogs.DiagnosisTypeDialog;
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.PatientDiagnosis;
@@ -29,6 +30,7 @@ import com.example.frontend.R;
 import com.example.frontend.Service.DatabaseHelper;
 import com.example.frontend.Service.JsonPlaceHolderApi;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +41,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DiagnosisFragment extends Fragment implements DiagnosisDialog.DiagnosisDialogListener, DiagnosisTypeDialog.DiagnosisTypeDialogListener {
+public class DiagnosisFragment extends Fragment implements DiagnosisDialog.DiagnosisDialogListener, DiagnosisTypeDialog.DiagnosisTypeDialogListener , DiagnosisPriorityDialog.DiagnosisPriorityDialogListener {
 
     private int patientId;
     private View cView;
@@ -60,6 +62,8 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
     private ImageView btnAddNewDiagnosis;
     private String lastInsertedClass = null;
     private String deletedDiagnosisTypeClass = null;
+
+    private Button diagnosisPriorityBtn;
 
     /*Only used for Heruoku Database
 
@@ -95,6 +99,14 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         });
         selectedDiagnosisBtn = new Button(getContext());
         addClassButtons();
+
+        diagnosisPriorityBtn = (Button) cView.findViewById(R.id.btnDiagnosisPriority);
+        diagnosisPriorityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDiagnosisPriorityDialog();
+            }
+        });
 
     }
 
@@ -334,6 +346,25 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         columnCounter = 1;
     }
 
+    public void openDiagnosisPriorityDialog() {
+        List<PatientDiagnosis> allPatientDiagnosis = db.getAllDiagnosesOfPatient(patientId);
+        List<DiagnosisType> allDiagnosisTypes = db.getAllDiagnosisTypes();
+
+        ArrayList<PatientDiagnosis> arrayListAllPatientDiagnosis = new ArrayList<>(allPatientDiagnosis.size());
+        arrayListAllPatientDiagnosis.addAll(allPatientDiagnosis);
+        ArrayList<DiagnosisType> arrayListAllDiagnosisTypes = new ArrayList<>(allDiagnosisTypes.size());
+        arrayListAllDiagnosisTypes.addAll(allDiagnosisTypes);
+
+        DiagnosisPriorityDialog diagnosisPriorityDialog = new DiagnosisPriorityDialog();
+        Bundle args = new Bundle();
+        args.putSerializable("patientDiagnosesList", arrayListAllPatientDiagnosis);
+        args.putSerializable("diagnosisTypesList", arrayListAllDiagnosisTypes);
+
+        diagnosisPriorityDialog.setArguments(args);
+        diagnosisPriorityDialog.setTargetFragment(DiagnosisFragment.this, 1);
+        diagnosisPriorityDialog.show(getActivity().getSupportFragmentManager(), "Diagnosis Priority Dialog");
+    }
+
     public void openDiagnosisDialog() {
         DiagnosisDialog diagnosisDialog = new DiagnosisDialog();
         diagnosisDialog.setTargetFragment(DiagnosisFragment.this, 1);
@@ -519,5 +550,8 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         }); */
     }
 
+    @Override
+    public void applySortedDiagnosis(List<PatientDiagnosis> sortedPatientDiagnoses) {
 
+    }
 }

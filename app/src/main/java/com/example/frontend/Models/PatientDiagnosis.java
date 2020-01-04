@@ -2,7 +2,9 @@ package com.example.frontend.Models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class PatientDiagnosis {
+import java.io.Serializable;
+
+public class PatientDiagnosis implements Serializable {
 
     @SerializedName("patient_id")
     private int patientId;
