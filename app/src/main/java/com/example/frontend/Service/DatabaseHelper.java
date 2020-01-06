@@ -151,6 +151,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    patient_id int NOT NULL, " +
                 "    diagnosistype_id int NOT NULL, " +
                 "    comment text, " +
+                "    priority int, " +
                 "    FOREIGN KEY (patient_id) REFERENCES Patient(id) ON DELETE CASCADE, " +
                 "    FOREIGN KEY (diagnosistype_id) REFERENCES DiagnosisType(id) ON DELETE CASCADE, " +
                 "    UNIQUE (patient_id, diagnosistype_id) " +
@@ -846,6 +847,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("patient_id", patientDiagnosis.getPatientId());
         values.put("diagnosistype_id", patientDiagnosis.getDiagnosisId());
         values.put("comment", patientDiagnosis.getComment());
+        values.put("priority", patientDiagnosis.getPriority());
 
         // Inserting Row
         db.insert("PatientDiagnosis", null, values);
@@ -858,13 +860,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query("PatientDiagnosis", new String[]{"patient_id", "diagnosistype_id",
-                        "comment"}, "patient_id = ? AND diagnosistype_id = ?",
+                        "comment", "priority"}, "patient_id = ? AND diagnosistype_id = ?",
                 new String[]{String.valueOf(patientId), String.valueOf(diagnosisTypeId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         PatientDiagnosis patientDiagnosis = new PatientDiagnosis(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),
-                cursor.getString(2));
+                cursor.getString(2), Integer.parseInt(cursor.getString(3)));
         // return patientDiagnosis
         return patientDiagnosis;
     }
@@ -884,7 +886,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 patientDiagnosis.setPatientId(Integer.parseInt(cursor.getString(0)));
                 patientDiagnosis.setDiagnosisId(Integer.parseInt(cursor.getString(1)));
                 patientDiagnosis.setComment(cursor.getString(2));
-                // Adding patientDiagnosis to list
+                if (cursor.getString(3) == null){
+                    patientDiagnosis.setPriority(-1);
+                }else{
+                    patientDiagnosis.setPriority(Integer.parseInt(cursor.getString(3)));
+                }                // Adding patientDiagnosis to list
                 patientDiagnosisList.add(patientDiagnosis);
             } while (cursor.moveToNext());
         }
@@ -896,7 +902,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<PatientDiagnosis> getAllDiagnosesOfPatient(int patientId) {
         List<PatientDiagnosis> diagnosesOfPatientList = new ArrayList<PatientDiagnosis>();
         // Select All Query
-        String selectQuery = "SELECT * FROM PatientDiagnosis WHERE patient_id = ?";
+        String selectQuery = "SELECT * FROM PatientDiagnosis WHERE patient_id = ? ORDER BY priority";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(patientId)});
@@ -908,6 +914,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 patientDiagnosis.setPatientId(patientId);
                 patientDiagnosis.setDiagnosisId(Integer.parseInt(cursor.getString(1)));
                 patientDiagnosis.setComment(cursor.getString(2));
+                if (cursor.getString(3) == null){
+                    patientDiagnosis.setPriority(-1);
+                }else{
+                    patientDiagnosis.setPriority(Integer.parseInt(cursor.getString(3)));
+                }
                 // Adding patientDiagnosis to list
                 diagnosesOfPatientList.add(patientDiagnosis);
             } while (cursor.moveToNext());
@@ -920,7 +931,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<PatientDiagnosis> getPatientDiagnosisOfClass(int patientId, String type) {
         List<PatientDiagnosis> selectedPatientDiagnoses = new ArrayList<PatientDiagnosis>();
         // Select All Query
-        String selectQuery = "SELECT patient_id, diagnosistype_id, type, comment FROM PatientDiagnosis " +
+        String selectQuery = "SELECT patient_id, diagnosistype_id, comment, priority FROM PatientDiagnosis " +
                 "INNER JOIN DiagnosisType " +
                 "ON PatientDiagnosis.diagnosistype_id =  DiagnosisType.id " +
                 "WHERE PatientDiagnosis.patient_id = ? AND DiagnosisType.type = ?";
@@ -935,6 +946,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 patientDiagnosis.setPatientId(patientId);
                 patientDiagnosis.setDiagnosisId(Integer.parseInt(cursor.getString(1)));
                 patientDiagnosis.setComment(cursor.getString(2));
+                if (cursor.getString(3) == null){
+                    patientDiagnosis.setPriority(-1);
+                }else{
+                    patientDiagnosis.setPriority(Integer.parseInt(cursor.getString(3)));
+                }
 
                 // Adding patientDiagnosis to list
                 selectedPatientDiagnoses.add(patientDiagnosis);
@@ -952,6 +968,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("patient_id", patientId);
         values.put("diagnosistype_id", diagnosisTypeId);
         values.put("comment", patientDiagnosis.getComment());
+        values.put("priority", patientDiagnosis.getPriority());
 
         // updating row
         return db.update("PatientDiagnosis", values, "patient_id = ? AND diagnosistype_id= ?",

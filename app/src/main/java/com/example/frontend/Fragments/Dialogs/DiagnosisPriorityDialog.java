@@ -49,7 +49,7 @@ public class DiagnosisPriorityDialog extends AppCompatDialogFragment {
         rvDiagnoses = (RecyclerView) view.findViewById(R.id.rvDiagnoses);
         rvDiagnoses.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        recyclerAdapter = new RecyclerAdapter(allPatientDiagnoses,allDiagnosisTypes);
+        recyclerAdapter = new RecyclerAdapter(allPatientDiagnoses,allDiagnosisTypes, getContext());
         rvDiagnoses.setAdapter(recyclerAdapter);
 
         //Adds Divider (Lines) between rows of the Recycler of Diagnoses
@@ -91,6 +91,7 @@ public class DiagnosisPriorityDialog extends AppCompatDialogFragment {
             recyclerView.getAdapter().notifyItemMoved(fromPosition,toPosition);
             recyclerView.getAdapter().notifyItemChanged(fromPosition);
             recyclerView.getAdapter().notifyItemChanged(toPosition);
+
 
             return false;
         }

@@ -1,5 +1,6 @@
 package com.example.frontend.Fragments.Dialogs;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +10,16 @@ import android.widget.TextView;
 import com.example.frontend.Models.DiagnosisType;
 import com.example.frontend.Models.PatientDiagnosis;
 import com.example.frontend.R;
+import com.example.frontend.Service.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>  {
         private List<PatientDiagnosis> diagnosesList = new ArrayList<>();
         private List<DiagnosisType> diagnosisTypeList = new ArrayList<>();
+        private DatabaseHelper db ;
 
 
     // Provide a reference to the views for each data item
@@ -34,7 +38,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public RecyclerAdapter(List<PatientDiagnosis> myDataset, List<DiagnosisType> diagnosisTypes) {
+        public RecyclerAdapter(List<PatientDiagnosis> myDataset, List<DiagnosisType> diagnosisTypes, Context context) {
+            db = new DatabaseHelper(context);
             diagnosesList = myDataset;
             diagnosisTypeList = diagnosisTypes;
         }
@@ -53,12 +58,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         // Replace the contents of a view (invoked by the layout manager)
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
+
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
+            int patientId = diagnosesList.get(position).getPatientId();
+            int diagnosisId = diagnosesList.get(position).getDiagnosisId();
+            String comment = diagnosesList.get(position).getComment();
+
             holder.tvPriorityNumber.setText(String.valueOf(position+1));
             for(DiagnosisType dt : diagnosisTypeList){
-                if(diagnosesList.get(position).getDiagnosisId() == dt.getId()){
+                if( diagnosisId == dt.getId()){
                     holder.tvDiagnosisRow.setText(dt.getName());
+                    PatientDiagnosis newPd = new PatientDiagnosis(patientId, diagnosisId, comment, position+1);
+                    db.updatePatientDiagnosis(patientId, diagnosisId, newPd);
                 }
             }
         }

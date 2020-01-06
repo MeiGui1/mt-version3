@@ -11,14 +11,16 @@ public class PatientDiagnosis implements Serializable {
     @SerializedName("diagnosistype_id")
     private int diagnosisId;
     private String comment;
+    private int priority;
 
     public PatientDiagnosis() {
     }
 
-    public PatientDiagnosis(int patientId, int diagnosisId, String comment) {
+    public PatientDiagnosis(int patientId, int diagnosisId, String comment, int priority) {
         this.patientId = patientId;
         this.diagnosisId = diagnosisId;
         this.comment = comment;
+        this.priority = priority;
     }
 
     public int getPatientId() {
@@ -43,5 +45,13 @@ public class PatientDiagnosis implements Serializable {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }
