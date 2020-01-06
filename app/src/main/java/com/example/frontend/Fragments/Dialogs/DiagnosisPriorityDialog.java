@@ -63,12 +63,6 @@ public class DiagnosisPriorityDialog extends AppCompatDialogFragment {
         etComment = (EditText)view.findViewById(R.id.edit_comment);
         builder.setView(view)
                 .setTitle(getString(R.string.diagnosis_priorization))
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
