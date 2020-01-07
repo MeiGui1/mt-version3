@@ -33,7 +33,6 @@ public class DiagnosisPriorityDialog extends AppCompatDialogFragment {
     private List<DiagnosisType> allDiagnosisTypes;
 
     public interface DiagnosisPriorityDialogListener {
-        void applySortedDiagnosis(List<PatientDiagnosis> sortedPatientDiagnoses);
     }
 
     public DiagnosisPriorityDialogListener listener ;

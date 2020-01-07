@@ -550,8 +550,4 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         }); */
     }
 
-    @Override
-    public void applySortedDiagnosis(List<PatientDiagnosis> sortedPatientDiagnoses) {
-
-    }
 }

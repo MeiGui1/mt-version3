@@ -1,7 +1,13 @@
 package com.example.frontend.Activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,10 +18,13 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -87,6 +96,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -139,6 +150,8 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
         setContentView(R.layout.activity_menu);
 
         setTitle(getString(R.string.overview));
@@ -323,7 +336,7 @@ public class MenuActivity extends AppCompatActivity {
         //pdf file name
         String fileName = patient.getShortname() + " - Zusammenfassung" ;
         //pdf file path
-        String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + fileName + ".pdf";
+        final String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + fileName + ".pdf";
         try {
             PdfWriter writer = PdfWriter.getInstance(mDoc, new FileOutputStream(filePath));
             //PdfWriter.getInstance(mDoc, new FileOutputStream(filePath)).setStrictImageSequence(true);
@@ -612,7 +625,35 @@ public class MenuActivity extends AppCompatActivity {
             if(reader != null){
                 reader.close();
             }
-            Toast.makeText(this, fileName + ".pdf " + getString(R.string.saved) + "!", Toast.LENGTH_SHORT).show();
+
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            //Yes button clicked
+                            File file = new File(filePath);
+                            Intent target = new Intent(Intent.ACTION_VIEW);
+                            target.setDataAndType(Uri.fromFile(file),"application/pdf");
+                            target.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            Intent intent = Intent.createChooser(target, "Open File");
+                            try {
+                                startActivity(intent);
+                            } catch (ActivityNotFoundException e) {
+                                // Instruct the user to install a PDF reader here, or something
+                            }
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            //No button clicked
+                            break;
+                    }
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Die Zusammenfassung der Konsultation wurde erfolgreich heruntergeladen.").setPositiveButton("Öffnen", dialogClickListener)
+                    .setNegativeButton("Beenden", dialogClickListener).show();
 
         } catch (
                 Exception e) {
