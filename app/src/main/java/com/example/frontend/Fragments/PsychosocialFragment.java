@@ -1,21 +1,30 @@
 package com.example.frontend.Fragments;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.frontend.Fragments.Dialogs.ReasonDialog;
 import com.example.frontend.Models.ImprovementReason;
+import com.example.frontend.Models.Note;
 import com.example.frontend.Models.PsychoSocialAfter;
 import com.example.frontend.Models.PsychoSocialBefore;
 import com.example.frontend.R;
@@ -46,6 +55,9 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
     private Button btnWorkAfter;
     private Button btnFinancialAfter;
     private Button btnEventAfter;
+    private boolean firstTouch = false;
+
+
 
     private ImageView btnReason;
 
@@ -119,6 +131,7 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         btnEventAfter = view.findViewById(R.id.btnEventAfter);
         btnEventAfter.setOnTouchListener(new ChoiceTouchListener());
 
+
         btnReason = view.findViewById(R.id.btnReason);
         btnReason.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,9 +144,14 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         setPsychoSocialAfter();
 
     }
-
+    int clickCount = 0;
+    /*variable for storing the time of first click*/
+    long startTime;
+    /* variable for calculating the total time*/
+    long duration;
+    /* constant for defining the time duration between the click that can be considered as double-tap */
     private final class ChoiceTouchListener implements View.OnTouchListener {
-
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             int X = (int) motionEvent.getRawX();
@@ -143,6 +161,40 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
                     RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
                     xDelta = X - lParams.leftMargin;
                     yDelta = Y - lParams.topMargin;
+
+                    clickCount++;
+
+                    if (clickCount==1){
+                        startTime = System.currentTimeMillis();
+                    }
+
+                    else if(clickCount == 2)
+                    {
+                        long duration =  System.currentTimeMillis() - startTime;
+                        if(duration <= 500)
+                        {
+                            PopupWindow popupwindow_obj = popupDisplay();
+                            popupwindow_obj.setBackgroundDrawable(new BitmapDrawable());
+
+                            popupwindow_obj.showAsDropDown(view, -60, 15);
+                            // where u want show on view click event popupwindow.showAsDropDown(view, x, y);
+
+                            /*
+                            if(view.getBackground().getConstantState().equals(
+                                    getResources().getDrawable(R.drawable.roundedbutton_red).getConstantState())){
+                                view.setBackgroundResource(R.drawable.roundedbutton_blue);
+                            }else{
+                                view.setBackgroundResource(R.drawable.roundedbutton_red);
+                            }*/
+                            clickCount = 0;
+                            duration = 0;
+                        }else{
+                            clickCount = 1;
+                            startTime = System.currentTimeMillis();
+                        }
+                        break;
+                    }
+
                     break;
                 case MotionEvent.ACTION_UP:
                     savePositions();
@@ -170,6 +222,7 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
                     break;
             }
             rlActual.invalidate();
+
             return true;
         }
     }
@@ -635,5 +688,24 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }); */
+    }
+    public PopupWindow popupDisplay()
+    {
+
+        final PopupWindow popupWindow = new PopupWindow(getContext());
+
+        // inflate your layout or dynamically add view
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
+
+        View view = inflater.inflate(R.layout.psychosocial_menu, null);
+
+        Button item = (Button) view.findViewById(R.id.btnColor);
+
+        popupWindow.setFocusable(true);
+        popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setContentView(view);
+
+        return popupWindow;
     }
 }
