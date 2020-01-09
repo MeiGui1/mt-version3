@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -173,21 +174,11 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
                         long duration =  System.currentTimeMillis() - startTime;
                         if(duration <= 500)
                         {
-                            PopupWindow popupwindow_obj = popupDisplay();
+                            PopupWindow popupwindow_obj = popupDisplay(view, motionEvent);
                             popupwindow_obj.setBackgroundDrawable(new BitmapDrawable());
-
                             popupwindow_obj.showAsDropDown(view, -60, 15);
-                            // where u want show on view click event popupwindow.showAsDropDown(view, x, y);
-
-                            /*
-                            if(view.getBackground().getConstantState().equals(
-                                    getResources().getDrawable(R.drawable.roundedbutton_red).getConstantState())){
-                                view.setBackgroundResource(R.drawable.roundedbutton_blue);
-                            }else{
-                                view.setBackgroundResource(R.drawable.roundedbutton_red);
-                            }*/
-                            clickCount = 0;
                             duration = 0;
+                            clickCount = 0;
                         }else{
                             clickCount = 1;
                             startTime = System.currentTimeMillis();
@@ -689,7 +680,7 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
             }
         }); */
     }
-    public PopupWindow popupDisplay()
+    public PopupWindow popupDisplay(final View clickedItem, final MotionEvent event)
     {
 
         final PopupWindow popupWindow = new PopupWindow(getContext());
@@ -699,7 +690,55 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
 
         View view = inflater.inflate(R.layout.psychosocial_menu, null);
 
-        Button item = (Button) view.findViewById(R.id.btnColor);
+        Button btnColor = (Button) view.findViewById(R.id.btnColor);
+        btnColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(clickedItem.getBackground().getConstantState().equals(
+                        getResources().getDrawable(R.drawable.roundedbutton_red).getConstantState())){
+                    clickedItem.setBackgroundResource(R.drawable.roundedbutton_blue);
+                }else{
+                    clickedItem.setBackgroundResource(R.drawable.roundedbutton_red);
+                }
+                popupWindow.dismiss();
+            }
+        });
+        Button btnSize1 = (Button) view.findViewById(R.id.size1);
+        Button btnSize2 = (Button) view.findViewById(R.id.size2);
+        Button btnSize3 = (Button) view.findViewById(R.id.size3);
+        View.OnClickListener changeSize = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ViewGroup.LayoutParams lp = clickedItem.getLayoutParams();
+                float factor = clickedItem.getContext().getResources().getDisplayMetrics().density;
+                switch (view.getId()){
+                    case R.id.size1:
+                        lp.width = (int)(70 * factor);
+                        lp.height = (int)(70 * factor);
+                        clickedItem.setLayoutParams(lp);
+
+                        break;
+                    case R.id.size2:
+                        lp.width = (int)(90 * factor);
+                        lp.height = (int)(90 * factor);
+                        clickedItem.setLayoutParams(lp);
+
+                        break;
+                    case R.id.size3:
+                        lp.width = (int)(110 * factor);
+                        lp.height = (int)(110 * factor);
+                        clickedItem.setLayoutParams(lp);
+
+                        break;
+                }
+                //event.setAction(MotionEvent.ACTION_MOVE);
+                popupWindow.dismiss();
+            }
+        };
+
+        btnSize1.setOnClickListener(changeSize);
+        btnSize2.setOnClickListener(changeSize);
+        btnSize3.setOnClickListener(changeSize);
 
         popupWindow.setFocusable(true);
         popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -708,4 +747,5 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
 
         return popupWindow;
     }
+
 }
