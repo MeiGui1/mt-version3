@@ -191,14 +191,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    patient_id   int PRIMARY KEY, " +
                 "    pain_xpos    int NOT NULL, " +
                 "    pain_ypos    int NOT NULL, " +
-                "    familiy_xpos int NOT NULL, " +
-                "    familiy_ypos int NOT NULL, " +
+                "    pain_color   int NOT NULL, " +
+                "    pain_size    int NOT NULL, " +
+                "    family_xpos int NOT NULL, " +
+                "    family_ypos int NOT NULL, " +
+                "    family_color int NOT NULL, " +
+                "    family_size  int NOT NULL, " +
                 "    work_xpos    int NOT NULL, " +
                 "    work_ypos    int NOT NULL, " +
+                "    work_color   text NOT NULL, " +
+                "    work_size    int NOT NULL, " +
                 "    finance_xpos int NOT NULL, " +
                 "    finance_ypos int NOT NULL, " +
+                "    finance_color  int NOT NULL, " +
+                "    finance_size int NOT NULL, " +
                 "    event_xpos   int NOT NULL, " +
                 "    event_ypos   int NOT NULL, " +
+                "    event_color  int NOT NULL, " +
+                "    event_size   int NOT NULL, " +
                 "    FOREIGN KEY (patient_id) REFERENCES Patient (id) ON DELETE CASCADE " +
                 ")");
         db.execSQL("CREATE TABLE PsychoSocialAfter " +
@@ -206,14 +216,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    patient_id   int PRIMARY KEY, " +
                 "    pain_xpos    int NOT NULL, " +
                 "    pain_ypos    int NOT NULL, " +
-                "    familiy_xpos int NOT NULL, " +
-                "    familiy_ypos int NOT NULL, " +
+                "    pain_color   int NOT NULL, " +
+                "    pain_size    int NOT NULL, " +
+                "    family_xpos int NOT NULL, " +
+                "    family_ypos int NOT NULL, " +
+                "    family_color int NOT NULL, " +
+                "    family_size  int NOT NULL, " +
                 "    work_xpos    int NOT NULL, " +
                 "    work_ypos    int NOT NULL, " +
+                "    work_color   text NOT NULL, " +
+                "    work_size    int NOT NULL, " +
                 "    finance_xpos int NOT NULL, " +
                 "    finance_ypos int NOT NULL, " +
+                "    finance_color  int NOT NULL, " +
+                "    finance_size int NOT NULL, " +
                 "    event_xpos   int NOT NULL, " +
                 "    event_ypos   int NOT NULL, " +
+                "    event_color  int NOT NULL, " +
+                "    event_size   int NOT NULL, " +
                 "    FOREIGN KEY (patient_id) REFERENCES Patient (id) ON DELETE CASCADE " +
                 ")");
         db.execSQL("CREATE TABLE ImprovementReason " +
@@ -2001,16 +2021,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("patient_id", psychoSocialBefore.getPatient_id());
+
         values.put("pain_xpos", psychoSocialBefore.getPain_xpos());
         values.put("pain_ypos", psychoSocialBefore.getPain_ypos());
-        values.put("familiy_xpos", psychoSocialBefore.getFamily_xpos());
-        values.put("familiy_ypos", psychoSocialBefore.getFamily_ypos());
+        values.put("pain_color", psychoSocialBefore.getPain_color());
+        values.put("pain_size", psychoSocialBefore.getPain_size());
+
+        values.put("family_xpos", psychoSocialBefore.getFamily_xpos());
+        values.put("family_ypos", psychoSocialBefore.getFamily_ypos());
+        values.put("family_color", psychoSocialBefore.getFamily_color());
+        values.put("family_size", psychoSocialBefore.getFamily_size());
+
         values.put("work_xpos", psychoSocialBefore.getWork_xpos());
         values.put("work_ypos", psychoSocialBefore.getWork_ypos());
+        values.put("work_color", psychoSocialBefore.getWork_color());
+        values.put("work_size", psychoSocialBefore.getWork_size());
+
         values.put("finance_xpos", psychoSocialBefore.getFinance_xpos());
         values.put("finance_ypos", psychoSocialBefore.getFinance_ypos());
+        values.put("finance_color", psychoSocialBefore.getFinance_color());
+        values.put("finance_size", psychoSocialBefore.getFinance_size());
+
         values.put("event_xpos", psychoSocialBefore.getEvent_xpos());
         values.put("event_ypos", psychoSocialBefore.getEvent_ypos());
+        values.put("event_color", psychoSocialBefore.getEvent_color());
+        values.put("event_size", psychoSocialBefore.getEvent_size());
 
         // Inserting Row
         db.insert("PsychoSocialBefore", null, values);
@@ -2031,14 +2066,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         psychoSocialBefore.setPatient_id(Integer.parseInt(cursor.getString(0)));
         psychoSocialBefore.setPain_xpos(Integer.parseInt(cursor.getString(1)));
         psychoSocialBefore.setPain_ypos(Integer.parseInt(cursor.getString(2)));
-        psychoSocialBefore.setFamily_xpos(Integer.parseInt(cursor.getString(3)));
-        psychoSocialBefore.setFamily_ypos(Integer.parseInt(cursor.getString(4)));
-        psychoSocialBefore.setWork_xpos(Integer.parseInt(cursor.getString(5)));
-        psychoSocialBefore.setWork_ypos(Integer.parseInt(cursor.getString(6)));
-        psychoSocialBefore.setFinance_xpos(Integer.parseInt(cursor.getString(7)));
-        psychoSocialBefore.setFinance_ypos(Integer.parseInt(cursor.getString(8)));
-        psychoSocialBefore.setEvent_xpos(Integer.parseInt(cursor.getString(9)));
-        psychoSocialBefore.setEvent_ypos(Integer.parseInt(cursor.getString(10)));
+        psychoSocialBefore.setPain_color(Integer.parseInt(cursor.getString(3)));
+        psychoSocialBefore.setPain_size(Integer.parseInt(cursor.getString(4)));
+        psychoSocialBefore.setFamily_xpos(Integer.parseInt(cursor.getString(5)));
+        psychoSocialBefore.setFamily_ypos(Integer.parseInt(cursor.getString(6)));
+        psychoSocialBefore.setFamily_color(Integer.parseInt(cursor.getString(7)));
+        psychoSocialBefore.setFamily_size(Integer.parseInt(cursor.getString(8)));
+        psychoSocialBefore.setWork_xpos(Integer.parseInt(cursor.getString(9)));
+        psychoSocialBefore.setWork_ypos(Integer.parseInt(cursor.getString(10)));
+        psychoSocialBefore.setWork_color(Integer.parseInt(cursor.getString(11)));
+        psychoSocialBefore.setWork_size(Integer.parseInt(cursor.getString(12)));
+        psychoSocialBefore.setFinance_xpos(Integer.parseInt(cursor.getString(13)));
+        psychoSocialBefore.setFinance_ypos(Integer.parseInt(cursor.getString(14)));
+        psychoSocialBefore.setFinance_color(Integer.parseInt(cursor.getString(15)));
+        psychoSocialBefore.setFinance_size(Integer.parseInt(cursor.getString(16)));
+        psychoSocialBefore.setEvent_xpos(Integer.parseInt(cursor.getString(17)));
+        psychoSocialBefore.setEvent_ypos(Integer.parseInt(cursor.getString(18)));
+        psychoSocialBefore.setEvent_color(Integer.parseInt(cursor.getString(19)));
+        psychoSocialBefore.setEvent_size(Integer.parseInt(cursor.getString(20)));
 
         // return psychoSocialBefore
         return psychoSocialBefore;
@@ -2059,14 +2104,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 psychoSocialBefore.setPatient_id(Integer.parseInt(cursor.getString(0)));
                 psychoSocialBefore.setPain_xpos(Integer.parseInt(cursor.getString(1)));
                 psychoSocialBefore.setPain_ypos(Integer.parseInt(cursor.getString(2)));
-                psychoSocialBefore.setFamily_xpos(Integer.parseInt(cursor.getString(3)));
-                psychoSocialBefore.setFamily_ypos(Integer.parseInt(cursor.getString(4)));
-                psychoSocialBefore.setWork_xpos(Integer.parseInt(cursor.getString(5)));
-                psychoSocialBefore.setWork_ypos(Integer.parseInt(cursor.getString(6)));
-                psychoSocialBefore.setFinance_xpos(Integer.parseInt(cursor.getString(7)));
-                psychoSocialBefore.setFinance_ypos(Integer.parseInt(cursor.getString(8)));
-                psychoSocialBefore.setEvent_xpos(Integer.parseInt(cursor.getString(9)));
-                psychoSocialBefore.setEvent_ypos(Integer.parseInt(cursor.getString(10)));
+                psychoSocialBefore.setPain_color(Integer.parseInt(cursor.getString(3)));
+                psychoSocialBefore.setPain_size(Integer.parseInt(cursor.getString(4)));
+                psychoSocialBefore.setFamily_xpos(Integer.parseInt(cursor.getString(5)));
+                psychoSocialBefore.setFamily_ypos(Integer.parseInt(cursor.getString(6)));
+                psychoSocialBefore.setFamily_color(Integer.parseInt(cursor.getString(7)));
+                psychoSocialBefore.setFamily_size(Integer.parseInt(cursor.getString(8)));
+                psychoSocialBefore.setWork_xpos(Integer.parseInt(cursor.getString(9)));
+                psychoSocialBefore.setWork_ypos(Integer.parseInt(cursor.getString(10)));
+                psychoSocialBefore.setWork_color(Integer.parseInt(cursor.getString(11)));
+                psychoSocialBefore.setWork_size(Integer.parseInt(cursor.getString(12)));
+                psychoSocialBefore.setFinance_xpos(Integer.parseInt(cursor.getString(13)));
+                psychoSocialBefore.setFinance_ypos(Integer.parseInt(cursor.getString(14)));
+                psychoSocialBefore.setFinance_color(Integer.parseInt(cursor.getString(15)));
+                psychoSocialBefore.setFinance_size(Integer.parseInt(cursor.getString(16)));
+                psychoSocialBefore.setEvent_xpos(Integer.parseInt(cursor.getString(17)));
+                psychoSocialBefore.setEvent_ypos(Integer.parseInt(cursor.getString(18)));
+                psychoSocialBefore.setEvent_color(Integer.parseInt(cursor.getString(19)));
+                psychoSocialBefore.setEvent_size(Integer.parseInt(cursor.getString(20)));
                 // Adding psychoSocialBefore to list
                 psychoSocialBeforeList.add(psychoSocialBefore);
             } while (cursor.moveToNext());
@@ -2081,16 +2136,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("patient_id", psychoSocialBefore.getPatient_id());
+
         values.put("pain_xpos", psychoSocialBefore.getPain_xpos());
         values.put("pain_ypos", psychoSocialBefore.getPain_ypos());
-        values.put("familiy_xpos", psychoSocialBefore.getFamily_xpos());
-        values.put("familiy_ypos", psychoSocialBefore.getFamily_ypos());
+        values.put("pain_color", psychoSocialBefore.getPain_color());
+        values.put("pain_size", psychoSocialBefore.getPain_size());
+
+        values.put("family_xpos", psychoSocialBefore.getFamily_xpos());
+        values.put("family_ypos", psychoSocialBefore.getFamily_ypos());
+        values.put("family_color", psychoSocialBefore.getFamily_color());
+        values.put("family_size", psychoSocialBefore.getFamily_size());
+
         values.put("work_xpos", psychoSocialBefore.getWork_xpos());
         values.put("work_ypos", psychoSocialBefore.getWork_ypos());
+        values.put("work_color", psychoSocialBefore.getWork_color());
+        values.put("work_size", psychoSocialBefore.getWork_size());
+
         values.put("finance_xpos", psychoSocialBefore.getFinance_xpos());
         values.put("finance_ypos", psychoSocialBefore.getFinance_ypos());
+        values.put("finance_color", psychoSocialBefore.getFinance_color());
+        values.put("finance_size", psychoSocialBefore.getFinance_size());
+
         values.put("event_xpos", psychoSocialBefore.getEvent_xpos());
         values.put("event_ypos", psychoSocialBefore.getEvent_ypos());
+        values.put("event_color", psychoSocialBefore.getEvent_color());
+        values.put("event_size", psychoSocialBefore.getEvent_size());
 
         // updating row
         return db.update("PsychoSocialBefore", values, "patient_id = ?",
@@ -2124,16 +2194,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("patient_id", psychoSocialAfter.getPatient_id());
+
         values.put("pain_xpos", psychoSocialAfter.getPain_xpos());
         values.put("pain_ypos", psychoSocialAfter.getPain_ypos());
-        values.put("familiy_xpos", psychoSocialAfter.getFamily_xpos());
-        values.put("familiy_ypos", psychoSocialAfter.getFamily_ypos());
+        values.put("pain_color", psychoSocialAfter.getPain_color());
+        values.put("pain_size", psychoSocialAfter.getPain_size());
+
+        values.put("family_xpos", psychoSocialAfter.getFamily_xpos());
+        values.put("family_ypos", psychoSocialAfter.getFamily_ypos());
+        values.put("family_color", psychoSocialAfter.getFamily_color());
+        values.put("family_size", psychoSocialAfter.getFamily_size());
+
         values.put("work_xpos", psychoSocialAfter.getWork_xpos());
         values.put("work_ypos", psychoSocialAfter.getWork_ypos());
+        values.put("work_color", psychoSocialAfter.getWork_color());
+        values.put("work_size", psychoSocialAfter.getWork_size());
+
         values.put("finance_xpos", psychoSocialAfter.getFinance_xpos());
         values.put("finance_ypos", psychoSocialAfter.getFinance_ypos());
+        values.put("finance_color", psychoSocialAfter.getFinance_color());
+        values.put("finance_size", psychoSocialAfter.getFinance_size());
+
         values.put("event_xpos", psychoSocialAfter.getEvent_xpos());
         values.put("event_ypos", psychoSocialAfter.getEvent_ypos());
+        values.put("event_color", psychoSocialAfter.getEvent_color());
+        values.put("event_size", psychoSocialAfter.getEvent_size());
 
         // Inserting Row
         db.insert("PsychoSocialAfter", null, values);
@@ -2154,14 +2239,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         psychoSocialAfter.setPatient_id(Integer.parseInt(cursor.getString(0)));
         psychoSocialAfter.setPain_xpos(Integer.parseInt(cursor.getString(1)));
         psychoSocialAfter.setPain_ypos(Integer.parseInt(cursor.getString(2)));
-        psychoSocialAfter.setFamily_xpos(Integer.parseInt(cursor.getString(3)));
-        psychoSocialAfter.setFamily_ypos(Integer.parseInt(cursor.getString(4)));
-        psychoSocialAfter.setWork_xpos(Integer.parseInt(cursor.getString(5)));
-        psychoSocialAfter.setWork_ypos(Integer.parseInt(cursor.getString(6)));
-        psychoSocialAfter.setFinance_xpos(Integer.parseInt(cursor.getString(7)));
-        psychoSocialAfter.setFinance_ypos(Integer.parseInt(cursor.getString(8)));
-        psychoSocialAfter.setEvent_xpos(Integer.parseInt(cursor.getString(9)));
-        psychoSocialAfter.setEvent_ypos(Integer.parseInt(cursor.getString(10)));
+        psychoSocialAfter.setPain_color(Integer.parseInt(cursor.getString(3)));
+        psychoSocialAfter.setPain_size(Integer.parseInt(cursor.getString(4)));
+        psychoSocialAfter.setFamily_xpos(Integer.parseInt(cursor.getString(5)));
+        psychoSocialAfter.setFamily_ypos(Integer.parseInt(cursor.getString(6)));
+        psychoSocialAfter.setFamily_color(Integer.parseInt(cursor.getString(7)));
+        psychoSocialAfter.setFamily_size(Integer.parseInt(cursor.getString(8)));
+        psychoSocialAfter.setWork_xpos(Integer.parseInt(cursor.getString(9)));
+        psychoSocialAfter.setWork_ypos(Integer.parseInt(cursor.getString(10)));
+        psychoSocialAfter.setWork_color(Integer.parseInt(cursor.getString(11)));
+        psychoSocialAfter.setWork_size(Integer.parseInt(cursor.getString(12)));
+        psychoSocialAfter.setFinance_xpos(Integer.parseInt(cursor.getString(13)));
+        psychoSocialAfter.setFinance_ypos(Integer.parseInt(cursor.getString(14)));
+        psychoSocialAfter.setFinance_color(Integer.parseInt(cursor.getString(15)));
+        psychoSocialAfter.setFinance_size(Integer.parseInt(cursor.getString(16)));
+        psychoSocialAfter.setEvent_xpos(Integer.parseInt(cursor.getString(17)));
+        psychoSocialAfter.setEvent_ypos(Integer.parseInt(cursor.getString(18)));
+        psychoSocialAfter.setEvent_color(Integer.parseInt(cursor.getString(19)));
+        psychoSocialAfter.setEvent_size(Integer.parseInt(cursor.getString(20)));
 
         // return psychoSocialAfter
         return psychoSocialAfter;
@@ -2182,14 +2277,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 psychoSocialAfter.setPatient_id(Integer.parseInt(cursor.getString(0)));
                 psychoSocialAfter.setPain_xpos(Integer.parseInt(cursor.getString(1)));
                 psychoSocialAfter.setPain_ypos(Integer.parseInt(cursor.getString(2)));
-                psychoSocialAfter.setFamily_xpos(Integer.parseInt(cursor.getString(3)));
-                psychoSocialAfter.setFamily_ypos(Integer.parseInt(cursor.getString(4)));
-                psychoSocialAfter.setWork_xpos(Integer.parseInt(cursor.getString(5)));
-                psychoSocialAfter.setWork_ypos(Integer.parseInt(cursor.getString(6)));
-                psychoSocialAfter.setFinance_xpos(Integer.parseInt(cursor.getString(7)));
-                psychoSocialAfter.setFinance_ypos(Integer.parseInt(cursor.getString(8)));
-                psychoSocialAfter.setEvent_xpos(Integer.parseInt(cursor.getString(9)));
-                psychoSocialAfter.setEvent_ypos(Integer.parseInt(cursor.getString(10)));
+                psychoSocialAfter.setPain_color(Integer.parseInt(cursor.getString(3)));
+                psychoSocialAfter.setPain_size(Integer.parseInt(cursor.getString(4)));
+                psychoSocialAfter.setFamily_xpos(Integer.parseInt(cursor.getString(5)));
+                psychoSocialAfter.setFamily_ypos(Integer.parseInt(cursor.getString(6)));
+                psychoSocialAfter.setFamily_color(Integer.parseInt(cursor.getString(7)));
+                psychoSocialAfter.setFamily_size(Integer.parseInt(cursor.getString(8)));
+                psychoSocialAfter.setWork_xpos(Integer.parseInt(cursor.getString(9)));
+                psychoSocialAfter.setWork_ypos(Integer.parseInt(cursor.getString(10)));
+                psychoSocialAfter.setWork_color(Integer.parseInt(cursor.getString(11)));
+                psychoSocialAfter.setWork_size(Integer.parseInt(cursor.getString(12)));
+                psychoSocialAfter.setFinance_xpos(Integer.parseInt(cursor.getString(13)));
+                psychoSocialAfter.setFinance_ypos(Integer.parseInt(cursor.getString(14)));
+                psychoSocialAfter.setFinance_color(Integer.parseInt(cursor.getString(15)));
+                psychoSocialAfter.setFinance_size(Integer.parseInt(cursor.getString(16)));
+                psychoSocialAfter.setEvent_xpos(Integer.parseInt(cursor.getString(17)));
+                psychoSocialAfter.setEvent_ypos(Integer.parseInt(cursor.getString(18)));
+                psychoSocialAfter.setEvent_color(Integer.parseInt(cursor.getString(19)));
+                psychoSocialAfter.setEvent_size(Integer.parseInt(cursor.getString(20)));
                 // Adding psychoSocialAfter to list
                 psychoSocialAfterList.add(psychoSocialAfter);
             } while (cursor.moveToNext());
@@ -2204,16 +2309,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("patient_id", psychoSocialAfter.getPatient_id());
+
         values.put("pain_xpos", psychoSocialAfter.getPain_xpos());
         values.put("pain_ypos", psychoSocialAfter.getPain_ypos());
-        values.put("familiy_xpos", psychoSocialAfter.getFamily_xpos());
-        values.put("familiy_ypos", psychoSocialAfter.getFamily_ypos());
+        values.put("pain_color", psychoSocialAfter.getPain_color());
+        values.put("pain_size", psychoSocialAfter.getPain_size());
+
+        values.put("family_xpos", psychoSocialAfter.getFamily_xpos());
+        values.put("family_ypos", psychoSocialAfter.getFamily_ypos());
+        values.put("family_color", psychoSocialAfter.getFamily_color());
+        values.put("family_size", psychoSocialAfter.getFamily_size());
+
         values.put("work_xpos", psychoSocialAfter.getWork_xpos());
         values.put("work_ypos", psychoSocialAfter.getWork_ypos());
+        values.put("work_color", psychoSocialAfter.getWork_color());
+        values.put("work_size", psychoSocialAfter.getWork_size());
+
         values.put("finance_xpos", psychoSocialAfter.getFinance_xpos());
         values.put("finance_ypos", psychoSocialAfter.getFinance_ypos());
+        values.put("finance_color", psychoSocialAfter.getFinance_color());
+        values.put("finance_size", psychoSocialAfter.getFinance_size());
+
         values.put("event_xpos", psychoSocialAfter.getEvent_xpos());
         values.put("event_ypos", psychoSocialAfter.getEvent_ypos());
+        values.put("event_color", psychoSocialAfter.getEvent_color());
+        values.put("event_size", psychoSocialAfter.getEvent_size());
 
         // updating row
         return db.update("PsychoSocialAfter", values, "patient_id = ?",

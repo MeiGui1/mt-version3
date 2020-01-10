@@ -8,36 +8,22 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.frontend.Fragments.Dialogs.ReasonDialog;
 import com.example.frontend.Models.ImprovementReason;
-import com.example.frontend.Models.Note;
 import com.example.frontend.Models.PsychoSocialAfter;
 import com.example.frontend.Models.PsychoSocialBefore;
 import com.example.frontend.R;
 import com.example.frontend.Service.DatabaseHelper;
-import com.example.frontend.Service.JsonPlaceHolderApi;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PsychosocialFragment extends Fragment implements ReasonDialog.ReasonDialogListener {
 
@@ -59,12 +45,12 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
     private boolean firstTouch = false;
 
 
-
     private ImageView btnReason;
 
     private int xDelta;
     private int yDelta;
-    private RelativeLayout rlActual;
+    private RelativeLayout rlBefore;
+    private RelativeLayout rlAfter;
 
     private ImprovementReason improvementReasonOfPatient = new ImprovementReason();
     private PsychoSocialBefore psychoSocialBeforeOfPatient = new PsychoSocialBefore();
@@ -108,7 +94,8 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         db = new DatabaseHelper(getContext());
-        rlActual = view.findViewById(R.id.rlBefore);
+        rlBefore = view.findViewById(R.id.rlBefore);
+        rlAfter = view.findViewById(R.id.rlAfter);
 
         btnPainBefore = view.findViewById(R.id.btnPainBefore);
         btnPainBefore.setOnTouchListener(new ChoiceTouchListener());
@@ -145,11 +132,13 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         setPsychoSocialAfter();
 
     }
+
     int clickCount = 0;
     /*variable for storing the time of first click*/
     long startTime;
     /* variable for calculating the total time*/
     long duration;
+
     /* constant for defining the time duration between the click that can be considered as double-tap */
     private final class ChoiceTouchListener implements View.OnTouchListener {
         @RequiresApi(api = Build.VERSION_CODES.N)
@@ -165,21 +154,17 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
 
                     clickCount++;
 
-                    if (clickCount==1){
+                    if (clickCount == 1) {
                         startTime = System.currentTimeMillis();
-                    }
-
-                    else if(clickCount == 2)
-                    {
-                        long duration =  System.currentTimeMillis() - startTime;
-                        if(duration <= 500)
-                        {
+                    } else if (clickCount == 2) {
+                        long duration = System.currentTimeMillis() - startTime;
+                        if (duration <= 500) {
                             PopupWindow popupwindow_obj = popupDisplay(view, motionEvent);
                             popupwindow_obj.setBackgroundDrawable(new BitmapDrawable());
                             popupwindow_obj.showAsDropDown(view, -60, 15);
                             duration = 0;
                             clickCount = 0;
-                        }else{
+                        } else {
                             clickCount = 1;
                             startTime = System.currentTimeMillis();
                         }
@@ -197,8 +182,8 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
                 case MotionEvent.ACTION_POINTER_DOWN:
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    int rlWidth = rlActual.getWidth() - 70;
-                    int rlHeight = rlActual.getHeight() - 70;
+                    int rlWidth = rlBefore.getWidth() - 70;
+                    int rlHeight = rlBefore.getHeight() - 70;
 
                     RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
                     int newX = X - xDelta;
@@ -212,7 +197,7 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
                     }
                     break;
             }
-            rlActual.invalidate();
+            rlBefore.invalidate();
 
             return true;
         }
@@ -348,18 +333,19 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
 
     public void setPsychoSocialBefore() {
         boolean PsychoSocialBeforeExists = db.existsPsychoSocialBefore(patientId);
-
         if (PsychoSocialBeforeExists) {
-            if(!initialSetUpBeforeDone){
+            if (!initialSetUpBeforeDone) {
                 setUpPositionsBefore();
                 initialSetUpBeforeDone = true;
-            }else{
+            } else {
                 updatePsychoSocialBefore(psychoSocialBeforeOfPatient);
             }
         } else {
-            if(initialSetUpBeforeDone){
+            if (initialSetUpBeforeDone) {
+                setDefaultSizeColorBefore();
+                savePositions();
                 addNewPsychoSocialBefore(psychoSocialBeforeOfPatient);
-            }else{
+            } else {
                 initialSetUpBeforeDone = true;
             }
         }
@@ -439,16 +425,18 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         boolean PsychoSocialAfterExists = db.existsPsychoSocialAfter(patientId);
 
         if (PsychoSocialAfterExists) {
-            if(!initialSetUpAfterDone){
+            if (!initialSetUpAfterDone) {
                 setUpPositionsAfter();
                 initialSetUpAfterDone = true;
-            }else{
+            } else {
                 updatePsychoSocialAfter(psychoSocialAfterOfPatient);
             }
         } else {
-            if(initialSetUpAfterDone) {
+            if (initialSetUpAfterDone) {
+                setDefaultSizeColorAfter();
+                savePositions();
                 addNewPsychoSocialAfter(psychoSocialAfterOfPatient);
-            }else{
+            } else {
                 initialSetUpAfterDone = true;
             }
         }
@@ -488,13 +476,14 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         }); */
     }
 
-    private void savePositions(){
+    private void savePositions() {
         psychoSocialBeforeOfPatient.setPatient_id(patientId);
         psychoSocialAfterOfPatient.setPatient_id(patientId);
 
         lpPainBefore = (RelativeLayout.LayoutParams) btnPainBefore.getLayoutParams();
         psychoSocialBeforeOfPatient.setPain_xpos(lpPainBefore.leftMargin);
         psychoSocialBeforeOfPatient.setPain_ypos(lpPainBefore.topMargin);
+
 
         lpFamilyBefore = (RelativeLayout.LayoutParams) btnFamilyBefore.getLayoutParams();
         psychoSocialBeforeOfPatient.setFamily_xpos(lpFamilyBefore.leftMargin);
@@ -511,7 +500,6 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         lpEventBefore = (RelativeLayout.LayoutParams) btnEventBefore.getLayoutParams();
         psychoSocialBeforeOfPatient.setEvent_xpos(lpEventBefore.leftMargin);
         psychoSocialBeforeOfPatient.setEvent_ypos(lpEventBefore.topMargin);
-
 
 
         lpPainAfter = (RelativeLayout.LayoutParams) btnPainAfter.getLayoutParams();
@@ -535,33 +523,44 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         psychoSocialAfterOfPatient.setEvent_ypos(lpEventAfter.topMargin);
     }
 
-    private void setUpPositionsBefore(){
-        PsychoSocialBefore psychoSocialBefore = db.getPsychoSocialBefore(patientId);
+    private void setUpPositionsBefore() {
+        psychoSocialBeforeOfPatient = db.getPsychoSocialBefore(patientId);
 
         lpPainBefore = (RelativeLayout.LayoutParams) btnPainBefore.getLayoutParams();
-        lpPainBefore.leftMargin = psychoSocialBefore.getPain_xpos();
-        lpPainBefore.topMargin = psychoSocialBefore.getPain_ypos();
+        lpPainBefore.leftMargin = psychoSocialBeforeOfPatient.getPain_xpos();
+        lpPainBefore.topMargin = psychoSocialBeforeOfPatient.getPain_ypos();
         btnPainBefore.setLayoutParams(lpPainBefore);
+        setButtonSize(btnPainBefore, psychoSocialBeforeOfPatient.getPain_size());
+        setButtonColor(btnPainBefore, psychoSocialBeforeOfPatient.getPain_color());
+
 
         lpFamilyBefore = (RelativeLayout.LayoutParams) btnFamilyBefore.getLayoutParams();
-        lpFamilyBefore.leftMargin = psychoSocialBefore.getFamily_xpos();
-        lpFamilyBefore.topMargin = psychoSocialBefore.getFamily_ypos();
+        lpFamilyBefore.leftMargin = psychoSocialBeforeOfPatient.getFamily_xpos();
+        lpFamilyBefore.topMargin = psychoSocialBeforeOfPatient.getFamily_ypos();
         btnFamilyBefore.setLayoutParams(lpFamilyBefore);
+        setButtonSize(btnFamilyBefore, psychoSocialBeforeOfPatient.getFamily_size());
+        setButtonColor(btnFamilyBefore, psychoSocialBeforeOfPatient.getFamily_color());
 
         lpWorkBefore = (RelativeLayout.LayoutParams) btnWorkBefore.getLayoutParams();
-        lpWorkBefore.leftMargin = psychoSocialBefore.getWork_xpos();
-        lpWorkBefore.topMargin = psychoSocialBefore.getWork_ypos();
+        lpWorkBefore.leftMargin = psychoSocialBeforeOfPatient.getWork_xpos();
+        lpWorkBefore.topMargin = psychoSocialBeforeOfPatient.getWork_ypos();
         btnWorkBefore.setLayoutParams(lpWorkBefore);
+        setButtonSize(btnWorkBefore, psychoSocialBeforeOfPatient.getWork_size());
+        setButtonColor(btnWorkBefore, psychoSocialBeforeOfPatient.getWork_color());
 
         lpFinancialBefore = (RelativeLayout.LayoutParams) btnFinancialBefore.getLayoutParams();
-        lpFinancialBefore.leftMargin = psychoSocialBefore.getFinance_xpos();
-        lpFinancialBefore.topMargin = psychoSocialBefore.getFinance_ypos();
+        lpFinancialBefore.leftMargin = psychoSocialBeforeOfPatient.getFinance_xpos();
+        lpFinancialBefore.topMargin = psychoSocialBeforeOfPatient.getFinance_ypos();
         btnFinancialBefore.setLayoutParams(lpFinancialBefore);
+        setButtonSize(btnFinancialBefore, psychoSocialBeforeOfPatient.getFinance_size());
+        setButtonColor(btnFinancialBefore, psychoSocialBeforeOfPatient.getFinance_color());
 
         lpEventBefore = (RelativeLayout.LayoutParams) btnEventBefore.getLayoutParams();
-        lpEventBefore.leftMargin = psychoSocialBefore.getEvent_xpos();
-        lpEventBefore.topMargin = psychoSocialBefore.getEvent_ypos();
+        lpEventBefore.leftMargin = psychoSocialBeforeOfPatient.getEvent_xpos();
+        lpEventBefore.topMargin = psychoSocialBeforeOfPatient.getEvent_ypos();
         btnEventBefore.setLayoutParams(lpEventBefore);
+        setButtonSize(btnEventBefore, psychoSocialBeforeOfPatient.getEvent_size());
+        setButtonColor(btnEventBefore, psychoSocialBeforeOfPatient.getEvent_color());
 
         /* Only used for Heruoku Database
 
@@ -608,33 +607,69 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         }); */
     }
 
-    private void setUpPositionsAfter(){
-        PsychoSocialAfter psychoSocialAfter = db.getPsychoSocialAfter(patientId);
+    private void setButtonColor(Button btn, int color) {
+        if (color == 1) {
+            btn.setBackgroundResource(R.drawable.roundedbutton_red);
+        } else if (color == 0) {
+            btn.setBackgroundResource(R.drawable.roundedbutton_green);
+        }
+    }
+
+    private void setButtonSize(Button btn, int size) {
+        int sizePixel = 0;
+        if (size == 1) {
+            sizePixel = 70;
+        } else if (size == 2) {
+            sizePixel = 90;
+        } else if (size == 3) {
+            sizePixel = 110;
+        }
+
+        ViewGroup.LayoutParams lp = btn.getLayoutParams();
+        float factor = btn.getContext().getResources().getDisplayMetrics().density;
+        lp.width = (int) (sizePixel * factor);
+        lp.height = (int) (sizePixel * factor);
+        btn.setLayoutParams(lp);
+    }
+
+    private void setUpPositionsAfter() {
+        psychoSocialAfterOfPatient = db.getPsychoSocialAfter(patientId);
 
         lpPainAfter = (RelativeLayout.LayoutParams) btnPainAfter.getLayoutParams();
-        lpPainAfter.leftMargin = psychoSocialAfter.getPain_xpos();
-        lpPainAfter.topMargin = psychoSocialAfter.getPain_ypos();
+        lpPainAfter.leftMargin = psychoSocialAfterOfPatient.getPain_xpos();
+        lpPainAfter.topMargin = psychoSocialAfterOfPatient.getPain_ypos();
         btnPainAfter.setLayoutParams(lpPainAfter);
+        setButtonSize(btnPainAfter, psychoSocialAfterOfPatient.getPain_size());
+        setButtonColor(btnPainAfter, psychoSocialAfterOfPatient.getPain_color());
+
 
         lpFamilyAfter = (RelativeLayout.LayoutParams) btnFamilyAfter.getLayoutParams();
-        lpFamilyAfter.leftMargin = psychoSocialAfter.getFamily_xpos();
-        lpFamilyAfter.topMargin = psychoSocialAfter.getFamily_ypos();
+        lpFamilyAfter.leftMargin = psychoSocialAfterOfPatient.getFamily_xpos();
+        lpFamilyAfter.topMargin = psychoSocialAfterOfPatient.getFamily_ypos();
         btnFamilyAfter.setLayoutParams(lpFamilyAfter);
+        setButtonSize(btnFamilyAfter, psychoSocialAfterOfPatient.getFamily_size());
+        setButtonColor(btnFamilyAfter, psychoSocialAfterOfPatient.getFamily_color());
 
         lpWorkAfter = (RelativeLayout.LayoutParams) btnWorkAfter.getLayoutParams();
-        lpWorkAfter.leftMargin = psychoSocialAfter.getWork_xpos();
-        lpWorkAfter.topMargin = psychoSocialAfter.getWork_ypos();
+        lpWorkAfter.leftMargin = psychoSocialAfterOfPatient.getWork_xpos();
+        lpWorkAfter.topMargin = psychoSocialAfterOfPatient.getWork_ypos();
         btnWorkAfter.setLayoutParams(lpWorkAfter);
+        setButtonSize(btnWorkAfter, psychoSocialAfterOfPatient.getWork_size());
+        setButtonColor(btnWorkAfter, psychoSocialAfterOfPatient.getWork_color());
 
         lpFinancialAfter = (RelativeLayout.LayoutParams) btnFinancialAfter.getLayoutParams();
-        lpFinancialAfter.leftMargin = psychoSocialAfter.getFinance_xpos();
-        lpFinancialAfter.topMargin = psychoSocialAfter.getFinance_ypos();
+        lpFinancialAfter.leftMargin = psychoSocialAfterOfPatient.getFinance_xpos();
+        lpFinancialAfter.topMargin = psychoSocialAfterOfPatient.getFinance_ypos();
         btnFinancialAfter.setLayoutParams(lpFinancialAfter);
+        setButtonSize(btnFinancialAfter, psychoSocialAfterOfPatient.getFinance_size());
+        setButtonColor(btnFinancialAfter, psychoSocialAfterOfPatient.getFinance_color());
 
         lpEventAfter = (RelativeLayout.LayoutParams) btnEventAfter.getLayoutParams();
-        lpEventAfter.leftMargin = psychoSocialAfter.getEvent_xpos();
-        lpEventAfter.topMargin = psychoSocialAfter.getEvent_ypos();
+        lpEventAfter.leftMargin = psychoSocialAfterOfPatient.getEvent_xpos();
+        lpEventAfter.topMargin = psychoSocialAfterOfPatient.getEvent_ypos();
         btnEventAfter.setLayoutParams(lpEventAfter);
+        setButtonSize(btnEventAfter, psychoSocialAfterOfPatient.getEvent_size());
+        setButtonColor(btnEventAfter, psychoSocialAfterOfPatient.getEvent_color());
 
         /* Only used for Heruoku Database
 
@@ -680,8 +715,8 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
             }
         }); */
     }
-    public PopupWindow popupDisplay(final View clickedItem, final MotionEvent event)
-    {
+
+    public PopupWindow popupDisplay(final View clickedItem, final MotionEvent event) {
 
         final PopupWindow popupWindow = new PopupWindow(getContext());
 
@@ -694,12 +729,7 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         btnColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(clickedItem.getBackground().getConstantState().equals(
-                        getResources().getDrawable(R.drawable.roundedbutton_red).getConstantState())){
-                    clickedItem.setBackgroundResource(R.drawable.roundedbutton_blue);
-                }else{
-                    clickedItem.setBackgroundResource(R.drawable.roundedbutton_red);
-                }
+                updatePsychosocialColor(clickedItem);
                 popupWindow.dismiss();
             }
         });
@@ -711,24 +741,24 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
             public void onClick(View view) {
                 ViewGroup.LayoutParams lp = clickedItem.getLayoutParams();
                 float factor = clickedItem.getContext().getResources().getDisplayMetrics().density;
-                switch (view.getId()){
+                switch (view.getId()) {
                     case R.id.size1:
-                        lp.width = (int)(70 * factor);
-                        lp.height = (int)(70 * factor);
+                        lp.width = (int) (70 * factor);
+                        lp.height = (int) (70 * factor);
                         clickedItem.setLayoutParams(lp);
-
+                        updatePsychosocialSize(clickedItem, 1);
                         break;
                     case R.id.size2:
-                        lp.width = (int)(90 * factor);
-                        lp.height = (int)(90 * factor);
+                        lp.width = (int) (90 * factor);
+                        lp.height = (int) (90 * factor);
                         clickedItem.setLayoutParams(lp);
-
+                        updatePsychosocialSize(clickedItem, 2);
                         break;
                     case R.id.size3:
-                        lp.width = (int)(110 * factor);
-                        lp.height = (int)(110 * factor);
+                        lp.width = (int) (110 * factor);
+                        lp.height = (int) (110 * factor);
                         clickedItem.setLayoutParams(lp);
-
+                        updatePsychosocialSize(clickedItem, 3);
                         break;
                 }
                 //event.setAction(MotionEvent.ACTION_MOVE);
@@ -748,4 +778,176 @@ public class PsychosocialFragment extends Fragment implements ReasonDialog.Reaso
         return popupWindow;
     }
 
+    private void updatePsychosocialColor(View clickedButton) {
+        if (clickedButton.getParent().equals(rlBefore)) {
+            int newColor;
+            switch (clickedButton.getId()) {
+                case R.id.btnPainBefore:
+                    if (psychoSocialBeforeOfPatient.getPain_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialBeforeOfPatient.setPain_color(newColor);
+                    break;
+                case R.id.btnFamilyBefore:
+                    if (psychoSocialBeforeOfPatient.getFamily_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialBeforeOfPatient.setFamily_color(newColor);
+                    break;
+                case R.id.btnWorkBefore:
+                    if (psychoSocialBeforeOfPatient.getWork_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialBeforeOfPatient.setWork_color(newColor);
+                    break;
+                case R.id.btnFinancialBefore:
+                    if (psychoSocialBeforeOfPatient.getFinance_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialBeforeOfPatient.setFinance_color(newColor);
+                    break;
+                case R.id.btnEventBefore:
+                    if (psychoSocialBeforeOfPatient.getEvent_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialBeforeOfPatient.setEvent_color(newColor);
+                    break;
+            }
+            updatePsychoSocialBefore(psychoSocialBeforeOfPatient);
+
+        } else if (clickedButton.getParent().equals(rlAfter)) {
+            int newColor;
+            switch (clickedButton.getId()) {
+                case R.id.btnPainAfter:
+                    if (psychoSocialAfterOfPatient.getPain_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialAfterOfPatient.setPain_color(newColor);
+                    break;
+                case R.id.btnFamilyAfter:
+                    if (psychoSocialAfterOfPatient.getFamily_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialAfterOfPatient.setFamily_color(newColor);
+                    break;
+                case R.id.btnWorkAfter:
+                    if (psychoSocialAfterOfPatient.getWork_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialAfterOfPatient.setWork_color(newColor);
+                    break;
+                case R.id.btnFinancialAfter:
+                    if (psychoSocialAfterOfPatient.getFinance_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialAfterOfPatient.setFinance_color(newColor);
+                    break;
+                case R.id.btnEventAfter:
+                    if (psychoSocialAfterOfPatient.getEvent_color() == 1) {
+                        newColor = 0;
+                    } else {
+                        newColor = 1;
+                    }
+                    setButtonColor((Button) clickedButton, newColor);
+                    psychoSocialAfterOfPatient.setEvent_color(newColor);
+                    break;
+            }
+            updatePsychoSocialAfter(psychoSocialAfterOfPatient);
+        }
+
+    }
+
+    private void setDefaultSizeColorBefore() {
+        psychoSocialBeforeOfPatient.setPain_size(1);
+        psychoSocialBeforeOfPatient.setFamily_size(1);
+        psychoSocialBeforeOfPatient.setWork_size(1);
+        psychoSocialBeforeOfPatient.setFinance_size(1);
+        psychoSocialBeforeOfPatient.setEvent_size(1);
+
+        psychoSocialBeforeOfPatient.setPain_color(1);   // 1 red
+        psychoSocialBeforeOfPatient.setFamily_color(0); // 0 green
+        psychoSocialBeforeOfPatient.setWork_color(0);
+        psychoSocialBeforeOfPatient.setFinance_color(0);
+        psychoSocialBeforeOfPatient.setEvent_color(0);
+    }
+
+    private void setDefaultSizeColorAfter() {
+        psychoSocialAfterOfPatient.setPain_size(1);
+        psychoSocialAfterOfPatient.setFamily_size(1);
+        psychoSocialAfterOfPatient.setWork_size(1);
+        psychoSocialAfterOfPatient.setFinance_size(1);
+        psychoSocialAfterOfPatient.setEvent_size(1);
+
+        psychoSocialAfterOfPatient.setPain_color(1);   // 1 red
+        psychoSocialAfterOfPatient.setFamily_color(0); // 0 green
+        psychoSocialAfterOfPatient.setWork_color(0);
+        psychoSocialAfterOfPatient.setFinance_color(0);
+        psychoSocialAfterOfPatient.setEvent_color(0);
+    }
+
+    private void updatePsychosocialSize(View clickedItem, int size) {
+        switch (clickedItem.getId()) {
+            case R.id.btnPainBefore:
+                psychoSocialBeforeOfPatient.setPain_size(size);
+                break;
+            case R.id.btnFamilyBefore:
+                psychoSocialBeforeOfPatient.setFamily_size(size);
+                break;
+            case R.id.btnWorkBefore:
+                psychoSocialBeforeOfPatient.setWork_size(size);
+                break;
+            case R.id.btnFinancialBefore:
+                psychoSocialBeforeOfPatient.setFinance_size(size);
+                break;
+            case R.id.btnEventBefore:
+                psychoSocialBeforeOfPatient.setEvent_size(size);
+                break;
+            case R.id.btnPainAfter:
+                psychoSocialAfterOfPatient.setPain_size(size);
+                break;
+            case R.id.btnFamilyAfter:
+                psychoSocialAfterOfPatient.setFamily_size(size);
+                break;
+            case R.id.btnWorkAfter:
+                psychoSocialAfterOfPatient.setWork_size(size);
+                break;
+            case R.id.btnFinancialAfter:
+                psychoSocialAfterOfPatient.setFinance_size(size);
+                break;
+            case R.id.btnEventAfter:
+                psychoSocialAfterOfPatient.setEvent_size(size);
+                break;
+        }
+        updatePsychoSocialAfter(psychoSocialAfterOfPatient);
+        updatePsychoSocialBefore(psychoSocialBeforeOfPatient);
+    }
+
 }
+
