@@ -9,6 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/drugs"
+        android:layout_marginLeft="10dp"
         >
     </CheckBox>
     <CheckBox
@@ -16,14 +17,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/exercises"
-        android:layout_below="@id/cbDrugs">
+        android:layout_below="@id/cbDrugs"
+        android:layout_marginLeft="10dp"
+        >
     </CheckBox>
     <CheckBox
         android:id="@+id/cbAwareness"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/awareness"
-        android:layout_below="@id/cbExercises">
+        android:layout_below="@id/cbExercises"
+        android:layout_marginLeft="10dp"
+        >
     </CheckBox>
     <CheckBox
         android:id="@+id/cbOthers"
@@ -31,6 +36,8 @@
         android:layout_height="wrap_content"
         android:text="@string/other_reasons"
         android:layout_below="@id/cbAwareness"
+        android:layout_marginLeft="10dp"
+
         >
     </CheckBox>
 
@@ -39,7 +46,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/cbOthers"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="40dp"
         android:visibility="invisible"
+
         />
 </RelativeLayout>

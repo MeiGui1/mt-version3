@@ -391,6 +391,7 @@ public class DiagnosisFragment extends Fragment implements DiagnosisDialog.Diagn
         diagnosisTypeDialog.show(getActivity().getSupportFragmentManager(), "DiagnosisType Dialog");
     }
 
+
     @Override
     public void applyDiagnosisType(String name, String type, String description) {
         DiagnosisType newDiagnosisType = new DiagnosisType();

@@ -9,13 +9,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/amount"
+        android:layout_marginLeft="10dp"
         />
     <EditText
         android:id="@+id/edit_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/amountExample"
-        android:layout_below="@id/amount"/>
+        android:layout_below="@id/amount"
+        android:layout_marginLeft="10dp"
+        />
     <TextView
         android:id="@+id/dosis"
         android:layout_width="wrap_content"
@@ -23,6 +26,8 @@
         android:text="@string/dosis"
         android:layout_below="@id/edit_amount"
         android:paddingTop="20dp"
+        android:layout_marginLeft="10dp"
+
         />
     <LinearLayout
         android:id="@+id/rgDosierung"
@@ -32,6 +37,7 @@
         android:layout_gravity="center_horizontal"
         android:paddingTop="20dp"
         android:layout_below="@+id/dosis"
+        android:layout_marginLeft="10dp"
         >
 
         <RadioButton
@@ -140,11 +146,14 @@
         android:text="@string/additionalInformation"
         android:layout_below="@id/rgDosierung"
         android:paddingTop="20dp"
+        android:layout_marginLeft="10dp"
         />
     <EditText
         android:id="@+id/edit_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/comment"/>
+        android:layout_below="@id/comment"
+        android:layout_marginLeft="10dp"
+        />
 
 </RelativeLayout>

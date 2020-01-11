@@ -11,12 +11,14 @@
         android:text="@string/name"
         android:layout_below="@id/name"
         android:paddingBottom="10dp"
+        android:layout_marginLeft="10dp"
         />
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
+        android:layout_marginLeft="10dp"
         />
     <TextView
         android:id="@+id/gender"
@@ -26,13 +28,16 @@
         android:layout_below="@id/etName"
         android:paddingTop="20dp"
         android:paddingBottom="10dp"
+        android:layout_marginLeft="10dp"
         />
     <RadioGroup
         android:id="@+id/rgGender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/gender"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
+        >
         <RadioButton
             android:id="@+id/rbMale"
             android:layout_width="wrap_content"

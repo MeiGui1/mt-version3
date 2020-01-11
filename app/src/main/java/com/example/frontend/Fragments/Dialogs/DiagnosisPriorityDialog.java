@@ -26,7 +26,6 @@ import java.util.List;
 
 
 public class DiagnosisPriorityDialog extends AppCompatDialogFragment {
-    private EditText etComment;
     private RecyclerView rvDiagnoses;
     private RecyclerAdapter recyclerAdapter;
     private List<PatientDiagnosis> allPatientDiagnoses;
@@ -59,14 +58,11 @@ public class DiagnosisPriorityDialog extends AppCompatDialogFragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(rvDiagnoses);
 
-        etComment = (EditText)view.findViewById(R.id.edit_comment);
         builder.setView(view)
                 .setTitle(getString(R.string.diagnosis_priorization))
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String comment = etComment.getText().toString();
-                        //listener.applySortedDiagnosis(comment);
                     }
                 });
 

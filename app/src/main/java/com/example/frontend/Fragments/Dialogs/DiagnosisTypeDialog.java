@@ -123,7 +123,7 @@ public class DiagnosisTypeDialog extends AppCompatDialogFragment {
     public void onStart() {
         super.onStart();
         AlertDialog dialog = (AlertDialog) getDialog();
-        dialog.getWindow().setLayout(1000, 400);
+        dialog.getWindow().setLayout(2000, 800);
         dialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
 
         if(diagnosisType != null){
